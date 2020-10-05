@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.coldis</groupId>
+		<artifactId>configuration</artifactId>
+		<version>0.0.47</version>
+	</parent>
+
+	<groupId>org.coldis.infrastructure</groupId>
+	<artifactId>java-service</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>Java service</name>
+
+	<properties>
+	</properties>
+
+	<scm>
+		<url>https://github.com/coldis-org/infrastructure-java-service</url>
+		<connection>scm:git:https://github.com/coldis-org/infrastructure-java-service.git</connection>
+		<developerConnection>scm:git:git@github.com:coldis-org/infrastructure-java-service.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
+	<dependencies>
+
+
+	</dependencies>
+
+</project>

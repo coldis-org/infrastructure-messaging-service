@@ -1,0 +1,28 @@
+{
+	"id": "infrastructure-java-service",
+	"container": {
+		"portMappings": [
+			{
+				"containerPort": 9090,
+				"labels": {
+					"VIP_0": "/infrastructure-java-service:9090"
+				}
+			}
+		],
+		"type": "DOCKER",
+		"volumes": [
+		],
+		"docker": {
+			"image": "coldis/infrastructure-java-service",
+			"forcePullImage": true,
+			"parameters": []
+		}
+	},
+	"env": {},
+	"healthChecks": [],
+	"args": [],
+	"cpus": 0.5,
+	"disk": 1024,
+	"instances": 1,
+	"mem": 256
+}
