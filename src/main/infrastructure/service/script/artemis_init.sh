@@ -11,7 +11,7 @@ sed -i "s/logger.handlers=.*/logger.handlers=CONSOLE/g" ${CONFIG_PATH}/logging.p
 # Update users and roles with if username and password is passed as argument
 if [ "$ARTEMIS_USERNAME" ] && [ "$ARTEMIS_PASSWORD" ]; then
 	$BROKER_HOME/bin/artemis user rm --user artemis
-	$BROKER_HOME/bin/artemis user add --user "$ARTEMIS_USERNAME" --password "$ARTEMIS_PASSWORD" --role amq
+	$BROKER_HOME/bin/artemis user add --user "$ARTEMIS_USERNAME" --password "$ARTEMIS_PASSWORD" --role "technology-messaging-service-admin"
 fi
 
 # Runs performance journal.

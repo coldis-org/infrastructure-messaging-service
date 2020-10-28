@@ -32,7 +32,7 @@ ARTEMIS_INSTANCE_ETC_URI='file:/var/lib/artemis/etc/'
 
 
 # Hawtio Properties
-HAWTIO_ROLE='amq'
+HAWTIO_ROLE='technology-messaging-service-admin'
 
 
 # Java Opts

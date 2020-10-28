@@ -36,7 +36,7 @@ RUN cd /var/lib && \
 	--home /opt/apache-artemis \
 	--user artemis \
 	--password password \
-	--role amq \
+	--role "technology-messaging-service-admin" \
 	--require-login \
 	--cluster-user artemisCluster \
 	--cluster-password password && ls -la artemis && ls artemis/bin

@@ -33,7 +33,7 @@ ARTEMIS_INSTANCE_ETC_URI='file:/var/lib/artemis/etc/'
 
 # Java Opts
 if [ -z "$JAVA_ARGS" ]; then
-    JAVA_ARGS=" -XX:+PrintClassHistogram -XX:+UseStringDeduplication -Dhawtio.realm=activemq -Dhawtio.offline=true -Dhawtio.role=amq -Dhawtio.rolePrincipalClasses=org.apache.activemq.artemis.spi.core.security.jaas.RolePrincipal -Djolokia.policyLocation=${ARTEMIS_INSTANCE_ETC_URI}jolokia-access.xml"
+    JAVA_ARGS=" -XX:+PrintClassHistogram -XX:+UseStringDeduplication -Dhawtio.realm=activemq -Dhawtio.offline=true -Dhawtio.role=technology-messaging-service-admin -Dhawtio.rolePrincipalClasses=org.apache.activemq.artemis.spi.core.security.jaas.RolePrincipal -Djolokia.policyLocation=${ARTEMIS_INSTANCE_ETC_URI}jolokia-access.xml"
 fi
 JAVA_ARGS="$JAVA_ARGS $JAVA_OPTS"
 
