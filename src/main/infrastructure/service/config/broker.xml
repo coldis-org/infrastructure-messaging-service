@@ -32,11 +32,11 @@ under the License.
     <journal-directory>data/journal</journal-directory>
     <large-messages-directory>data/large-messages</large-messages-directory>
     <journal-datasync>true</journal-datasync>
-    <journal-min-files>53</journal-min-files>
-    <journal-pool-files>237</journal-pool-files>
+    <journal-min-files>113</journal-min-files>
+    <journal-pool-files>247</journal-pool-files>
     <journal-device-block-size>4096</journal-device-block-size>
-    <journal-file-size>10M</journal-file-size>
-    <journal-compact-min-files>0</journal-compact-min-files>
+    <journal-file-size>5M</journal-file-size>
+    <!-- <journal-compact-min-files>0</journal-compact-min-files> -->
     <journal-sync-non-transactional>false</journal-sync-non-transactional>
     <!--
        This value was determined through a calculation.
@@ -78,7 +78,7 @@ under the License.
     <disk-scan-period>5000</disk-scan-period>
     <!-- once the disk hits this limit the system will block, or close the connection in certain protocols
            that won't support flow control. -->
-    <max-disk-usage>90</max-disk-usage>
+    <max-disk-usage>95</max-disk-usage>
     <!-- should the broker detect dead locks and other issues -->
     <critical-analyzer>true</critical-analyzer>
     <critical-analyzer-timeout>240000</critical-analyzer-timeout>
