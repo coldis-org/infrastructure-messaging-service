@@ -32,11 +32,12 @@ under the License.
     <journal-directory>data/journal</journal-directory>
     <large-messages-directory>data/large-messages</large-messages-directory>
     <journal-datasync>true</journal-datasync>
-    <journal-min-files>113</journal-min-files>
-    <journal-pool-files>247</journal-pool-files>
+    <journal-min-files>237</journal-min-files>
+    <journal-pool-files>531</journal-pool-files>
     <journal-device-block-size>4096</journal-device-block-size>
     <journal-file-size>5M</journal-file-size>
-    <!-- <journal-compact-min-files>0</journal-compact-min-files> -->
+    <journal-compact-min-files>531</journal-compact-min-files>
+    <journal-compact-percentage>25</journal-compact-percentage>
     <journal-sync-non-transactional>false</journal-sync-non-transactional>
     <!--
        This value was determined through a calculation.
