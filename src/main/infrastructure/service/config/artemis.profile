@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-ARTEMIS_HOME='/opt/apache-artemis-2.15.0'
+ARTEMIS_HOME='/opt/apache-artemis-2.16.0'
 ARTEMIS_INSTANCE='/var/lib/artemis'
 ARTEMIS_DATA_DIR='/var/lib/artemis/data'
 ARTEMIS_ETC_DIR='/var/lib/artemis/etc'
@@ -37,7 +37,7 @@ HAWTIO_ROLE='technology-messaging-service-admin'
 
 # Java Opts
 if [ -z "$JAVA_ARGS" ]; then
-    JAVA_ARGS=" -XX:+PrintClassHistogram -XX:+UseStringDeduplication -Dhawtio.realm=activemq -Dhawtio.offline=true -Dhawtio.rolePrincipalClasses=org.apache.activemq.artemis.spi.core.security.jaas.RolePrincipal -Djolokia.policyLocation=${ARTEMIS_INSTANCE_ETC_URI}jolokia-access.xml"
+    JAVA_ARGS=" -XX:+PrintClassHistogram -XX:+UseStringDeduplication -Dhawtio.realm=activemq -Dhawtio.offline=true -Dorg.apache.activemq.UseDedicatedTaskRunner=false -Dhawtio.rolePrincipalClasses=org.apache.activemq.artemis.spi.core.security.jaas.RolePrincipal -Djolokia.policyLocation=${ARTEMIS_INSTANCE_ETC_URI}jolokia-access.xml"
 fi
 JAVA_ARGS="$JAVA_ARGS $JAVA_OPTS"
 

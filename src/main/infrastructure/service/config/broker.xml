@@ -32,12 +32,12 @@ under the License.
     <journal-directory>data/journal</journal-directory>
     <large-messages-directory>data/large-messages</large-messages-directory>
     <journal-datasync>true</journal-datasync>
-    <journal-min-files>237</journal-min-files>
-    <journal-pool-files>531</journal-pool-files>
+    <journal-min-files>137</journal-min-files>
+    <journal-pool-files>273</journal-pool-files>
     <journal-device-block-size>4096</journal-device-block-size>
     <journal-file-size>5M</journal-file-size>
-    <journal-compact-min-files>531</journal-compact-min-files>
-    <journal-compact-percentage>25</journal-compact-percentage>
+    <journal-compact-min-files>273</journal-compact-min-files>
+    <journal-compact-percentage>50</journal-compact-percentage>
     <journal-sync-non-transactional>false</journal-sync-non-transactional>
     <!--
        This value was determined through a calculation.
@@ -79,7 +79,7 @@ under the License.
     <disk-scan-period>5000</disk-scan-period>
     <!-- once the disk hits this limit the system will block, or close the connection in certain protocols
            that won't support flow control. -->
-    <max-disk-usage>95</max-disk-usage>
+    <max-disk-usage>85</max-disk-usage>
     <!-- should the broker detect dead locks and other issues -->
     <critical-analyzer>true</critical-analyzer>
     <critical-analyzer-timeout>240000</critical-analyzer-timeout>
@@ -106,7 +106,7 @@ under the License.
                     "anycastPrefix=jms.queue.;multicastPrefix=jms.topic." to the acceptor url.
                     See https://issues.apache.org/jira/browse/ARTEMIS-1644 for more information. -->
       <!-- Acceptor for every supported protocol -->
-      <acceptor name="artemis">tcp://0.0.0.0:61616?tcpSendBufferSize=65536;tcpReceiveBufferSize=65536;tcpNoDelay=false;batchDelay=37;directDeliver=false;protocols=CORE;useEpoll=true;</acceptor>
+      <acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=true;tcpSendBufferSize=65536;tcpReceiveBufferSize=65536;tcpNoDelay=false;batchDelay=37;directDeliver=false;</acceptor>
       <!-- AMQP Acceptor.  Listens on default AMQP port for AMQP traffic.-->
       <!-- <acceptor name="amqp">tcp://0.0.0.0:5672?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=AMQP;useEpoll=true;amqpCredits=1000;amqpLowCredits=300;amqpMinLargeMessageSize=102400;amqpDuplicateDetection=true</acceptor> -->
       <!-- STOMP Acceptor. -->

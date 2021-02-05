@@ -12,7 +12,7 @@ RUN apt-get update && \
 	rm -rf /var/lib/apt/lists/*
 
 # Installs Artemis.
-ENV ACTIVEMQ_ARTEMIS_VERSION 2.15.0 
+ENV ACTIVEMQ_ARTEMIS_VERSION 2.16.0 
 RUN apt-get update && \
 	apt-get install -y --no-install-recommends wget gnupg2 && \
 	cd /opt && \
@@ -42,6 +42,7 @@ RUN cd /var/lib && \
 	--cluster-password password && ls -la artemis && ls artemis/bin
 
 # Copies scripts and utilities.
+ENV ARTEMIS_GLOBAL_MAX_SIZE=512MB
 RUN mkdir -p /opt/artemis-utils
 COPY utils /opt/artemis-utils
 COPY config /var/lib/artemis/etc

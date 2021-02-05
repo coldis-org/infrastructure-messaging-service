@@ -9,9 +9,16 @@ export BROKER_HOME CONFIG_PATH
 sed -i "s/logger.handlers=.*/logger.handlers=CONSOLE/g" ${CONFIG_PATH}/logging.properties
 
 # Update users and roles with if username and password is passed as argument
-if [ "$ARTEMIS_USERNAME" ] && [ "$ARTEMIS_PASSWORD" ]; then
-	$BROKER_HOME/bin/artemis user rm --user artemis
-	$BROKER_HOME/bin/artemis user add --user "$ARTEMIS_USERNAME" --password "$ARTEMIS_PASSWORD" --role "technology-messaging-service-admin"
+if [ "${ARTEMIS_USERNAME}" ] && [ "${ARTEMIS_PASSWORD}" ]; then
+	echo "${ARTEMIS_USERNAME} = ${ARTEMIS_PASSWORD}" > ${CONFIG_PATH}/artemis-users.properties
+	echo "technology-messaging-service-admin = ${ARTEMIS_USERNAME}" > ${CONFIG_PATH}/artemis-roles.properties
+	cat ${CONFIG_PATH}/artemis-users.properties
+fi
+
+# If global max size is set.
+if [ "${ARTEMIS_GLOBAL_MAX_SIZE}" ]; then
+	# Adds the global max size to the configuration.
+	sed -i "s#<acceptors>#<global-max-size>${ARTEMIS_GLOBAL_MAX_SIZE}</global-max-size>\n\t<acceptors>#" ${CONFIG_PATH}/broker.xml
 fi
 
 # Runs performance journal.
