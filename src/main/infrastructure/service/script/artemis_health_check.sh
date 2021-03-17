@@ -15,7 +15,18 @@ POST_RESPONSE_STATUS=$(echo ${POST_RESPONSE} | jq ".status")
 echo "Post status: ${POST_RESPONSE_STATUS}"
 if [ "${POST_RESPONSE_STATUS}" != "200" ]
 then
-	exit "Message could not be added. Status: ${POST_RESPONSE_STATUS}"
+
+	# If producers are blocked
+	if (tail -10 /var/lib/artemis/log/artemis.log | grep "System will start blocking producers")
+	then 
+		# Logs it an exit. 
+		echo "Producers blocked. Waiting producers to be unblocked."
+		exit 0;
+	else 
+		# Exits with an error.
+		exit "Message could not be added. Status: ${POST_RESPONSE_STATUS}"
+	fi
+	
 fi
 
 # Removes the test message from the queue.

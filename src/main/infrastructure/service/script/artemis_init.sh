@@ -5,9 +5,6 @@ BROKER_HOME=/var/lib/artemis
 CONFIG_PATH=$BROKER_HOME/etc
 export BROKER_HOME CONFIG_PATH
 
-# Log to tty to enable docker logs container-name
-sed -i "s/logger.handlers=.*/logger.handlers=CONSOLE/g" ${CONFIG_PATH}/logging.properties
-
 # Update users and roles with if username and password is passed as argument
 if [ "${ARTEMIS_USERNAME}" ] && [ "${ARTEMIS_PASSWORD}" ]; then
 	echo "${ARTEMIS_USERNAME} = ${ARTEMIS_PASSWORD}" > ${CONFIG_PATH}/artemis-users.properties

@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-ARTEMIS_HOME='/opt/apache-artemis-2.16.0'
+ARTEMIS_HOME='/opt/apache-artemis-2.17.0'
 ARTEMIS_INSTANCE='/var/lib/artemis'
 ARTEMIS_DATA_DIR='/var/lib/artemis/data'
 ARTEMIS_ETC_DIR='/var/lib/artemis/etc'
@@ -31,9 +31,11 @@ ARTEMIS_INSTANCE_ETC_URI='file:/var/lib/artemis/etc/'
 #ARTEMIS_CLUSTER_PROPS="-Dactivemq.remoting.default.port=61617 -Dactivemq.remoting.amqp.port=5673 -Dactivemq.remoting.stomp.port=61614 -Dactivemq.remoting.hornetq.port=5446"
 
 
+# Configuring logging.
+JAVA_ARGS=" -Djava.util.logging.manager=org.jboss.logmanager.LogManager -Dlogging.configuration=${ARTEMIS_INSTANCE_ETC_URI}/logging.properties"
+
 # Hawtio Properties
 HAWTIO_ROLE='technology-messaging-service-admin'
-
 
 # Java Opts
 if [ -z "$JAVA_ARGS" ]; then
