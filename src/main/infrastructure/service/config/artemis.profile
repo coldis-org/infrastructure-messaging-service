@@ -30,10 +30,6 @@ ARTEMIS_INSTANCE_ETC_URI='file:/var/lib/artemis/etc/'
 # Cluster Properties: Used to pass arguments to ActiveMQ Artemis which can be referenced in broker.xml
 #ARTEMIS_CLUSTER_PROPS="-Dactivemq.remoting.default.port=61617 -Dactivemq.remoting.amqp.port=5673 -Dactivemq.remoting.stomp.port=61614 -Dactivemq.remoting.hornetq.port=5446"
 
-
-# Configuring logging.
-JAVA_ARGS=" -Djava.util.logging.manager=org.jboss.logmanager.LogManager -Dlogging.configuration=${ARTEMIS_INSTANCE_ETC_URI}/logging.properties"
-
 # Hawtio Properties
 HAWTIO_ROLE='technology-messaging-service-admin'
 

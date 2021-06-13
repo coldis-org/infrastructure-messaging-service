@@ -15,7 +15,7 @@ fi
 # If global max size is set.
 if [ "${ARTEMIS_GLOBAL_MAX_SIZE}" ]; then
 	# Adds the global max size to the configuration.
-	sed -i "s#<acceptors>#<global-max-size>${ARTEMIS_GLOBAL_MAX_SIZE}</global-max-size>\n\t<acceptors>#" ${CONFIG_PATH}/broker.xml
+	sed -i "s#<!-- Global max size. -->#<!-- Global max size. -->\n\t\t${ARTEMIS_GLOBAL_MAX_SIZE}</global-max-size>#" ${CONFIG_PATH}/broker.xml
 fi
 
 # Runs performance journal.
