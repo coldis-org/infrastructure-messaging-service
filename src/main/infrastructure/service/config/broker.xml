@@ -23,16 +23,16 @@
 		<journal-device-block-size>4096</journal-device-block-size>
 		<journal-file-size>17M</journal-file-size>
 		<journal-compact-min-files>531</journal-compact-min-files>
-		<journal-compact-percentage>23</journal-compact-percentage>
+		<journal-compact-percentage>29</journal-compact-percentage>
 		<journal-sync-non-transactional>false</journal-sync-non-transactional>
-		<journal-max-io>7000</journal-max-io>
+		<!-- <journal-max-io>1500</journal-max-io> -->
 		<!-- Journal buffer. -->
-		<journal-buffer-timeout>500000</journal-buffer-timeout>
-		<journal-buffer-size>1M</journal-buffer-size>
-		<page-sync-timeout>500000</page-sync-timeout>
+		<journal-buffer-timeout>5000000</journal-buffer-timeout>
+		<journal-buffer-size>17M</journal-buffer-size>
+		<page-sync-timeout>5000000</page-sync-timeout>
 		<!-- Thread pool. -->
 		<thread-pool-max-size>128</thread-pool-max-size>
-		<scheduled-thread-pool-max-size>64</scheduled-thread-pool-max-size>
+		<scheduled-thread-pool-max-size>32</scheduled-thread-pool-max-size>
 		<!-- Disk usage -->
 		<disk-scan-period>10000</disk-scan-period>
 		<max-disk-usage>90</max-disk-usage>
@@ -44,7 +44,7 @@
 		<!-- Global max size. -->
 		<!-- Acceptors. -->
 		<acceptors>
-			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=true;tcpSendBufferSize=65536;tcpReceiveBufferSize=65536;tcpNoDelay=false;batchDelay=37;directDeliver=false;
+			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=true;directDeliver=false;
 			</acceptor>
 		</acceptors>
 		<!-- Security. -->
