@@ -18,35 +18,39 @@
 		<journal-directory>data/journal</journal-directory>
 		<journal-type>ASYNCIO</journal-type>
 		<journal-datasync>true</journal-datasync>
-		<journal-min-files>473</journal-min-files>
-		<journal-pool-files>591</journal-pool-files>
 		<journal-device-block-size>4096</journal-device-block-size>
-		<journal-file-size>17M</journal-file-size>
-		<journal-compact-min-files>531</journal-compact-min-files>
+		<journal-file-size>7M</journal-file-size>
+		<journal-min-files>237</journal-min-files>
+		<journal-pool-files>3123</journal-pool-files>
+		<journal-compact-min-files>793</journal-compact-min-files>
 		<journal-compact-percentage>29</journal-compact-percentage>
 		<journal-sync-non-transactional>false</journal-sync-non-transactional>
-		<!-- <journal-max-io>1500</journal-max-io> -->
+		<journal-max-io>32768</journal-max-io>
 		<!-- Journal buffer. -->
-		<journal-buffer-timeout>5000000</journal-buffer-timeout>
-		<journal-buffer-size>17M</journal-buffer-size>
-		<page-sync-timeout>5000000</page-sync-timeout>
+		<journal-buffer-timeout>1300000</journal-buffer-timeout>
+		<journal-buffer-size>262144</journal-buffer-size>
+		<page-sync-timeout>137000000</page-sync-timeout>
 		<!-- Thread pool. -->
-		<thread-pool-max-size>128</thread-pool-max-size>
-		<scheduled-thread-pool-max-size>32</scheduled-thread-pool-max-size>
+		<thread-pool-max-size>137</thread-pool-max-size>
+		<scheduled-thread-pool-max-size>137</scheduled-thread-pool-max-size>
 		<!-- Disk usage -->
-		<disk-scan-period>10000</disk-scan-period>
 		<max-disk-usage>90</max-disk-usage>
 		<!-- Disable critical analyzer. -->
 		<critical-analyzer>false</critical-analyzer>
-		<critical-analyzer-timeout>240000</critical-analyzer-timeout>
-		<critical-analyzer-check-period>24000</critical-analyzer-check-period>
-		<critical-analyzer-policy>LOG</critical-analyzer-policy>
 		<!-- Global max size. -->
 		<!-- Acceptors. -->
 		<acceptors>
-			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=true;directDeliver=false;
-			</acceptor>
+			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=true;tcpNoDelay=true;directDeliver=false;batchDelay=37;tcpSendBufferSize=262144;tcpReceiveBufferSize=262144;writeBufferLowWaterMark=262144;writeBufferHighWaterMark=1048576</acceptor>
 		</acceptors>
+		<!-- Paging. -->		
+		<read-whole-page>true</read-whole-page>
+		<page-max-concurrent-io>7</page-max-concurrent-io>
+		<!-- Transaction -->
+		<transaction-timeout>93000</transaction-timeout>
+		<!-- Scans. -->
+		<disk-scan-period>11000</disk-scan-period>
+		<message-expiry-scan-period>-1</message-expiry-scan-period>
+		<address-queue-scan-period>1300000</address-queue-scan-period>
 		<!-- Security. -->
 		<security-settings>
 			<security-setting match="#">
