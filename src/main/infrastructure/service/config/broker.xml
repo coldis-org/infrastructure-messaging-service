@@ -41,6 +41,7 @@
 		<!-- Acceptors. -->
 		<acceptors>
 			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=true;tcpNoDelay=true;directDeliver=false;batchDelay=37;tcpSendBufferSize=262144;tcpReceiveBufferSize=262144;writeBufferLowWaterMark=262144;writeBufferHighWaterMark=1048576</acceptor>
+			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=true;tcpNoDelay=true;directDeliver=false;batchDelay=37;tcpSendBufferSize=262144;tcpReceiveBufferSize=262144;writeBufferLowWaterMark=262144;writeBufferHighWaterMark=1048576</acceptor>
 		</acceptors>
 		<!-- Paging. -->		
 		<read-whole-page>true</read-whole-page>
