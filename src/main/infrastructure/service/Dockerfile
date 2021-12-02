@@ -12,7 +12,7 @@ RUN apt-get update && \
 	rm -rf /var/lib/apt/lists/*
 
 # Installs Artemis.
-ENV ACTIVEMQ_ARTEMIS_VERSION 2.18.0 
+ENV ACTIVEMQ_ARTEMIS_VERSION 2.19.0
 RUN apt-get update && \
 	apt-get install -y --no-install-recommends wget gnupg2 && \
 	cd /opt && \

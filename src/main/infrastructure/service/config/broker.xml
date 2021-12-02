@@ -21,9 +21,9 @@
 		<journal-device-block-size>4096</journal-device-block-size>
 		<journal-file-size>7M</journal-file-size>
 		<journal-min-files>237</journal-min-files>
-		<journal-pool-files>3123</journal-pool-files>
-		<journal-compact-min-files>793</journal-compact-min-files>
-		<journal-compact-percentage>29</journal-compact-percentage>
+		<journal-pool-files>793</journal-pool-files>
+		<journal-compact-min-files>293</journal-compact-min-files>
+		<journal-compact-percentage>73</journal-compact-percentage>
 		<journal-sync-non-transactional>false</journal-sync-non-transactional>
 		<journal-max-io>32768</journal-max-io>
 		<!-- Journal buffer. -->
@@ -31,8 +31,8 @@
 		<journal-buffer-size>262144</journal-buffer-size>
 		<page-sync-timeout>137000000</page-sync-timeout>
 		<!-- Thread pool. -->
-		<thread-pool-max-size>137</thread-pool-max-size>
-		<scheduled-thread-pool-max-size>137</scheduled-thread-pool-max-size>
+		<thread-pool-max-size>171</thread-pool-max-size>
+		<scheduled-thread-pool-max-size>171</scheduled-thread-pool-max-size>
 		<!-- Disk usage -->
 		<max-disk-usage>90</max-disk-usage>
 		<!-- Disable critical analyzer. -->

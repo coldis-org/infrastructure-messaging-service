@@ -17,7 +17,7 @@ if [ "${POST_RESPONSE_STATUS}" != "200" ]
 then
 
 	# If producers are blocked
-	if (tail -10 /var/lib/artemis/log/artemis.log | grep "System will start blocking producers")
+	if (tail -50 /var/lib/artemis/log/artemis.log | grep "System will start blocking producers")
 	then 
 		# Logs it an exit. 
 		echo "Producers blocked. Waiting producers to be unblocked."
