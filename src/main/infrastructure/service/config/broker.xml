@@ -12,8 +12,7 @@
 		<!-- Paging, bindings and large messages -->
 		<paging-directory>data/paging</paging-directory>
 		<bindings-directory>data/bindings</bindings-directory>
-		<large-messages-directory>data/large-messages
-		</large-messages-directory>
+		<large-messages-directory>data/large-messages</large-messages-directory>
 		<!-- Journal config. -->
 		<journal-directory>data/journal</journal-directory>
 		<journal-type>ASYNCIO</journal-type>
