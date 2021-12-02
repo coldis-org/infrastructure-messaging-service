@@ -19,11 +19,11 @@
 		<journal-type>ASYNCIO</journal-type>
 		<journal-datasync>true</journal-datasync>
 		<journal-device-block-size>4096</journal-device-block-size>
-		<journal-file-size>7M</journal-file-size>
-		<journal-min-files>237</journal-min-files>
-		<journal-pool-files>793</journal-pool-files>
-		<journal-compact-min-files>293</journal-compact-min-files>
-		<journal-compact-percentage>73</journal-compact-percentage>
+		<journal-file-size>29M</journal-file-size>
+		<journal-min-files>173</journal-min-files>
+		<journal-pool-files>573</journal-pool-files>
+		<journal-compact-min-files>237</journal-compact-min-files>
+		<journal-compact-percentage>37</journal-compact-percentage>
 		<journal-sync-non-transactional>false</journal-sync-non-transactional>
 		<journal-max-io>32768</journal-max-io>
 		<!-- Journal buffer. -->
@@ -45,7 +45,7 @@
 		</acceptors>
 		<!-- Paging. -->		
 		<read-whole-page>true</read-whole-page>
-		<page-max-concurrent-io>7</page-max-concurrent-io>
+		<page-max-concurrent-io>19</page-max-concurrent-io>
 		<!-- Transaction -->
 		<transaction-timeout>93000</transaction-timeout>
 		<!-- Scans. -->
