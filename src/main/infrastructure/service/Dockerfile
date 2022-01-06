@@ -12,7 +12,7 @@ RUN apt-get update && \
 	rm -rf /var/lib/apt/lists/*
 
 # Installs Artemis.
-ENV ACTIVEMQ_ARTEMIS_VERSION 2.19.0
+ENV ACTIVEMQ_ARTEMIS_VERSION 2.20.0
 RUN apt-get update && \
 	apt-get install -y --no-install-recommends wget gnupg2 && \
 	cd /opt && \
@@ -57,6 +57,8 @@ RUN mkdir -p /opt/jmx-exporter/etc/ \
 		/opt/artemis-utils \
 		/opt/jmx-exporter && \
 	chmod 755 -R /artemis_init
+
+COPY lib /var/lib/artemis/lib
 
 # Goes back to artemis user.
 USER artemis
