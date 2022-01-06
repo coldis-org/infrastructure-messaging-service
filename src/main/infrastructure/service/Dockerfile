@@ -53,6 +53,7 @@ RUN mkdir -p /opt/jmx-exporter/etc/ \
 	ln -s /opt/artemis-utils/jmx-exporter-config.yaml /opt/jmx-exporter/etc/jmx-exporter-config.yaml && \
 	chown -R artemis.artemis \
 		/artemis_init \
+		/artemis_health_check \
 		/var/lib/artemis \
 		/opt/artemis-utils \
 		/opt/jmx-exporter && \
