@@ -18,20 +18,20 @@
 		<journal-type>ASYNCIO</journal-type>
 		<journal-datasync>true</journal-datasync>
 		<journal-device-block-size>4096</journal-device-block-size>
-		<journal-file-size>29M</journal-file-size>
-		<journal-min-files>173</journal-min-files>
-		<journal-pool-files>573</journal-pool-files>
-		<journal-compact-min-files>237</journal-compact-min-files>
-		<journal-compact-percentage>37</journal-compact-percentage>
+		<journal-file-size>7M</journal-file-size>
+		<journal-min-files>13</journal-min-files>
+		<journal-pool-files>973</journal-pool-files>
+		<journal-compact-min-files>313</journal-compact-min-files>
+		<journal-compact-percentage>7</journal-compact-percentage>
 		<journal-sync-non-transactional>false</journal-sync-non-transactional>
 		<journal-max-io>32768</journal-max-io>
 		<!-- Journal buffer. -->
 		<journal-buffer-timeout>1300000</journal-buffer-timeout>
-		<journal-buffer-size>262144</journal-buffer-size>
+		<journal-buffer-size>501760</journal-buffer-size>
 		<page-sync-timeout>137000000</page-sync-timeout>
 		<!-- Thread pool. -->
-		<thread-pool-max-size>171</thread-pool-max-size>
-		<scheduled-thread-pool-max-size>171</scheduled-thread-pool-max-size>
+		<thread-pool-max-size>213</thread-pool-max-size>
+		<scheduled-thread-pool-max-size>137</scheduled-thread-pool-max-size>
 		<!-- Disk usage -->
 		<max-disk-usage>90</max-disk-usage>
 		<!-- Disable critical analyzer. -->
@@ -39,12 +39,12 @@
 		<!-- Global max size. -->
 		<!-- Acceptors. -->
 		<acceptors>
-			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=true;tcpNoDelay=true;directDeliver=false;batchDelay=37;tcpSendBufferSize=262144;tcpReceiveBufferSize=262144;writeBufferLowWaterMark=262144;writeBufferHighWaterMark=1048576</acceptor>
-			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=true;tcpNoDelay=true;directDeliver=false;batchDelay=37;tcpSendBufferSize=262144;tcpReceiveBufferSize=262144;writeBufferLowWaterMark=262144;writeBufferHighWaterMark=1048576</acceptor>
+			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=true;directDeliver=false;batchDelay=57;tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152;writeBufferLowWaterMark=524288;writeBufferHighWaterMark=16777216</acceptor>
+			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=true;directDeliver=false;batchDelay=57;tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152;writeBufferLowWaterMark=524288;writeBufferHighWaterMark=16777216</acceptor>
 		</acceptors>
 		<!-- Paging. -->		
-		<read-whole-page>true</read-whole-page>
-		<page-max-concurrent-io>19</page-max-concurrent-io>
+		<read-whole-page>false</read-whole-page>
+		<page-max-concurrent-io>10</page-max-concurrent-io>
 		<!-- Transaction -->
 		<transaction-timeout>93000</transaction-timeout>
 		<!-- Scans. -->
