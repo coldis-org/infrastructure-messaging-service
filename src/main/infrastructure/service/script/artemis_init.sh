@@ -25,7 +25,7 @@ fi
 
 # Runs performance journal.
 performanceJournal() {
-	perfJournalConfiguration=${ARTEMIS_PERF_JOURNAL:-AUTO}
+	perfJournalConfiguration=${ARTEMIS_PERF_JOURNAL:-NONE}
 	if [ "$perfJournalConfiguration" = "AUTO" ] || [ "$perfJournalConfiguration" = "ALWAYS" ]; then
 
 		if [ "$perfJournalConfiguration" = "AUTO" ] && [ -e /var/lib/artemis/data/.perf-journal-completed ]; then
