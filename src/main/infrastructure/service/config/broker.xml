@@ -18,20 +18,24 @@
 		<journal-type>ASYNCIO</journal-type>
 		<journal-datasync>true</journal-datasync>
 		<journal-device-block-size>4096</journal-device-block-size>
-		<journal-file-size>7M</journal-file-size>
+		<journal-file-size>17M</journal-file-size>
 		<journal-min-files>13</journal-min-files>
-		<journal-pool-files>973</journal-pool-files>
-		<journal-compact-min-files>313</journal-compact-min-files>
-		<journal-compact-percentage>7</journal-compact-percentage>
+		<journal-pool-files>731</journal-pool-files>
+		<journal-compact-min-files>217</journal-compact-min-files>
+		<journal-compact-percentage>43</journal-compact-percentage>
 		<journal-sync-non-transactional>false</journal-sync-non-transactional>
-		<journal-max-io>32768</journal-max-io>
+		<journal-max-io>16384</journal-max-io>
+		<!-- Shutdown -->
+		<graceful-shutdown-enabled>true</graceful-shutdown-enabled>
+		<graceful-shutdown-timeout>30</graceful-shutdown-timeout>
 		<!-- Journal buffer. -->
 		<journal-buffer-timeout>1300000</journal-buffer-timeout>
-		<journal-buffer-size>501760</journal-buffer-size>
-		<page-sync-timeout>137000000</page-sync-timeout>
+		<journal-buffer-size>1M</journal-buffer-size>
+		<page-sync-timeout>13700000</page-sync-timeout>
 		<!-- Thread pool. -->
 		<thread-pool-max-size>213</thread-pool-max-size>
 		<scheduled-thread-pool-max-size>137</scheduled-thread-pool-max-size>
+		<id-cache-size>130000</id-cache-size>
 		<!-- Disk usage -->
 		<max-disk-usage>90</max-disk-usage>
 		<!-- Disable critical analyzer. -->
@@ -39,12 +43,12 @@
 		<!-- Global max size. -->
 		<!-- Acceptors. -->
 		<acceptors>
-			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=true;directDeliver=false;batchDelay=57;tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152;writeBufferLowWaterMark=524288;writeBufferHighWaterMark=16777216</acceptor>
-			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=true;directDeliver=false;batchDelay=57;tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152;writeBufferLowWaterMark=524288;writeBufferHighWaterMark=16777216</acceptor>
+			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=true;directDeliver=false;batchDelay=57;tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152;amqpCredits=1000;amqpLowCredits=300</acceptor>
+			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=true;directDeliver=false;batchDelay=57;tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152;amqpCredits=1000;amqpLowCredits=300</acceptor>
 		</acceptors>
 		<!-- Paging. -->		
-		<read-whole-page>false</read-whole-page>
-		<page-max-concurrent-io>10</page-max-concurrent-io>
+		<read-whole-page>true</read-whole-page>
+		<page-max-concurrent-io>5</page-max-concurrent-io>
 		<!-- Transaction -->
 		<transaction-timeout>93000</transaction-timeout>
 		<!-- Scans. -->
@@ -76,35 +80,6 @@
 					roles="technology-messaging-service-admin" />
 			</security-setting>
 		</security-settings>
-		<address-settings>
-			<!-- Management -->
-			<address-setting match="activemq.management#">
-				<dead-letter-address>DLQ</dead-letter-address>
-				<expiry-address>ExpiryQueue</expiry-address>
-				<redelivery-delay>0</redelivery-delay>
-				<max-size-bytes>-1</max-size-bytes>
-				<message-counter-history-day-limit>10
-				</message-counter-history-day-limit>
-				<address-full-policy>PAGE</address-full-policy>
-				<auto-create-queues>true</auto-create-queues>
-				<auto-create-addresses>true</auto-create-addresses>
-				<auto-create-jms-queues>true</auto-create-jms-queues>
-				<auto-create-jms-topics>true</auto-create-jms-topics>
-			</address-setting>
-			<address-setting match="#">
-				<dead-letter-address>DLQ</dead-letter-address>
-				<expiry-address>ExpiryQueue</expiry-address>
-				<redelivery-delay>0</redelivery-delay>
-				<max-size-bytes>-1</max-size-bytes>
-				<message-counter-history-day-limit>10
-				</message-counter-history-day-limit>
-				<address-full-policy>PAGE</address-full-policy>
-				<auto-create-queues>true</auto-create-queues>
-				<auto-create-addresses>true</auto-create-addresses>
-				<auto-create-jms-queues>true</auto-create-jms-queues>
-				<auto-create-jms-topics>true</auto-create-jms-topics>
-			</address-setting>
-		</address-settings>
 		<!-- Default queues. -->
 		<addresses>
 			<address name="DLQ">
@@ -118,5 +93,41 @@
 				</anycast>
 			</address>
 		</addresses>
+		<!-- Address settings -->
+		<address-settings>
+			<address-setting match="activemq.management#">
+				<dead-letter-address>DLQ</dead-letter-address>
+				<expiry-address>ExpiryQueue</expiry-address>
+				<message-counter-history-day-limit>10</message-counter-history-day-limit>
+				<auto-create-queues>true</auto-create-queues>
+				<auto-delete-queues>false</auto-delete-queues>
+				<auto-create-addresses>true</auto-create-addresses>
+				<auto-delete-addresses>false</auto-delete-addresses>
+				<max-size-bytes>-1</max-size-bytes>
+				<page-size-bytes>17M</page-size-bytes>
+				<page-max-cache-size>73</page-max-cache-size>
+				<address-full-policy>PAGE</address-full-policy>
+				<redelivery-delay>37</redelivery-delay>
+				<redelivery-delay-multiplier>1.5</redelivery-delay-multiplier>
+				<max-redelivery-delay>1700</max-redelivery-delay>
+			</address-setting>
+			<address-setting match="#">
+				<dead-letter-address>DLQ</dead-letter-address>
+				<expiry-address>ExpiryQueue</expiry-address>
+				<redelivery-delay>0</redelivery-delay>
+				<message-counter-history-day-limit>10</message-counter-history-day-limit>
+				<auto-create-queues>true</auto-create-queues>
+				<auto-delete-queues>false</auto-delete-queues>
+				<auto-create-addresses>true</auto-create-addresses>
+				<auto-delete-addresses>false</auto-delete-addresses>
+				<max-size-bytes>-1</max-size-bytes>
+				<page-size-bytes>17M</page-size-bytes>
+				<page-max-cache-size>73</page-max-cache-size>
+				<address-full-policy>PAGE</address-full-policy>
+				<redelivery-delay>37</redelivery-delay>
+				<redelivery-delay-multiplier>1.5</redelivery-delay-multiplier>
+				<max-redelivery-delay>1700</max-redelivery-delay>
+			</address-setting>
+		</address-settings>
 	</core>
 </configuration>

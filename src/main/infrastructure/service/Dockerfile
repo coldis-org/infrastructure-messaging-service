@@ -1,5 +1,5 @@
 # From Java service.
-FROM coldis/infrastructure-java-service:2.0
+FROM coldis/infrastructure-java-service:3.0
 
 # Creates the user and group for Artemis.
 RUN groupadd -r artemis && \

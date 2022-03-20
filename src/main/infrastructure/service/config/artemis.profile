@@ -35,7 +35,7 @@ HAWTIO_ROLE='technology-messaging-service-admin'
 
 # Java Opts
 if [ -z "$JAVA_ARGS" ]; then
-    JAVA_ARGS=" -XX:+PrintClassHistogram -XX:+UseStringDeduplication -Dhawtio.realm=activemq -Dhawtio.offline=true -Dorg.apache.activemq.UseDedicatedTaskRunner=false -Dhawtio.rolePrincipalClasses=org.apache.activemq.artemis.spi.core.security.jaas.RolePrincipal -Djolokia.policyLocation=${ARTEMIS_INSTANCE_ETC_URI}jolokia-access.xml"
+    JAVA_ARGS="--add-opens java.base/jdk.internal.misc=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED -Dio.netty.tryReflectionSetAccessible=true -Dhawtio.realm=activemq -Dhawtio.offline=true -Dhawtio.rolePrincipalClasses=org.apache.activemq.artemis.spi.core.security.jaas.RolePrincipal -Djolokia.policyLocation=${ARTEMIS_INSTANCE_ETC_URI}jolokia-access.xml"
 fi
 JAVA_ARGS="$JAVA_ARGS $JAVA_OPTS"
 
