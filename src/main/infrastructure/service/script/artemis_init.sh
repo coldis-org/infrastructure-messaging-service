@@ -20,7 +20,7 @@ fi
 # If global max size is set.
 if [ "${JOURNAL_BUFFER_SIZE}" ]; then
 	# Adds the global max size to the configuration.
-	sed -i "s#<journal-buffer-size>5M</journal-buffer-size>#<journal-buffer-size>${JOURNAL_BUFFER_SIZE}</journal-buffer-size>#" ${CONFIG_PATH}/broker.xml
+	sed -i "s#<journal-buffer-size>1M</journal-buffer-size>#<journal-buffer-size>${JOURNAL_BUFFER_SIZE}</journal-buffer-size>#" ${CONFIG_PATH}/broker.xml
 fi
 
 # Runs performance journal.

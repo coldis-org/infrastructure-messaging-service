@@ -30,7 +30,7 @@
 		<graceful-shutdown-timeout>30</graceful-shutdown-timeout>
 		<!-- Journal buffer. -->
 		<journal-buffer-timeout>1300000</journal-buffer-timeout>
-		<journal-buffer-size>1M</journal-buffer-size>
+		<journal-buffer-size>3M</journal-buffer-size>
 		<page-sync-timeout>13700000</page-sync-timeout>
 		<!-- Thread pool. -->
 		<thread-pool-max-size>213</thread-pool-max-size>
@@ -107,14 +107,13 @@
 				<page-size-bytes>17M</page-size-bytes>
 				<page-max-cache-size>73</page-max-cache-size>
 				<address-full-policy>PAGE</address-full-policy>
-				<redelivery-delay>37</redelivery-delay>
+				<!-- <redelivery-delay>37</redelivery-delay> -->
 				<redelivery-delay-multiplier>1.5</redelivery-delay-multiplier>
 				<max-redelivery-delay>1700</max-redelivery-delay>
 			</address-setting>
 			<address-setting match="#">
 				<dead-letter-address>DLQ</dead-letter-address>
 				<expiry-address>ExpiryQueue</expiry-address>
-				<redelivery-delay>0</redelivery-delay>
 				<message-counter-history-day-limit>10</message-counter-history-day-limit>
 				<auto-create-queues>true</auto-create-queues>
 				<auto-delete-queues>false</auto-delete-queues>
@@ -122,9 +121,9 @@
 				<auto-delete-addresses>false</auto-delete-addresses>
 				<max-size-bytes>-1</max-size-bytes>
 				<page-size-bytes>17M</page-size-bytes>
-				<page-max-cache-size>73</page-max-cache-size>
+				<page-max-cache-size>131</page-max-cache-size>
 				<address-full-policy>PAGE</address-full-policy>
-				<redelivery-delay>37</redelivery-delay>
+				<!-- <redelivery-delay>37</redelivery-delay> -->
 				<redelivery-delay-multiplier>1.5</redelivery-delay-multiplier>
 				<max-redelivery-delay>1700</max-redelivery-delay>
 			</address-setting>
