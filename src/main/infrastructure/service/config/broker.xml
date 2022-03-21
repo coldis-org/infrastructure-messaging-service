@@ -24,13 +24,13 @@
 		<journal-compact-min-files>217</journal-compact-min-files>
 		<journal-compact-percentage>43</journal-compact-percentage>
 		<journal-sync-non-transactional>false</journal-sync-non-transactional>
-		<journal-max-io>16384</journal-max-io>
+		<journal-max-io>32768</journal-max-io>
 		<!-- Shutdown -->
 		<graceful-shutdown-enabled>true</graceful-shutdown-enabled>
 		<graceful-shutdown-timeout>30</graceful-shutdown-timeout>
 		<!-- Journal buffer. -->
 		<journal-buffer-timeout>1300000</journal-buffer-timeout>
-		<journal-buffer-size>3M</journal-buffer-size>
+		<journal-buffer-size>5M</journal-buffer-size>
 		<page-sync-timeout>13700000</page-sync-timeout>
 		<!-- Thread pool. -->
 		<thread-pool-max-size>213</thread-pool-max-size>
