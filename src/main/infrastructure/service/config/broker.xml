@@ -43,12 +43,12 @@
 		<!-- Global max size. -->
 		<!-- Acceptors. -->
 		<acceptors>
-			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=true;directDeliver=false;batchDelay=57;tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152</acceptor>
-			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=true;directDeliver=false;batchDelay=57;tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152</acceptor>
+			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=true;directDeliver=false;batchDelay=57;tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152;minLargeMessageSize=262144;compressLargeMessages=true</acceptor>
+			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=true;directDeliver=false;batchDelay=57;tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152;minLargeMessageSize=262144;compressLargeMessages=true</acceptor>
 		</acceptors>
 		<!-- Paging. -->		
-		<read-whole-page>true</read-whole-page>
-		<page-max-concurrent-io>5</page-max-concurrent-io>
+		<read-whole-page>false</read-whole-page>
+		<page-max-concurrent-io>11</page-max-concurrent-io>
 		<!-- Transaction -->
 		<transaction-timeout>93000</transaction-timeout>
 		<!-- Scans. -->
@@ -105,7 +105,7 @@
 				<auto-delete-addresses>false</auto-delete-addresses>
 				<max-size-bytes>-1</max-size-bytes>
 				<page-size-bytes>17M</page-size-bytes>
-				<page-max-cache-size>73</page-max-cache-size>
+				<page-max-cache-size>131</page-max-cache-size>
 				<address-full-policy>PAGE</address-full-policy>
 				<!-- <redelivery-delay>37</redelivery-delay> -->
 				<redelivery-delay-multiplier>1.5</redelivery-delay-multiplier>
