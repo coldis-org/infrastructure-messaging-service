@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-ARTEMIS_HOME='/opt/apache-artemis-2.20.0'
+ARTEMIS_HOME='/opt/artemis'
 ARTEMIS_INSTANCE='/var/lib/artemis'
 ARTEMIS_DATA_DIR='/var/lib/artemis/data'
 ARTEMIS_ETC_DIR='/var/lib/artemis/etc'
