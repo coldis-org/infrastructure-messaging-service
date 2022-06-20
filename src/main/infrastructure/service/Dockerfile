@@ -18,7 +18,7 @@ RUN groupadd -r artemis \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Installs Artemis.
-ENV ACTIVEMQ_ARTEMIS_VERSION 2.21.0
+ENV ACTIVEMQ_ARTEMIS_VERSION 2.23.0
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends wget gnupg2 \
 	&& wget "https://www.apache.org/dist/activemq/activemq-artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz" \
