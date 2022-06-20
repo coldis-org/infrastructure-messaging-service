@@ -46,6 +46,7 @@ RUN cd /var/lib \
 	${EXTRA_ARGS}
 COPY config /var/lib/artemis/etc
 RUN mkdir -p /var/lib/artemis/lock \
+	&& mkdir -p /var/lib/artemis/data \
 	&& chown -R artemis.artemis /var/lib/artemis
 
 # Copies the scripts.
@@ -58,8 +59,6 @@ RUN chmod -R 755 /opt/artemis-script \
 		mv -- "${FILE}" "${FILE%.sh}"; \
 	done
 	
-USER artemis
-
 # Web Server
 EXPOSE 8161 \
 	# JMX Exporter

@@ -1,6 +1,10 @@
 #!/bin/sh
 set -e
 
+# Makes sure data is available.
+chown -R artemis.artemis /var/lib/artemis
+su - artemis
+
 # Variables.
 BROKER_HOME=/var/lib/artemis
 CONFIG_PATH=$BROKER_HOME/etc

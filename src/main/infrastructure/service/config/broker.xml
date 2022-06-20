@@ -10,18 +10,20 @@
 		<persistence-enabled>true</persistence-enabled>
 		<!-- Paging, bindings and large messages -->
 		<paging-directory>data/paging</paging-directory>
-		<bindings-directory>data/bindings</bindings-directory>
 		<large-messages-directory>data/large-messages</large-messages-directory>
+		<read-whole-page>false</read-whole-page>
+		<page-max-concurrent-io>29</page-max-concurrent-io>
 		<!-- Journal config. -->
+		<bindings-directory>data/bindings</bindings-directory>
 		<journal-directory>data/journal</journal-directory>
 		<journal-type>ASYNCIO</journal-type>
 		<journal-datasync>false</journal-datasync>
 		<journal-device-block-size>4096</journal-device-block-size>
 		<journal-file-size>17M</journal-file-size>
-		<journal-min-files>13</journal-min-files>
-		<journal-pool-files>57</journal-pool-files>
-		<journal-compact-min-files>47</journal-compact-min-files>
-		<journal-compact-percentage>17</journal-compact-percentage>
+		<journal-min-files>57</journal-min-files>
+		<journal-pool-files>113</journal-pool-files>
+		<journal-compact-min-files>67</journal-compact-min-files>
+		<journal-compact-percentage>31</journal-compact-percentage>
 		<journal-sync-non-transactional>false</journal-sync-non-transactional>
 		<journal-max-io>32768</journal-max-io>
 		<!-- Journal buffer. -->
@@ -31,7 +33,7 @@
 		<!-- Thread pool. -->
 		<thread-pool-max-size>213</thread-pool-max-size>
 		<scheduled-thread-pool-max-size>137</scheduled-thread-pool-max-size>
-		<id-cache-size>130000</id-cache-size>
+		<id-cache-size>170000</id-cache-size>
 		<persist-id-cache>true</persist-id-cache>
 		<!-- Disk usage -->
 		<max-disk-usage>90</max-disk-usage>
@@ -40,17 +42,14 @@
 		<graceful-shutdown-timeout>15000</graceful-shutdown-timeout>
 		<!-- Disable critical analyzer. -->
 		<critical-analyzer>true</critical-analyzer>
-		<critical-analyzer-timeout>120000</critical-analyzer-timeout>
-		<critical-analyzer-policy>HALT</critical-analyzer-policy>
+		<critical-analyzer-timeout>240000</critical-analyzer-timeout>
+		<critical-analyzer-policy>LOG</critical-analyzer-policy>
 		<!-- Global max size. -->
 		<!-- Acceptors. -->
 		<acceptors>
 			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=true;directDeliver=false;batchDelay=57;tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152;minLargeMessageSize=262144;compressLargeMessages=true</acceptor>
 			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=true;directDeliver=false;batchDelay=57;tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152;minLargeMessageSize=262144;compressLargeMessages=true</acceptor>
 		</acceptors>
-		<!-- Paging. -->		
-		<read-whole-page>false</read-whole-page>
-		<page-max-concurrent-io>19</page-max-concurrent-io>
 		<!-- Transaction -->
 		<transaction-timeout>93000</transaction-timeout>
 		<!-- Scans. -->
