@@ -23,9 +23,9 @@
 		<journal-min-files>57</journal-min-files>
 		<journal-pool-files>113</journal-pool-files>
 		<journal-compact-min-files>67</journal-compact-min-files>
-		<journal-compact-percentage>31</journal-compact-percentage>
+		<journal-compact-percentage>51</journal-compact-percentage>
 		<journal-sync-non-transactional>false</journal-sync-non-transactional>
-		<journal-max-io>32768</journal-max-io>
+		<journal-max-io>65535</journal-max-io>
 		<!-- Journal buffer. -->
 		<journal-buffer-timeout>13700000</journal-buffer-timeout>
 		<journal-buffer-size>3M</journal-buffer-size>
