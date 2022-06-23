@@ -37,6 +37,7 @@ HAWTIO_ROLE='technology-messaging-service-admin'
 if [ -z "$JAVA_ARGS" ]; then
     JAVA_ARGS="--add-opens java.base/jdk.internal.misc=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED -Dio.netty.tryReflectionSetAccessible=true -Dhawtio.realm=activemq -Dhawtio.offline=true -Dhawtio.rolePrincipalClasses=org.apache.activemq.artemis.spi.core.security.jaas.RolePrincipal -Djolokia.policyLocation=${ARTEMIS_INSTANCE_ETC_URI}jolokia-access.xml"
 fi
+JAVA_OPTS="$JAVA_OPTS -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false  -Dcom.sun.management.jmxremote.ssl=false -javaagent:${ARTEMIS_ETC_DIR}/jmx_prometheus_javaagent-0.17.0.jar=1234:${ARTEMIS_ETC_DIR}/config.yml"
 JAVA_ARGS="$JAVA_ARGS $JAVA_OPTS"
 
 #
