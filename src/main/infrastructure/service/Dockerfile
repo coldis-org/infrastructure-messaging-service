@@ -6,19 +6,21 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 WORKDIR /opt/
 
 # Variables.
-ENV ARTEMIS_USERNAME=artemis \
-	ARTEMIS_PASSWORD=artemis \
-	EXTRA_ARGS="--http-host 0.0.0.0 --host 0.0.0.0 --relax-jolokia --require-login --verbose"
+ENV ARTEMIS_USERNAME=artemis\
+	ARTEMIS_PASSWORD=artemis
 
 # Configures users and basic libs.
 RUN groupadd -r artemis \
 	&& useradd -r -g artemis artemis \
-	&& apt-get -qq -o=Dpkg::Use-Pty=0 update \
+	&& apt-get -qq -o=Dpkg::Use-Pty=0 update -y \
+	&& apt-get -qq -o=Dpkg::Use-Pty=0 full-upgrade -y \
+	&& apt-get -qq -o=Dpkg::Use-Pty=0 autoremove -y \
 	&& apt-get -qq -o=Dpkg::Use-Pty=0 install -y libaio1 curl jq \
-	&& rm -rf /var/lib/apt/lists/*
+	&& rm -rf /var/lib/apt-get/lists/*
 
 # Installs Artemis.
-ENV ACTIVEMQ_ARTEMIS_VERSION 2.23.0
+ENV ACTIVEMQ_ARTEMIS_VERSION="2.23.1" \
+	CREATE_ARGS="--http-host 0.0.0.0 --host 0.0.0.0 --relax-jolokia --require-login --verbose --no-autotune"
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends wget gnupg2 \
 	&& wget "https://www.apache.org/dist/activemq/activemq-artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz" \
@@ -31,8 +33,9 @@ RUN apt-get update \
 	&& chmod 755 artemis \
 	&& rm -f apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz KEYS apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc \
 	&& apt-get remove -y wget gnupg2 \
+	&& apt-get -qq -o=Dpkg::Use-Pty=0 autoremove -y \
 	&& apt-get clean -y \
-	&& rm -rf /var/lib/apt/lists/* 
+	&& rm -rf /var/lib/apt-get/lists/* 
 	
 # Creates broker instance.
 RUN cd /var/lib \
@@ -43,7 +46,7 @@ RUN cd /var/lib \
 	--role "technology-messaging-service-admin" \
 	--cluster-user "${ARTEMIS_USERNAME}-cluster" \
 	--cluster-password "${ARTEMIS_PASSWORD}" \
-	${EXTRA_ARGS}
+	${CREATE_ARGS}
 COPY config /var/lib/artemis/etc
 RUN mkdir -p /var/lib/artemis/lock \
 	&& mkdir -p /var/lib/artemis/data \

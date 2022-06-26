@@ -9,30 +9,30 @@
 		<!-- Persistence enabled. -->
 		<persistence-enabled>true</persistence-enabled>
 		<!-- Paging, bindings and large messages -->
+		<read-whole-page>true</read-whole-page>
+		<page-max-concurrent-io>37</page-max-concurrent-io>
+		<page-sync-timeout>13700000</page-sync-timeout>
 		<paging-directory>data/paging</paging-directory>
-		<large-messages-directory>data/large-messages</large-messages-directory>
-		<read-whole-page>false</read-whole-page>
-		<page-max-concurrent-io>29</page-max-concurrent-io>
 		<!-- Journal config. -->
+		<large-messages-directory>data/large-messages</large-messages-directory>
 		<bindings-directory>data/bindings</bindings-directory>
 		<journal-directory>data/journal</journal-directory>
 		<journal-type>ASYNCIO</journal-type>
 		<journal-datasync>false</journal-datasync>
 		<journal-device-block-size>4096</journal-device-block-size>
-		<journal-file-size>17M</journal-file-size>
-		<journal-min-files>57</journal-min-files>
-		<journal-pool-files>113</journal-pool-files>
-		<journal-compact-min-files>67</journal-compact-min-files>
-		<journal-compact-percentage>51</journal-compact-percentage>
+		<journal-file-size>11M</journal-file-size>
+		<journal-min-files>67</journal-min-files>
+		<journal-pool-files>213</journal-pool-files>
+		<journal-compact-min-files>73</journal-compact-min-files>
+		<journal-compact-percentage>63</journal-compact-percentage>
 		<journal-sync-non-transactional>false</journal-sync-non-transactional>
 		<journal-max-io>65535</journal-max-io>
 		<!-- Journal buffer. -->
 		<journal-buffer-timeout>13700000</journal-buffer-timeout>
-		<journal-buffer-size>3M</journal-buffer-size>
-		<page-sync-timeout>13700000</page-sync-timeout>
+		<journal-buffer-size>5M</journal-buffer-size>
 		<!-- Thread pool. -->
-		<thread-pool-max-size>213</thread-pool-max-size>
-		<scheduled-thread-pool-max-size>137</scheduled-thread-pool-max-size>
+		<thread-pool-max-size>32768</thread-pool-max-size>
+		<scheduled-thread-pool-max-size>32768</scheduled-thread-pool-max-size>
 		<id-cache-size>170000</id-cache-size>
 		<persist-id-cache>true</persist-id-cache>
 		<!-- Disk usage -->
@@ -105,10 +105,10 @@
 				<auto-create-addresses>true</auto-create-addresses>
 				<auto-delete-addresses>false</auto-delete-addresses>
 				<max-size-bytes>-1</max-size-bytes>
-				<page-size-bytes>17M</page-size-bytes>
-				<page-max-cache-size>131</page-max-cache-size>
+				<page-size-bytes>11M</page-size-bytes>
+				<page-max-cache-size>37</page-max-cache-size>
 				<address-full-policy>PAGE</address-full-policy>
-				<!-- <redelivery-delay>37</redelivery-delay> -->
+				<redelivery-delay>37</redelivery-delay>
 				<redelivery-delay-multiplier>1.5</redelivery-delay-multiplier>
 				<max-redelivery-delay>1700</max-redelivery-delay>
 			</address-setting>
@@ -121,10 +121,10 @@
 				<auto-create-addresses>true</auto-create-addresses>
 				<auto-delete-addresses>false</auto-delete-addresses>
 				<max-size-bytes>-1</max-size-bytes>
-				<page-size-bytes>17M</page-size-bytes>
-				<page-max-cache-size>131</page-max-cache-size>
+				<page-size-bytes>11M</page-size-bytes>
+				<page-max-cache-size>37</page-max-cache-size>
 				<address-full-policy>PAGE</address-full-policy>
-				<!-- <redelivery-delay>37</redelivery-delay> -->
+				<redelivery-delay>37</redelivery-delay>
 				<redelivery-delay-multiplier>1.5</redelivery-delay-multiplier>
 				<max-redelivery-delay>1700</max-redelivery-delay>
 			</address-setting>
