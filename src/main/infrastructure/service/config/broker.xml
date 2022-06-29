@@ -23,8 +23,8 @@
 		<journal-file-size>11M</journal-file-size>
 		<journal-min-files>67</journal-min-files>
 		<journal-pool-files>213</journal-pool-files>
-		<journal-compact-min-files>73</journal-compact-min-files>
-		<journal-compact-percentage>63</journal-compact-percentage>
+		<journal-compact-min-files>1</journal-compact-min-files>
+		<journal-compact-percentage>30</journal-compact-percentage>
 		<journal-sync-non-transactional>false</journal-sync-non-transactional>
 		<journal-max-io>65535</journal-max-io>
 		<!-- Journal buffer. -->
@@ -108,9 +108,9 @@
 				<page-size-bytes>11M</page-size-bytes>
 				<page-max-cache-size>37</page-max-cache-size>
 				<address-full-policy>PAGE</address-full-policy>
-				<redelivery-delay>37</redelivery-delay>
-				<redelivery-delay-multiplier>1.5</redelivery-delay-multiplier>
-				<max-redelivery-delay>1700</max-redelivery-delay>
+				<redelivery-delay>3700</redelivery-delay>
+				<redelivery-delay-multiplier>7</redelivery-delay-multiplier>
+				<max-redelivery-delay>90000</max-redelivery-delay>
 			</address-setting>
 			<address-setting match="#">
 				<dead-letter-address>DLQ</dead-letter-address>
@@ -124,9 +124,9 @@
 				<page-size-bytes>11M</page-size-bytes>
 				<page-max-cache-size>37</page-max-cache-size>
 				<address-full-policy>PAGE</address-full-policy>
-				<redelivery-delay>37</redelivery-delay>
-				<redelivery-delay-multiplier>1.5</redelivery-delay-multiplier>
-				<max-redelivery-delay>1700</max-redelivery-delay>
+				<redelivery-delay>3700</redelivery-delay>
+				<redelivery-delay-multiplier>7</redelivery-delay-multiplier>
+				<max-redelivery-delay>90000</max-redelivery-delay>
 			</address-setting>
 		</address-settings>
 	</core>
