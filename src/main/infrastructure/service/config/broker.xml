@@ -23,16 +23,16 @@
 		<journal-file-size>11M</journal-file-size>
 		<journal-min-files>67</journal-min-files>
 		<journal-pool-files>213</journal-pool-files>
-		<journal-compact-min-files>1</journal-compact-min-files>
-		<journal-compact-percentage>30</journal-compact-percentage>
+		<journal-compact-min-files>109</journal-compact-min-files>
+		<journal-compact-percentage>50</journal-compact-percentage>
 		<journal-sync-non-transactional>false</journal-sync-non-transactional>
 		<journal-max-io>65535</journal-max-io>
 		<!-- Journal buffer. -->
 		<journal-buffer-timeout>13700000</journal-buffer-timeout>
 		<journal-buffer-size>5M</journal-buffer-size>
 		<!-- Thread pool. -->
-		<thread-pool-max-size>32768</thread-pool-max-size>
-		<scheduled-thread-pool-max-size>32768</scheduled-thread-pool-max-size>
+		<thread-pool-max-size>1024</thread-pool-max-size>
+		<scheduled-thread-pool-max-size>512</scheduled-thread-pool-max-size>
 		<id-cache-size>170000</id-cache-size>
 		<persist-id-cache>true</persist-id-cache>
 		<!-- Disk usage -->
