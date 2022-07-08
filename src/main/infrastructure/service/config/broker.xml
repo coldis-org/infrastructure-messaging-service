@@ -33,7 +33,7 @@
 		<!-- Thread pool. -->
 		<thread-pool-max-size>1024</thread-pool-max-size>
 		<scheduled-thread-pool-max-size>512</scheduled-thread-pool-max-size>
-		<id-cache-size>170000</id-cache-size>
+		<id-cache-size>1700000</id-cache-size>
 		<persist-id-cache>true</persist-id-cache>
 		<!-- Disk usage -->
 		<max-disk-usage>90</max-disk-usage>
