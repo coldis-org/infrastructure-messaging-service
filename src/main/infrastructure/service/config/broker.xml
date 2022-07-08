@@ -21,10 +21,10 @@
 		<journal-datasync>false</journal-datasync>
 		<journal-device-block-size>4096</journal-device-block-size>
 		<journal-file-size>11M</journal-file-size>
-		<journal-min-files>67</journal-min-files>
-		<journal-pool-files>213</journal-pool-files>
-		<journal-compact-min-files>109</journal-compact-min-files>
-		<journal-compact-percentage>50</journal-compact-percentage>
+		<journal-min-files>379</journal-min-files>
+		<journal-pool-files>937</journal-pool-files>
+		<journal-compact-min-files>1397</journal-compact-min-files>
+		<journal-compact-percentage>83</journal-compact-percentage>
 		<journal-sync-non-transactional>false</journal-sync-non-transactional>
 		<journal-max-io>65535</journal-max-io>
 		<!-- Journal buffer. -->
