@@ -9,7 +9,7 @@
 		<!-- Persistence enabled. -->
 		<persistence-enabled>true</persistence-enabled>
 		<!-- Paging, bindings and large messages -->
-		<read-whole-page>true</read-whole-page>
+		<read-whole-page>false</read-whole-page>
 		<page-max-concurrent-io>37</page-max-concurrent-io>
 		<page-sync-timeout>13700000</page-sync-timeout>
 		<paging-directory>data/paging</paging-directory>
