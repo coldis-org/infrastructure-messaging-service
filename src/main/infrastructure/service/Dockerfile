@@ -19,7 +19,7 @@ RUN groupadd -r artemis \
 	&& rm -rf /var/lib/apt-get/lists/*
 
 # Installs Artemis.
-ENV ACTIVEMQ_ARTEMIS_VERSION="2.23.1" \
+ENV ACTIVEMQ_ARTEMIS_VERSION="2.24.0" \
 	CREATE_ARGS="--http-host 0.0.0.0 --host 0.0.0.0 --relax-jolokia --require-login --verbose --no-autotune"
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends wget gnupg2 \

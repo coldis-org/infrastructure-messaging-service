@@ -10,7 +10,7 @@
 		<persistence-enabled>true</persistence-enabled>
 		<!-- Paging, bindings and large messages -->
 		<read-whole-page>false</read-whole-page>
-		<page-max-concurrent-io>37</page-max-concurrent-io>
+		<page-max-concurrent-io>137</page-max-concurrent-io>
 		<page-sync-timeout>13700000</page-sync-timeout>
 		<paging-directory>data/paging</paging-directory>
 		<!-- Journal config. -->
@@ -23,13 +23,13 @@
 		<journal-file-size>11M</journal-file-size>
 		<journal-min-files>379</journal-min-files>
 		<journal-pool-files>937</journal-pool-files>
-		<journal-compact-min-files>1397</journal-compact-min-files>
+		<journal-compact-min-files>1097</journal-compact-min-files>
 		<journal-compact-percentage>83</journal-compact-percentage>
 		<journal-sync-non-transactional>false</journal-sync-non-transactional>
 		<journal-max-io>65535</journal-max-io>
 		<!-- Journal buffer. -->
 		<journal-buffer-timeout>13700000</journal-buffer-timeout>
-		<journal-buffer-size>5M</journal-buffer-size>
+		<journal-buffer-size>37M</journal-buffer-size>
 		<!-- Thread pool. -->
 		<thread-pool-max-size>1024</thread-pool-max-size>
 		<scheduled-thread-pool-max-size>512</scheduled-thread-pool-max-size>
@@ -127,6 +127,7 @@
 				<redelivery-delay>3700</redelivery-delay>
 				<redelivery-delay-multiplier>7</redelivery-delay-multiplier>
 				<max-redelivery-delay>90000</max-redelivery-delay>
+				<default-last-value-key>_AMQ_LVQ_NAME</default-last-value-key>
 			</address-setting>
 		</address-settings>
 	</core>
