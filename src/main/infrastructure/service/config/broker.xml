@@ -23,7 +23,7 @@
 		<journal-file-size>11M</journal-file-size>
 		<journal-min-files>379</journal-min-files>
 		<journal-pool-files>937</journal-pool-files>
-		<journal-compact-min-files>1097</journal-compact-min-files>
+		<journal-compact-min-files>957</journal-compact-min-files>
 		<journal-compact-percentage>83</journal-compact-percentage>
 		<journal-sync-non-transactional>false</journal-sync-non-transactional>
 		<journal-max-io>65535</journal-max-io>
