@@ -10,7 +10,7 @@
 		<persistence-enabled>true</persistence-enabled>
 		<!-- Paging, bindings and large messages -->
 		<read-whole-page>false</read-whole-page>
-		<page-max-concurrent-io>137</page-max-concurrent-io>
+		<page-max-concurrent-io>123</page-max-concurrent-io>
 		<page-sync-timeout>13700000</page-sync-timeout>
 		<paging-directory>data/paging</paging-directory>
 		<!-- Journal config. -->
@@ -29,9 +29,9 @@
 		<journal-max-io>65535</journal-max-io>
 		<!-- Journal buffer. -->
 		<journal-buffer-timeout>13700000</journal-buffer-timeout>
-		<journal-buffer-size>37M</journal-buffer-size>
+		<journal-buffer-size>29M</journal-buffer-size>
 		<!-- Thread pool. -->
-		<thread-pool-max-size>1024</thread-pool-max-size>
+		<thread-pool-max-size>512</thread-pool-max-size>
 		<scheduled-thread-pool-max-size>512</scheduled-thread-pool-max-size>
 		<id-cache-size>1700000</id-cache-size>
 		<persist-id-cache>true</persist-id-cache>
@@ -106,7 +106,7 @@
 				<auto-delete-addresses>false</auto-delete-addresses>
 				<max-size-bytes>-1</max-size-bytes>
 				<page-size-bytes>11M</page-size-bytes>
-				<page-max-cache-size>137</page-max-cache-size>
+				<page-max-cache-size>237</page-max-cache-size>
 				<address-full-policy>PAGE</address-full-policy>
 				<redelivery-delay>3700</redelivery-delay>
 				<redelivery-delay-multiplier>7</redelivery-delay-multiplier>
@@ -122,7 +122,7 @@
 				<auto-delete-addresses>false</auto-delete-addresses>
 				<max-size-bytes>-1</max-size-bytes>
 				<page-size-bytes>11M</page-size-bytes>
-				<page-max-cache-size>137</page-max-cache-size>
+				<page-max-cache-size>237</page-max-cache-size>
 				<address-full-policy>PAGE</address-full-policy>
 				<redelivery-delay>3700</redelivery-delay>
 				<redelivery-delay-multiplier>7</redelivery-delay-multiplier>
