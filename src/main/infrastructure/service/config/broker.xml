@@ -9,9 +9,9 @@
 		<!-- Persistence enabled. -->
 		<persistence-enabled>true</persistence-enabled>
 		<!-- Paging, bindings and large messages -->
-		<read-whole-page>false</read-whole-page>
-		<page-max-concurrent-io>123</page-max-concurrent-io>
-		<page-sync-timeout>13700000</page-sync-timeout>
+		<read-whole-page>true</read-whole-page>
+		<page-max-concurrent-io>7</page-max-concurrent-io>
+		<page-sync-timeout>4300000</page-sync-timeout>
 		<paging-directory>data/paging</paging-directory>
 		<!-- Journal config. -->
 		<large-messages-directory>data/large-messages</large-messages-directory>
@@ -19,27 +19,24 @@
 		<journal-directory>data/journal</journal-directory>
 		<journal-type>ASYNCIO</journal-type>
 		<journal-datasync>false</journal-datasync>
-		<journal-device-block-size>4096</journal-device-block-size>
-		<journal-file-size>11M</journal-file-size>
-		<journal-min-files>379</journal-min-files>
-		<journal-pool-files>937</journal-pool-files>
-		<journal-compact-min-files>957</journal-compact-min-files>
-		<journal-compact-percentage>83</journal-compact-percentage>
 		<journal-sync-non-transactional>false</journal-sync-non-transactional>
+		<journal-device-block-size>4096</journal-device-block-size>
+		<journal-file-size>37M</journal-file-size>
+		<journal-min-files>47</journal-min-files>
+		<journal-pool-files>47</journal-pool-files>
+		<journal-compact-min-files>291</journal-compact-min-files>
+		<journal-compact-percentage>93</journal-compact-percentage>
 		<journal-max-io>65535</journal-max-io>
-		<!-- Journal buffer. -->
-		<journal-buffer-timeout>13700000</journal-buffer-timeout>
-		<journal-buffer-size>29M</journal-buffer-size>
+		<journal-buffer-timeout>4300000</journal-buffer-timeout>
+		<journal-buffer-size>11M</journal-buffer-size>
 		<!-- Thread pool. -->
-		<thread-pool-max-size>512</thread-pool-max-size>
-		<scheduled-thread-pool-max-size>512</scheduled-thread-pool-max-size>
-		<id-cache-size>1700000</id-cache-size>
-		<persist-id-cache>true</persist-id-cache>
+		<thread-pool-max-size>192</thread-pool-max-size>
+		<scheduled-thread-pool-max-size>64</scheduled-thread-pool-max-size>
 		<!-- Disk usage -->
 		<max-disk-usage>90</max-disk-usage>
 		<!-- Shutdown -->
 		<graceful-shutdown-enabled>true</graceful-shutdown-enabled>
-		<graceful-shutdown-timeout>15000</graceful-shutdown-timeout>
+		<graceful-shutdown-timeout>37000</graceful-shutdown-timeout>
 		<!-- Disable critical analyzer. -->
 		<critical-analyzer>true</critical-analyzer>
 		<critical-analyzer-timeout>240000</critical-analyzer-timeout>
@@ -47,8 +44,8 @@
 		<!-- Global max size. -->
 		<!-- Acceptors. -->
 		<acceptors>
-			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=true;directDeliver=false;batchDelay=57;tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152;minLargeMessageSize=262144;compressLargeMessages=true</acceptor>
-			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=true;directDeliver=false;batchDelay=57;tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152;minLargeMessageSize=262144;compressLargeMessages=true</acceptor>
+			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=true;directDeliver=false;batchDelay=${BATCH_DELAY};tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152;minLargeMessageSize=262144;compressLargeMessages=true</acceptor>
+			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=true;directDeliver=false;batchDelay=${BATCH_DELAY};tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152;minLargeMessageSize=262144;compressLargeMessages=true</acceptor>
 		</acceptors>
 		<!-- Transaction -->
 		<transaction-timeout>93000</transaction-timeout>
@@ -105,12 +102,9 @@
 				<auto-create-addresses>true</auto-create-addresses>
 				<auto-delete-addresses>false</auto-delete-addresses>
 				<max-size-bytes>-1</max-size-bytes>
-				<page-size-bytes>11M</page-size-bytes>
-				<page-max-cache-size>237</page-max-cache-size>
+				<page-size-bytes>37M</page-size-bytes>
+				<management-browse-page-size>3000</management-browse-page-size>
 				<address-full-policy>PAGE</address-full-policy>
-				<redelivery-delay>3700</redelivery-delay>
-				<redelivery-delay-multiplier>7</redelivery-delay-multiplier>
-				<max-redelivery-delay>90000</max-redelivery-delay>
 			</address-setting>
 			<address-setting match="#">
 				<dead-letter-address>DLQ</dead-letter-address>
@@ -121,12 +115,9 @@
 				<auto-create-addresses>true</auto-create-addresses>
 				<auto-delete-addresses>false</auto-delete-addresses>
 				<max-size-bytes>-1</max-size-bytes>
-				<page-size-bytes>11M</page-size-bytes>
-				<page-max-cache-size>237</page-max-cache-size>
+				<page-size-bytes>37M</page-size-bytes>
+				<management-browse-page-size>3000</management-browse-page-size>
 				<address-full-policy>PAGE</address-full-policy>
-				<redelivery-delay>3700</redelivery-delay>
-				<redelivery-delay-multiplier>7</redelivery-delay-multiplier>
-				<max-redelivery-delay>90000</max-redelivery-delay>
 				<default-last-value-key>_AMQ_LVQ_NAME</default-last-value-key>
 			</address-setting>
 		</address-settings>
