@@ -70,7 +70,8 @@ RUN chmod -R 755 /opt/artemis-script \
 	done
 
 # Variables.
-ENV BATCH_DELAY=13
+ENV BATCH_DELAY=13\
+	LARGE_MESSAGE_SIZE=51200
 
 # Web Server
 EXPOSE 8161 \

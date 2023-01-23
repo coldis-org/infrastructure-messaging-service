@@ -9,8 +9,8 @@
 		<!-- Persistence enabled. -->
 		<persistence-enabled>true</persistence-enabled>
 		<!-- Paging, bindings and large messages -->
-		<read-whole-page>true</read-whole-page>
-		<page-max-concurrent-io>7</page-max-concurrent-io>
+		<read-whole-page>false</read-whole-page>
+		<page-max-concurrent-io>11</page-max-concurrent-io>
 		<page-sync-timeout>4300000</page-sync-timeout>
 		<paging-directory>data/paging</paging-directory>
 		<!-- Journal config. -->
@@ -18,15 +18,16 @@
 		<bindings-directory>data/bindings</bindings-directory>
 		<journal-directory>data/journal</journal-directory>
 		<journal-type>ASYNCIO</journal-type>
-		<journal-datasync>false</journal-datasync>
-		<journal-sync-non-transactional>false</journal-sync-non-transactional>
+		<journal-datasync>true</journal-datasync>
+		<journal-sync-transactional>true</journal-sync-transactional>
+		<journal-sync-non-transactional>true</journal-sync-non-transactional>
 		<journal-device-block-size>4096</journal-device-block-size>
 		<journal-file-size>37M</journal-file-size>
 		<journal-min-files>47</journal-min-files>
 		<journal-pool-files>47</journal-pool-files>
 		<journal-compact-min-files>291</journal-compact-min-files>
 		<journal-compact-percentage>93</journal-compact-percentage>
-		<journal-max-io>65535</journal-max-io>
+		<journal-max-io>32767</journal-max-io>
 		<journal-buffer-timeout>4300000</journal-buffer-timeout>
 		<journal-buffer-size>11M</journal-buffer-size>
 		<!-- Thread pool. -->
@@ -44,8 +45,8 @@
 		<!-- Global max size. -->
 		<!-- Acceptors. -->
 		<acceptors>
-			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=true;directDeliver=false;batchDelay=${BATCH_DELAY};tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152;minLargeMessageSize=262144;compressLargeMessages=true</acceptor>
-			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=true;directDeliver=false;batchDelay=${BATCH_DELAY};tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152;minLargeMessageSize=262144;compressLargeMessages=true</acceptor>
+			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=true;directDeliver=false;batchDelay=${BATCH_DELAY};tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152;minLargeMessageSize=${LARGE_MESSAGE_SIZE};compressLargeMessages=true</acceptor>
+			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=true;directDeliver=false;batchDelay=${BATCH_DELAY};tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152;minLargeMessageSize=${LARGE_MESSAGE_SIZE};compressLargeMessages=true</acceptor>
 		</acceptors>
 		<!-- Transaction -->
 		<transaction-timeout>93000</transaction-timeout>
@@ -105,6 +106,8 @@
 				<page-size-bytes>37M</page-size-bytes>
 				<management-browse-page-size>3000</management-browse-page-size>
 				<address-full-policy>PAGE</address-full-policy>
+				<redelivery-delay>597</redelivery-delay>
+				<redelivery-delay-multiplier>2.9</redelivery-delay-multiplier>
 			</address-setting>
 			<address-setting match="#">
 				<dead-letter-address>DLQ</dead-letter-address>
@@ -119,6 +122,8 @@
 				<management-browse-page-size>3000</management-browse-page-size>
 				<address-full-policy>PAGE</address-full-policy>
 				<default-last-value-key>_AMQ_LVQ_NAME</default-last-value-key>
+				<redelivery-delay>597</redelivery-delay>
+				<redelivery-delay-multiplier>2.9</redelivery-delay-multiplier>
 			</address-setting>
 		</address-settings>
 	</core>
