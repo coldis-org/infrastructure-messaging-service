@@ -31,7 +31,7 @@
 		<journal-buffer-timeout>4300000</journal-buffer-timeout>
 		<journal-buffer-size>11M</journal-buffer-size>
 		<!-- Thread pool. -->
-		<thread-pool-max-size>192</thread-pool-max-size>
+		<thread-pool-max-size>128</thread-pool-max-size>
 		<scheduled-thread-pool-max-size>64</scheduled-thread-pool-max-size>
 		<!-- Disk usage -->
 		<max-disk-usage>90</max-disk-usage>

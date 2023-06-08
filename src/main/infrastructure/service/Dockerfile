@@ -1,5 +1,5 @@
 # From Java service.
-FROM coldis/infrastructure-java-service:4.0
+FROM coldis/infrastructure-java-service:5.0
 
 # Make sure pipes are considered to determine success.
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -18,7 +18,7 @@ RUN groupadd -r artemis \
 	&& apt-get -qq -o=Dpkg::Use-Pty=0 install -y libaio1 curl jq \
 	&& rm -rf /var/lib/apt-get/lists/*
 # Installs Artemis.
-ENV ACTIVEMQ_ARTEMIS_VERSION="2.27.1" \
+ENV ACTIVEMQ_ARTEMIS_VERSION="2.28.0" \
 	CREATE_ARGS="--http-host 0.0.0.0 --host 0.0.0.0 --relax-jolokia --require-login --verbose --no-autotune"
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends wget gnupg2 \
