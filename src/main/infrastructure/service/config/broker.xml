@@ -106,8 +106,8 @@
 				<page-size-bytes>37M</page-size-bytes>
 				<management-browse-page-size>3000</management-browse-page-size>
 				<address-full-policy>PAGE</address-full-policy>
-				<redelivery-delay>597</redelivery-delay>
-				<redelivery-delay-multiplier>2.9</redelivery-delay-multiplier>
+				<redelivery-delay>3000</redelivery-delay>
+				<redelivery-delay-multiplier>5.0</redelivery-delay-multiplier>
 			</address-setting>
 			<address-setting match="#">
 				<dead-letter-address>DLQ</dead-letter-address>
@@ -122,8 +122,8 @@
 				<management-browse-page-size>3000</management-browse-page-size>
 				<address-full-policy>PAGE</address-full-policy>
 				<default-last-value-key>_AMQ_LVQ_NAME</default-last-value-key>
-				<redelivery-delay>597</redelivery-delay>
-				<redelivery-delay-multiplier>2.9</redelivery-delay-multiplier>
+				<redelivery-delay>3000</redelivery-delay>
+				<redelivery-delay-multiplier>5.0</redelivery-delay-multiplier>
 			</address-setting>
 		</address-settings>
 	</core>
