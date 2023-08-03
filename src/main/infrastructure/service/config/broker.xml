@@ -9,9 +9,9 @@
 		<!-- Persistence enabled. -->
 		<persistence-enabled>true</persistence-enabled>
 		<!-- Paging, bindings and large messages -->
-		<read-whole-page>false</read-whole-page>
-		<page-max-concurrent-io>11</page-max-concurrent-io>
-		<page-sync-timeout>4300000</page-sync-timeout>
+		<read-whole-page>true</read-whole-page>
+		<page-max-concurrent-io>16</page-max-concurrent-io>
+		<page-sync-timeout>7300000</page-sync-timeout>
 		<paging-directory>data/paging</paging-directory>
 		<!-- Journal config. -->
 		<large-messages-directory>data/large-messages</large-messages-directory>
@@ -22,17 +22,17 @@
 		<journal-sync-transactional>true</journal-sync-transactional>
 		<journal-sync-non-transactional>true</journal-sync-non-transactional>
 		<journal-device-block-size>4096</journal-device-block-size>
-		<journal-file-size>37M</journal-file-size>
-		<journal-min-files>47</journal-min-files>
-		<journal-pool-files>47</journal-pool-files>
-		<journal-compact-min-files>291</journal-compact-min-files>
+		<journal-file-size>11M</journal-file-size>
+		<journal-min-files>123</journal-min-files>
+		<journal-pool-files>123</journal-pool-files>
+		<journal-compact-min-files>739</journal-compact-min-files>
 		<journal-compact-percentage>93</journal-compact-percentage>
-		<journal-max-io>32767</journal-max-io>
-		<journal-buffer-timeout>4300000</journal-buffer-timeout>
+		<journal-max-io>32768</journal-max-io>
+		<journal-buffer-timeout>7300000</journal-buffer-timeout>
 		<journal-buffer-size>11M</journal-buffer-size>
 		<!-- Thread pool. -->
-		<thread-pool-max-size>128</thread-pool-max-size>
-		<scheduled-thread-pool-max-size>64</scheduled-thread-pool-max-size>
+		<thread-pool-max-size>32</thread-pool-max-size>
+		<scheduled-thread-pool-max-size>16</scheduled-thread-pool-max-size>
 		<!-- Disk usage -->
 		<max-disk-usage>90</max-disk-usage>
 		<!-- Shutdown -->
@@ -43,10 +43,11 @@
 		<critical-analyzer-timeout>240000</critical-analyzer-timeout>
 		<critical-analyzer-policy>LOG</critical-analyzer-policy>
 		<!-- Global max size. -->
+		<global-max-size>${GLOBAL_MAX_SIZE}</global-max-size>	
 		<!-- Acceptors. -->
 		<acceptors>
-			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=true;directDeliver=false;batchDelay=${BATCH_DELAY};tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152;minLargeMessageSize=${LARGE_MESSAGE_SIZE};compressLargeMessages=true</acceptor>
-			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=true;directDeliver=false;batchDelay=${BATCH_DELAY};tcpSendBufferSize=2097152;tcpReceiveBufferSize=2097152;minLargeMessageSize=${LARGE_MESSAGE_SIZE};compressLargeMessages=true</acceptor>
+			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=${CONN_USE_EPOLL};directDeliver=${CONN_DIRECT_DELIVER};tcpNoDelay=${CONN_TCP_NO_DELAY};batchDelay=${CONN_BATCH_DELAY};handshake-timeout=${CONN_HANDSHAKE_TIMEOUT};tcpSendBufferSize=${CONN_TCP_BUFFER_SIZE};tcpReceiveBufferSize=${CONN_TCP_BUFFER_SIZE};minLargeMessageSize=${CONN_LARGE_MESSAGE_SIZE};compressLargeMessages=true;remotingThreads=${CONN_REMOTING_THREADS};connectionsAllowed=${CONN_CONNECTIONS_ALLOWED}</acceptor>
+			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=${CONN_USE_EPOLL};directDeliver=${CONN_DIRECT_DELIVER};tcpNoDelay=${CONN_TCP_NO_DELAY};batchDelay=${CONN_BATCH_DELAY};handshake-timeout=${CONN_HANDSHAKE_TIMEOUT};tcpSendBufferSize=${CONN_TCP_BUFFER_SIZE};tcpReceiveBufferSize=${CONN_TCP_BUFFER_SIZE};minLargeMessageSize=${CONN_LARGE_MESSAGE_SIZE};compressLargeMessages=true;remotingThreads=${CONN_REMOTING_THREADS};connectionsAllowed=${CONN_CONNECTIONS_ALLOWED}</acceptor>
 		</acceptors>
 		<!-- Transaction -->
 		<transaction-timeout>93000</transaction-timeout>
@@ -97,33 +98,39 @@
 			<address-setting match="activemq.management#">
 				<dead-letter-address>DLQ</dead-letter-address>
 				<expiry-address>ExpiryQueue</expiry-address>
-				<message-counter-history-day-limit>10</message-counter-history-day-limit>
+				<message-counter-history-day-limit>3</message-counter-history-day-limit>
 				<auto-create-queues>true</auto-create-queues>
 				<auto-delete-queues>false</auto-delete-queues>
 				<auto-create-addresses>true</auto-create-addresses>
 				<auto-delete-addresses>false</auto-delete-addresses>
-				<max-size-bytes>-1</max-size-bytes>
-				<page-size-bytes>37M</page-size-bytes>
+				<page-size-bytes>11M</page-size-bytes>
+				<max-size-bytes>${QUEUE_MAX_SIZE}</max-size-bytes>
+				<max-size-messages>-1</max-size-messages>
 				<management-browse-page-size>3000</management-browse-page-size>
 				<address-full-policy>PAGE</address-full-policy>
 				<redelivery-delay>3000</redelivery-delay>
 				<redelivery-delay-multiplier>5.0</redelivery-delay-multiplier>
+				<max-redelivery-delay>1800000</max-redelivery-delay>
+				<max-delivery-attempts>13</max-delivery-attempts>
 			</address-setting>
 			<address-setting match="#">
 				<dead-letter-address>DLQ</dead-letter-address>
 				<expiry-address>ExpiryQueue</expiry-address>
-				<message-counter-history-day-limit>10</message-counter-history-day-limit>
+				<message-counter-history-day-limit>3</message-counter-history-day-limit>
 				<auto-create-queues>true</auto-create-queues>
 				<auto-delete-queues>false</auto-delete-queues>
 				<auto-create-addresses>true</auto-create-addresses>
 				<auto-delete-addresses>false</auto-delete-addresses>
-				<max-size-bytes>-1</max-size-bytes>
-				<page-size-bytes>37M</page-size-bytes>
+				<page-size-bytes>11M</page-size-bytes>
+				<max-size-bytes>${QUEUE_MAX_SIZE}</max-size-bytes>
+				<max-size-messages>111000</max-size-messages>
 				<management-browse-page-size>3000</management-browse-page-size>
 				<address-full-policy>PAGE</address-full-policy>
 				<default-last-value-key>_AMQ_LVQ_NAME</default-last-value-key>
 				<redelivery-delay>3000</redelivery-delay>
 				<redelivery-delay-multiplier>5.0</redelivery-delay-multiplier>
+				<max-redelivery-delay>1800000</max-redelivery-delay>
+				<max-delivery-attempts>13</max-delivery-attempts>
 			</address-setting>
 		</address-settings>
 	</core>

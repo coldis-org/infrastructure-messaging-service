@@ -18,7 +18,7 @@ RUN groupadd -r artemis \
 	&& apt-get -qq -o=Dpkg::Use-Pty=0 install -y libaio1 curl jq \
 	&& rm -rf /var/lib/apt-get/lists/*
 # Installs Artemis.
-ENV ACTIVEMQ_ARTEMIS_VERSION="2.28.0" \
+ENV ACTIVEMQ_ARTEMIS_VERSION="2.30.0" \
 	CREATE_ARGS="--http-host 0.0.0.0 --host 0.0.0.0 --relax-jolokia --require-login --verbose --no-autotune"
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends wget gnupg2 \
@@ -70,8 +70,18 @@ RUN chmod -R 755 /opt/artemis-script \
 	done
 
 # Variables.
-ENV BATCH_DELAY=13\
-	LARGE_MESSAGE_SIZE=51200
+ENV MAX_GLOBAL_SIZE_RATIO=4\
+	MAX_QUEUE_SIZE_RATIO=16\
+	CONN_USE_EPOLL=true\
+	CONN_TCP_BUFFER_SIZE=2097152\
+	CONN_CONNECTIONS_ALLOWED=128\
+	CONN_TCP_NO_DELAY=FALSE\
+	CONN_BATCH_DELAY=3\
+	CONN_DIRECT_DELIVER=false\
+	CONN_HANDSHAKE_TIMEOUT=360\
+	CONN_LARGE_MESSAGE_SIZE=51200\
+	CONN_REMOTING_THREADS=64
+
 
 # Web Server
 EXPOSE 8161 \
