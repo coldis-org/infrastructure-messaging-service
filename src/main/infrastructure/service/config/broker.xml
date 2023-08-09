@@ -31,8 +31,8 @@
 		<journal-buffer-timeout>7300000</journal-buffer-timeout>
 		<journal-buffer-size>11M</journal-buffer-size>
 		<!-- Thread pool. -->
-		<thread-pool-max-size>32</thread-pool-max-size>
-		<scheduled-thread-pool-max-size>16</scheduled-thread-pool-max-size>
+		<thread-pool-max-size>${THREAD_POOL}</thread-pool-max-size>
+		<scheduled-thread-pool-max-size>${SCHEDULED_THREAD_POOL}</scheduled-thread-pool-max-size>
 		<!-- Disk usage -->
 		<max-disk-usage>90</max-disk-usage>
 		<!-- Shutdown -->
@@ -108,6 +108,7 @@
 				<max-size-messages>-1</max-size-messages>
 				<management-browse-page-size>3000</management-browse-page-size>
 				<address-full-policy>PAGE</address-full-policy>
+				<default-last-value-key>_AMQ_LVQ_NAME</default-last-value-key>
 				<redelivery-delay>3000</redelivery-delay>
 				<redelivery-delay-multiplier>5.0</redelivery-delay-multiplier>
 				<max-redelivery-delay>1800000</max-redelivery-delay>

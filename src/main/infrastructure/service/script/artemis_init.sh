@@ -10,6 +10,27 @@ BROKER_HOME=/var/lib/artemis
 CONFIG_PATH=$BROKER_HOME/etc
 export BROKER_HOME CONFIG_PATH
 
+# Max CPU, threads and connections.
+if [ -z "${MAX_CPU}" ]
+then
+	MAX_CPU=$(cat "/sys/fs/cgroup/cpu/cpu.cfs_quota_us" || echo 0)
+	if ! [ ${MAX_CPU} -ne 0 ]
+	then
+		MAX_CPU=100000
+	fi
+fi
+THREAD_POOL=$(echo $((MAX_CPU * THREAD_POOL_RATIO / 100000)))
+SCHEDULED_THREAD_POOL=$(echo $((MAX_CPU * SCHEDULED_THREAD_POOL_RATIO / 100000)))
+if [ -z "${CONN_REMOTING_THREADS}" ]
+then
+	CONN_REMOTING_THREADS=$(echo $((MAX_CPU * CONN_REMOTING_THREADS_RATIO / 100000)))
+fi
+if [ -z "${CONN_CONNECTIONS_ALLOWED}" ]
+then
+	CONN_CONNECTIONS_ALLOWED=$(echo $((MAX_CPU * CONN_CONNECTIONS_ALLOWED_RATIO / 100000)))
+fi
+export THREAD_POOL SCHEDULED_THREAD_POOL CONN_REMOTING_THREADS CONN_CONNECTIONS_ALLOWED
+
 # Max memory and global size and queue size.
 if [ -z "${MAX_MEMORY}" ]
 then
@@ -19,16 +40,9 @@ then
 		MAX_MEMORY=$((1024 * 1024 * 1024))
 	fi
 fi
-
 QUEUE_MAX_SIZE=$(echo $((MAX_MEMORY / MAX_QUEUE_SIZE_RATIO)))
 GLOBAL_MAX_SIZE=$(echo $((MAX_MEMORY / MAX_GLOBAL_SIZE_RATIO)))
-
-export QUEUE_MAX_SIZE
-export GLOBAL_MAX_SIZE
-
-echo MAX_MEMORY=${MAX_MEMORY}
-echo QUEUE_MAX_SIZE=${QUEUE_MAX_SIZE}
-echo GLOBAL_MAX_SIZE=${GLOBAL_MAX_SIZE}
+export QUEUE_MAX_SIZE GLOBAL_MAX_SIZE
 
 ENV_VARIABLES=$(awk 'BEGIN{for(v in ENVIRON) print "$"v}')
 envsubst "$ENV_VARIABLES" <"${CONFIG_PATH}/broker.xml" | sponge "${CONFIG_PATH}/broker.xml"
