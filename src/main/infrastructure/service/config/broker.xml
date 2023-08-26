@@ -10,8 +10,8 @@
 		<persistence-enabled>true</persistence-enabled>
 		<!-- Paging, bindings and large messages -->
 		<read-whole-page>true</read-whole-page>
-		<page-max-concurrent-io>16</page-max-concurrent-io>
-		<page-sync-timeout>7300000</page-sync-timeout>
+		<page-max-concurrent-io>8</page-max-concurrent-io>
+		<page-sync-timeout>73000000</page-sync-timeout>
 		<paging-directory>data/paging</paging-directory>
 		<!-- Journal config. -->
 		<large-messages-directory>data/large-messages</large-messages-directory>
@@ -27,9 +27,9 @@
 		<journal-pool-files>123</journal-pool-files>
 		<journal-compact-min-files>739</journal-compact-min-files>
 		<journal-compact-percentage>93</journal-compact-percentage>
-		<journal-max-io>32768</journal-max-io>
-		<journal-buffer-timeout>7300000</journal-buffer-timeout>
-		<journal-buffer-size>11M</journal-buffer-size>
+		<journal-max-io>524288</journal-max-io>
+		<journal-buffer-timeout>73000000</journal-buffer-timeout>
+		<journal-buffer-size>55M</journal-buffer-size>
 		<!-- Thread pool. -->
 		<thread-pool-max-size>${THREAD_POOL}</thread-pool-max-size>
 		<scheduled-thread-pool-max-size>${SCHEDULED_THREAD_POOL}</scheduled-thread-pool-max-size>
@@ -46,8 +46,8 @@
 		<global-max-size>${GLOBAL_MAX_SIZE}</global-max-size>	
 		<!-- Acceptors. -->
 		<acceptors>
-			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=${CONN_USE_EPOLL};directDeliver=${CONN_DIRECT_DELIVER};tcpNoDelay=${CONN_TCP_NO_DELAY};batchDelay=${CONN_BATCH_DELAY};handshake-timeout=${CONN_HANDSHAKE_TIMEOUT};tcpSendBufferSize=${CONN_TCP_BUFFER_SIZE};tcpReceiveBufferSize=${CONN_TCP_BUFFER_SIZE};minLargeMessageSize=${CONN_LARGE_MESSAGE_SIZE};compressLargeMessages=true;remotingThreads=${CONN_REMOTING_THREADS};connectionsAllowed=${CONN_CONNECTIONS_ALLOWED}</acceptor>
-			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=${CONN_USE_EPOLL};directDeliver=${CONN_DIRECT_DELIVER};tcpNoDelay=${CONN_TCP_NO_DELAY};batchDelay=${CONN_BATCH_DELAY};handshake-timeout=${CONN_HANDSHAKE_TIMEOUT};tcpSendBufferSize=${CONN_TCP_BUFFER_SIZE};tcpReceiveBufferSize=${CONN_TCP_BUFFER_SIZE};minLargeMessageSize=${CONN_LARGE_MESSAGE_SIZE};compressLargeMessages=true;remotingThreads=${CONN_REMOTING_THREADS};connectionsAllowed=${CONN_CONNECTIONS_ALLOWED}</acceptor>
+			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=${CONN_USE_EPOLL};directDeliver=${CONN_DIRECT_DELIVER};tcpNoDelay=${CONN_TCP_NO_DELAY};batchDelay=${CONN_BATCH_DELAY};handshake-timeout=${CONN_HANDSHAKE_TIMEOUT};tcpSendBufferSize=${CONN_TCP_BUFFER_SIZE};tcpReceiveBufferSize=${CONN_TCP_BUFFER_SIZE};compressLargeMessages=${CONN_LARGE_MESSAGE_COMPRESS};minLargeMessageSize=${CONN_LARGE_MESSAGE_SIZE};compressionLevel=${CONN_LARGE_MESSAGE_COMPRESSION_LEVEL};remotingThreads=${CONN_REMOTING_THREADS};connectionsAllowed=${CONN_CONNECTIONS_ALLOWED}</acceptor>
+			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=${CONN_USE_EPOLL};directDeliver=${CONN_DIRECT_DELIVER};tcpNoDelay=${CONN_TCP_NO_DELAY};batchDelay=${CONN_BATCH_DELAY};handshake-timeout=${CONN_HANDSHAKE_TIMEOUT};tcpSendBufferSize=${CONN_TCP_BUFFER_SIZE};tcpReceiveBufferSize=${CONN_TCP_BUFFER_SIZE};compressLargeMessages=${CONN_LARGE_MESSAGE_COMPRESS};minLargeMessageSize=${CONN_LARGE_MESSAGE_SIZE};compressionLevel=${CONN_LARGE_MESSAGE_COMPRESSION_LEVEL};remotingThreads=${CONN_REMOTING_THREADS};connectionsAllowed=${CONN_CONNECTIONS_ALLOWED}</acceptor>
 		</acceptors>
 		<!-- Transaction -->
 		<transaction-timeout>93000</transaction-timeout>
@@ -103,9 +103,13 @@
 				<auto-delete-queues>false</auto-delete-queues>
 				<auto-create-addresses>true</auto-create-addresses>
 				<auto-delete-addresses>false</auto-delete-addresses>
-				<page-size-bytes>11M</page-size-bytes>
+				<page-size-bytes>${PAGE_SIZE}M</page-size-bytes>
 				<max-size-bytes>${QUEUE_MAX_SIZE}</max-size-bytes>
 				<max-size-messages>-1</max-size-messages>
+				<max-read-page-messages>-1</max-read-page-messages>
+				<max-read-page-bytes>-1</max-read-page-bytes>
+				<page-max-cache-size>${PAGE_CACHE_SIZE}</page-max-cache-size>
+				<default-consumer-window-size>${CONSUMER_WINDOW_SIZE}</default-consumer-window-size>
 				<management-browse-page-size>3000</management-browse-page-size>
 				<address-full-policy>PAGE</address-full-policy>
 				<default-last-value-key>_AMQ_LVQ_NAME</default-last-value-key>
@@ -122,9 +126,13 @@
 				<auto-delete-queues>false</auto-delete-queues>
 				<auto-create-addresses>true</auto-create-addresses>
 				<auto-delete-addresses>false</auto-delete-addresses>
-				<page-size-bytes>11M</page-size-bytes>
+				<page-size-bytes>${PAGE_SIZE}M</page-size-bytes>
 				<max-size-bytes>${QUEUE_MAX_SIZE}</max-size-bytes>
 				<max-size-messages>111000</max-size-messages>
+				<max-read-page-messages>-1</max-read-page-messages>
+				<max-read-page-bytes>-1</max-read-page-bytes>
+				<page-max-cache-size>${PAGE_CACHE_SIZE}</page-max-cache-size>
+				<default-consumer-window-size>${CONSUMER_WINDOW_SIZE}</default-consumer-window-size>
 				<management-browse-page-size>3000</management-browse-page-size>
 				<address-full-policy>PAGE</address-full-policy>
 				<default-last-value-key>_AMQ_LVQ_NAME</default-last-value-key>
