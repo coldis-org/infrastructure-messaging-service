@@ -26,7 +26,7 @@
 		<journal-min-files>123</journal-min-files>
 		<journal-pool-files>123</journal-pool-files>
 		<journal-compact-min-files>739</journal-compact-min-files>
-		<journal-compact-percentage>93</journal-compact-percentage>
+		<journal-compact-percentage>50</journal-compact-percentage>
 		<journal-max-io>524288</journal-max-io>
 		<journal-buffer-timeout>73000000</journal-buffer-timeout>
 		<journal-buffer-size>55M</journal-buffer-size>
@@ -105,7 +105,7 @@
 				<auto-delete-addresses>false</auto-delete-addresses>
 				<page-size-bytes>${PAGE_SIZE}M</page-size-bytes>
 				<max-size-bytes>${QUEUE_MAX_SIZE}</max-size-bytes>
-				<max-size-messages>-1</max-size-messages>
+				<max-size-messages>${MAX_QUEUE_SIZE_COUNT}</max-size-messages>
 				<max-read-page-messages>-1</max-read-page-messages>
 				<max-read-page-bytes>-1</max-read-page-bytes>
 				<page-max-cache-size>${PAGE_CACHE_SIZE}</page-max-cache-size>
@@ -128,7 +128,7 @@
 				<auto-delete-addresses>false</auto-delete-addresses>
 				<page-size-bytes>${PAGE_SIZE}M</page-size-bytes>
 				<max-size-bytes>${QUEUE_MAX_SIZE}</max-size-bytes>
-				<max-size-messages>111000</max-size-messages>
+				<max-size-messages>${MAX_QUEUE_SIZE_COUNT}</max-size-messages>
 				<max-read-page-messages>-1</max-read-page-messages>
 				<max-read-page-bytes>-1</max-read-page-bytes>
 				<page-max-cache-size>${PAGE_CACHE_SIZE}</page-max-cache-size>
