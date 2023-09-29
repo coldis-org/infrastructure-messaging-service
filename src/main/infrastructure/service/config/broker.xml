@@ -134,7 +134,9 @@
 				<max-delivery-attempts>13</max-delivery-attempts>
 			</address-setting>
 		</address-settings>
+		<!-- Diverts. -->
 		<xi:include href="${ARTEMIS_DIR}/diverts.xml"/>
+		<!-- Bridges. -->
 		<xi:include href="${ARTEMIS_DIR}/bridges.xml"/>
 	</core>
 </configuration>
