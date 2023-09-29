@@ -2,6 +2,7 @@
 <configuration
 		xmlns="urn:activemq"
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:xi="http://www.w3.org/2001/XInclude"
 		xsi:schemaLocation="urn:activemq /schema/artemis-configuration.xsd">
 	<core
 			xmlns="urn:activemq:core">
@@ -44,6 +45,8 @@
 		<critical-analyzer-policy>LOG</critical-analyzer-policy>
 		<!-- Global max size. -->
 		<global-max-size>${GLOBAL_MAX_SIZE}</global-max-size>	
+		<!-- Connectors. -->
+		<xi:include href="${ARTEMIS_DIR}/connectors.xml"/>
 		<!-- Acceptors. -->
 		<acceptors>
 			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=${CONN_USE_EPOLL};directDeliver=${CONN_DIRECT_DELIVER};tcpNoDelay=${CONN_TCP_NO_DELAY};batchDelay=${CONN_BATCH_DELAY};handshake-timeout=${CONN_HANDSHAKE_TIMEOUT};tcpSendBufferSize=${CONN_TCP_BUFFER_SIZE};tcpReceiveBufferSize=${CONN_TCP_BUFFER_SIZE};compressLargeMessages=${CONN_LARGE_MESSAGE_COMPRESS};minLargeMessageSize=${CONN_LARGE_MESSAGE_SIZE};compressionLevel=${CONN_LARGE_MESSAGE_COMPRESSION_LEVEL};remotingThreads=${CONN_REMOTING_THREADS};connectionsAllowed=${CONN_CONNECTIONS_ALLOWED}</acceptor>
@@ -81,18 +84,7 @@
 			</security-setting>
 		</security-settings>
 		<!-- Default queues. -->
-		<addresses>
-			<address name="DLQ">
-				<anycast>
-					<queue name="DLQ" />
-				</anycast>
-			</address>
-			<address name="ExpiryQueue">
-				<anycast>
-					<queue name="ExpiryQueue" />
-				</anycast>
-			</address>
-		</addresses>
+		<xi:include href="${ARTEMIS_DIR}/addresses.xml"/>
 		<!-- Address settings -->
 		<address-settings>
 			<address-setting match="activemq.management#">
@@ -142,5 +134,7 @@
 				<max-delivery-attempts>13</max-delivery-attempts>
 			</address-setting>
 		</address-settings>
+		<xi:include href="${ARTEMIS_DIR}/diverts.xml"/>
+		<xi:include href="${ARTEMIS_DIR}/bridges.xml"/>
 	</core>
 </configuration>
