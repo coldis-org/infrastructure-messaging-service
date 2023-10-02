@@ -11,7 +11,7 @@
 		<!-- Paging, bindings and large messages -->
 		<read-whole-page>true</read-whole-page>
 		<page-max-concurrent-io>8</page-max-concurrent-io>
-		<page-sync-timeout>73000000</page-sync-timeout>
+		<page-sync-timeout>7300000</page-sync-timeout>
 		<paging-directory>data/paging</paging-directory>
 		<!-- Journal config. -->
 		<large-messages-directory>data/large-messages</large-messages-directory>
@@ -27,14 +27,14 @@
 		<journal-pool-files>123</journal-pool-files>
 		<journal-compact-min-files>739</journal-compact-min-files>
 		<journal-compact-percentage>50</journal-compact-percentage>
-		<journal-max-io>524288</journal-max-io>
-		<journal-buffer-timeout>73000000</journal-buffer-timeout>
-		<journal-buffer-size>55M</journal-buffer-size>
+		<journal-max-io>32768</journal-max-io>
+		<journal-buffer-timeout>7300000</journal-buffer-timeout>
+		<journal-buffer-size>11M</journal-buffer-size>
 		<!-- Thread pool. -->
 		<thread-pool-max-size>${THREAD_POOL}</thread-pool-max-size>
 		<scheduled-thread-pool-max-size>${SCHEDULED_THREAD_POOL}</scheduled-thread-pool-max-size>
 		<!-- Disk usage -->
-		<max-disk-usage>90</max-disk-usage>
+		<max-disk-usage>95</max-disk-usage>
 		<!-- Shutdown -->
 		<graceful-shutdown-enabled>true</graceful-shutdown-enabled>
 		<graceful-shutdown-timeout>37000</graceful-shutdown-timeout>
@@ -108,11 +108,11 @@
 				<max-size-messages>${MAX_QUEUE_SIZE_COUNT}</max-size-messages>
 				<max-read-page-messages>-1</max-read-page-messages>
 				<max-read-page-bytes>-1</max-read-page-bytes>
-				<page-max-cache-size>${PAGE_CACHE_SIZE}</page-max-cache-size>
 				<default-consumer-window-size>${CONSUMER_WINDOW_SIZE}</default-consumer-window-size>
 				<management-browse-page-size>3000</management-browse-page-size>
 				<address-full-policy>PAGE</address-full-policy>
-				<default-last-value-key>_AMQ_LVQ_NAME</default-last-value-key>
+				<default-last-value-queue>${LAST_VALUE_QUEUE}</default-last-value-queue>
+				<default-last-value-key>${LAST_VALUE_KEY}</default-last-value-key>
 				<redelivery-delay>3000</redelivery-delay>
 				<redelivery-delay-multiplier>5.0</redelivery-delay-multiplier>
 				<max-redelivery-delay>1800000</max-redelivery-delay>
@@ -131,11 +131,11 @@
 				<max-size-messages>${MAX_QUEUE_SIZE_COUNT}</max-size-messages>
 				<max-read-page-messages>-1</max-read-page-messages>
 				<max-read-page-bytes>-1</max-read-page-bytes>
-				<page-max-cache-size>${PAGE_CACHE_SIZE}</page-max-cache-size>
 				<default-consumer-window-size>${CONSUMER_WINDOW_SIZE}</default-consumer-window-size>
 				<management-browse-page-size>3000</management-browse-page-size>
 				<address-full-policy>PAGE</address-full-policy>
-				<default-last-value-key>_AMQ_LVQ_NAME</default-last-value-key>
+				<default-last-value-queue>${LAST_VALUE_QUEUE}</default-last-value-queue>
+				<default-last-value-key>${LAST_VALUE_KEY}</default-last-value-key>
 				<redelivery-delay>3000</redelivery-delay>
 				<redelivery-delay-multiplier>5.0</redelivery-delay-multiplier>
 				<max-redelivery-delay>1800000</max-redelivery-delay>

@@ -44,6 +44,13 @@ QUEUE_MAX_SIZE=$(echo $((MAX_MEMORY / MAX_QUEUE_SIZE_RATIO)))
 GLOBAL_MAX_SIZE=$(echo $((MAX_MEMORY / MAX_GLOBAL_SIZE_RATIO)))
 export QUEUE_MAX_SIZE GLOBAL_MAX_SIZE
 
+LAST_VALUE_QUEUE=false
+if [ ! -z "${LAST_VALUE_KEY}" ]
+then
+	LAST_VALUE_QUEUE=true
+fi
+export LAST_VALUE_QUEUE
+
 ENV_VARIABLES=$(awk 'BEGIN{for(v in ENVIRON) print "$"v}')
 envsubst "$ENV_VARIABLES" <"${CONFIG_PATH}/broker.xml" | sponge "${CONFIG_PATH}/broker.xml"
 cat "${CONFIG_PATH}/broker.xml"
