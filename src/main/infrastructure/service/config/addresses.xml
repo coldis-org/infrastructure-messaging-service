@@ -1,0 +1,12 @@
+<addresses xmlns="urn:activemq:core">
+    <address name="DLQ">
+        <anycast>
+            <queue name="DLQ"/>
+        </anycast>
+    </address>
+    <address name="ExpiryQueue">
+        <anycast>
+            <queue name="ExpiryQueue"/>
+        </anycast>
+    </address>
+</addresses>
