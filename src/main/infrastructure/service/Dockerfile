@@ -1,5 +1,5 @@
 # From Java service.
-FROM coldis/infrastructure-java-service:5.0
+FROM coldis/infrastructure-java-service:6.0
 
 # Make sure pipes are considered to determine success.
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -18,7 +18,7 @@ RUN groupadd -r artemis \
 	&& apt-get -qq -o=Dpkg::Use-Pty=0 install -y libaio1 curl jq \
 	&& rm -rf /var/lib/apt-get/lists/*
 # Installs Artemis.
-ENV ACTIVEMQ_ARTEMIS_VERSION="2.31.0" \
+ENV ACTIVEMQ_ARTEMIS_VERSION="2.31.2" \
 	CREATE_ARGS="--http-host 0.0.0.0 --host 0.0.0.0 --relax-jolokia --require-login --verbose --no-autotune"
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends wget gnupg2 \
@@ -72,9 +72,9 @@ RUN chmod -R 755 /opt/artemis-script \
 # Variables.
 ENV MAX_GLOBAL_SIZE_RATIO=4\
 	MAX_QUEUE_SIZE_RATIO=16\
-	MAX_QUEUE_SIZE_COUNT=1111111\
-	THREAD_POOL_RATIO=48\
-	SCHEDULED_THREAD_POOL_RATIO=24\
+	MAX_QUEUE_SIZE_COUNT=111111\
+	THREAD_POOL_RATIO=64\
+	SCHEDULED_THREAD_POOL_RATIO=32\
 	PAGE_SIZE=11\
 	LAST_VALUE_KEY=_AMQ_LVQ_NAME\
 	CONSUMER_WINDOW_SIZE=3145728\
@@ -87,7 +87,7 @@ ENV MAX_GLOBAL_SIZE_RATIO=4\
 	CONN_LARGE_MESSAGE_SIZE=262144\
 	CONN_LARGE_MESSAGE_COMPRESS=true\
 	CONN_LARGE_MESSAGE_COMPRESSION_LEVEL=4\
-	CONN_REMOTING_THREADS_RATIO=64\
+	CONN_REMOTING_THREADS_RATIO=128\
 	CONN_CONNECTIONS_ALLOWED_RATIO=2048\
 	ARTEMIS_DIR=/var/lib/artemis/etc
 
