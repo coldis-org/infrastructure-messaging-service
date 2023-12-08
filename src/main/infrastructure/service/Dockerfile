@@ -20,13 +20,26 @@ RUN groupadd -r artemis \
 # Installs Artemis.
 ENV ACTIVEMQ_ARTEMIS_VERSION="2.31.2" \
 	CREATE_ARGS="--http-host 0.0.0.0 --host 0.0.0.0 --relax-jolokia --require-login --verbose --no-autotune"
+#RUN apt-get update \
+#	&& apt-get install -y --no-install-recommends wget gnupg2 \
+#	&& wget "https://www.apache.org/dist/activemq/activemq-artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz" \
+#	&& wget "https://www.apache.org/dist/activemq/activemq-artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc" \
+#	&& wget "https://apache.org/dist/activemq/KEYS" \
+#	&& gpg --no-tty --import "KEYS" \
+#	&& gpg --no-tty "apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc" \
+#	&& tar xfz apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz \
+#	&& mv apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION} artemis \
+#	&& chmod 755 artemis \
+#	&& rm -f apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz KEYS apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc \
+#	&& apt-get remove -y wget gnupg2 \
+#	&& apt-get -qq -o=Dpkg::Use-Pty=0 autoremove -y \
+#	&& apt-get clean -y \
+#	&& rm -rf /var/lib/apt-get/lists/* 
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends wget gnupg2 \
 	&& wget "https://www.apache.org/dist/activemq/activemq-artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz" \
 	&& wget "https://www.apache.org/dist/activemq/activemq-artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc" \
 	&& wget "https://apache.org/dist/activemq/KEYS" \
-	&& gpg --no-tty --import "KEYS" \
-	&& gpg --no-tty "apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc" \
 	&& tar xfz apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz \
 	&& mv apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION} artemis \
 	&& chmod 755 artemis \
@@ -77,7 +90,7 @@ ENV MAX_GLOBAL_SIZE_RATIO=4\
 	SCHEDULED_THREAD_POOL_RATIO=32\
 	PAGE_SIZE=11\
 	LAST_VALUE_KEY=_AMQ_LVQ_NAME\
-	CONSUMER_WINDOW_SIZE=3145728\
+	CONSUMER_WINDOW_SIZE=131072\
 	CONN_USE_EPOLL=true\
 	CONN_TCP_BUFFER_SIZE=4194304\
 	CONN_TCP_NO_DELAY=true\
