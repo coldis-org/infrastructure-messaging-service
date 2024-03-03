@@ -18,28 +18,15 @@ RUN groupadd -r artemis \
 	&& apt-get -qq -o=Dpkg::Use-Pty=0 install -y libaio1 curl jq \
 	&& rm -rf /var/lib/apt-get/lists/*
 # Installs Artemis.
-ENV ACTIVEMQ_ARTEMIS_VERSION="2.31.2" \
+ENV ACTIVEMQ_ARTEMIS_VERSION="2.32.0" \
 	CREATE_ARGS="--http-host 0.0.0.0 --host 0.0.0.0 --relax-jolokia --require-login --verbose --no-autotune"
-#RUN apt-get update \
-#	&& apt-get install -y --no-install-recommends wget gnupg2 \
-#	&& wget "https://www.apache.org/dist/activemq/activemq-artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz" \
-#	&& wget "https://www.apache.org/dist/activemq/activemq-artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc" \
-#	&& wget "https://apache.org/dist/activemq/KEYS" \
-#	&& gpg --no-tty --import "KEYS" \
-#	&& gpg --no-tty "apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc" \
-#	&& tar xfz apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz \
-#	&& mv apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION} artemis \
-#	&& chmod 755 artemis \
-#	&& rm -f apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz KEYS apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc \
-#	&& apt-get remove -y wget gnupg2 \
-#	&& apt-get -qq -o=Dpkg::Use-Pty=0 autoremove -y \
-#	&& apt-get clean -y \
-#	&& rm -rf /var/lib/apt-get/lists/* 
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends wget gnupg2 \
 	&& wget "https://www.apache.org/dist/activemq/activemq-artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz" \
 	&& wget "https://www.apache.org/dist/activemq/activemq-artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc" \
 	&& wget "https://apache.org/dist/activemq/KEYS" \
+	&& gpg --no-tty --import "KEYS" \
+	&& gpg --no-tty "apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc" \
 	&& tar xfz apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz \
 	&& mv apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION} artemis \
 	&& chmod 755 artemis \
@@ -48,6 +35,19 @@ RUN apt-get update \
 	&& apt-get -qq -o=Dpkg::Use-Pty=0 autoremove -y \
 	&& apt-get clean -y \
 	&& rm -rf /var/lib/apt-get/lists/* 
+#RUN apt-get update \
+#	&& apt-get install -y --no-install-recommends wget gnupg2 \
+#	&& wget "https://www.apache.org/dist/activemq/activemq-artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz" \
+#	&& wget "https://www.apache.org/dist/activemq/activemq-artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc" \
+#	&& wget "https://apache.org/dist/activemq/KEYS" \
+#	&& tar xfz apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz \
+#	&& mv apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION} artemis \
+#	&& chmod 755 artemis \
+#	&& rm -f apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz KEYS apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc \
+#	&& apt-get remove -y wget gnupg2 \
+#	&& apt-get -qq -o=Dpkg::Use-Pty=0 autoremove -y \
+#	&& apt-get clean -y \
+#	&& rm -rf /var/lib/apt-get/lists/* 
 
 # Installs basic libs.
 RUN  apt-get update \
@@ -100,8 +100,8 @@ ENV MAX_GLOBAL_SIZE_RATIO=4\
 	CONN_LARGE_MESSAGE_SIZE=262144\
 	CONN_LARGE_MESSAGE_COMPRESS=true\
 	CONN_LARGE_MESSAGE_COMPRESSION_LEVEL=4\
-	CONN_REMOTING_THREADS_RATIO=128\
-	CONN_CONNECTIONS_ALLOWED_RATIO=2048\
+	CONN_REMOTING_THREADS_RATIO=256\
+	CONN_CONNECTIONS_ALLOWED_RATIO=8192\
 	ARTEMIS_DIR=/var/lib/artemis/etc
 
 

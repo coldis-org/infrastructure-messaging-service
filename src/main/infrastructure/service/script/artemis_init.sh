@@ -13,11 +13,11 @@ export BROKER_HOME CONFIG_PATH
 # Max CPU, threads and connections.
 if [ -z "${MAX_CPU}" ]
 then
-	MAX_CPU=$(cat "/sys/fs/cgroup/cpu/cpu.cfs_quota_us" || echo 0)
-	if ! [ ${MAX_CPU} -ne 0 ]
-	then
-		MAX_CPU=100000
-	fi
+	MAX_CPU=$(cat "/sys/fs/cgroup/cpu/cpu.cfs_quota_us" || echo "error")
+fi
+if [ -z "${MAX_CPU}" ] || [ "${MAX_CPU}" = "error" ] || [ ${MAX_CPU} -le 0 ]
+then
+	MAX_CPU=100000
 fi
 THREAD_POOL=$(echo $((MAX_CPU * THREAD_POOL_RATIO / 100000)))
 SCHEDULED_THREAD_POOL=$(echo $((MAX_CPU * SCHEDULED_THREAD_POOL_RATIO / 100000)))
