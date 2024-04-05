@@ -7,8 +7,9 @@ su - artemis
 
 # Variables.
 BROKER_HOME=/var/lib/artemis
-CONFIG_PATH=$BROKER_HOME/etc
-export BROKER_HOME CONFIG_PATH
+CONFIG_PATH=${BROKER_HOME}/etc
+EXTENSION_CONFIG_PATH=${CONFIG_PATH}/extension
+export BROKER_HOME CONFIG_PATH EXTENSION_CONFIG_PATH
 
 # Max CPU, threads and connections.
 if [ -z "${MAX_CPU}" ]
@@ -61,5 +62,9 @@ if [ "${ARTEMIS_USERNAME}" ] && [ "${ARTEMIS_PASSWORD}" ]; then
 	echo "technology-messaging-service-admin = ${ARTEMIS_USERNAME}" > ${CONFIG_PATH}/artemis-roles.properties
 	cat ${CONFIG_PATH}/artemis-users.properties
 fi
+
+# Makes sure extension files exist.
+ls ${EXTENSION_CONFIG_PATH}/connectors.xml || cp ${CONFIG_PATH}/connectors.xml ${EXTENSION_CONFIG_FILE}/connectors.xml
+ls ${EXTENSION_CONFIG_PATH}/routers.xml || cp ${CONFIG_PATH}/routers.xml ${EXTENSION_CONFIG_FILE}/routers.xml
 
 exec "$@"

@@ -1,5 +1,5 @@
 # From Java service.
-FROM coldis/infrastructure-java-service:6.0
+FROM coldis/infrastructure-java-service:7.0
 
 # Make sure pipes are considered to determine success.
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
