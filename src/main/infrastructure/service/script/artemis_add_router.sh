@@ -52,7 +52,8 @@ ${DEBUG} && echo "ROUTER_URL=${ROUTER_URL}"
 ls ${EXTENSION_CONFIG_FILE} || touch ${EXTENSION_CONFIG_FILE} 
 
 # Adds or updates the connector.
-ROUTER_CONFIG_TAG="<xi:include href=\"${ARTEMIS_DIR}/extension/${ROUTER_NAME}.xml\" />"
+ROUTER_FILE_NAME="${ROUTER_NAME}.xml"
+ROUTER_CONFIG_TAG="<xi:include href=\"${ARTEMIS_DIR}/extension/${ROUTER_FILE_NAME}\" />"
 ROUTERS_END_TAG="</connection-routers>"
 if ! (cat ${EXTENSION_CONFIG_FILE} | grep "${ROUTER_CONFIG_TAG}")
 then
@@ -61,27 +62,16 @@ then
 fi
 
 # Reads the input file line by line.
-mkdir -p $(dirname ${VHOST})
-rm -f ${VHOST}.old ${VHOST}.tmp
-while read VHOST_LINE
+rm -f ${ROUTER_FILE_NAME}.old ${ROUTER_FILE_NAME}.tmp
+while read ROUTER_FILE_LINE
 do
-	echo "${VHOST_LINE}" >> ${VHOST}.tmp
+	echo "${ROUTER_FILE_LINE}" >> ${ROUTER_FILE_NAME}.tmp
 done
-${DEBUG} && cat ${VHOST}.tmp
+${DEBUG} && cat ${ROUTER_FILE_NAME}.tmp
 
-# Updates the file only if it has changed.
-touch ${VHOST}
-nginx_variables --files ${VHOST}.tmp
-if !(diff -s ${VHOST} ${VHOST}.tmp)
-then
-	# Changes the configuration.
-	mv ${VHOST} ${VHOST}.old
-	mv ${VHOST}.tmp ${VHOST}
-	# If the config cannot be reloaded.
-	${DEBUG} && echo "Reloading config"
-	nginx_variables
-	nginx_check_config
-	rm -f ${VHOST}.old
-else 
-	echo "Config file '${VHOST}' has not changed. Skipping."
-fi
+# Changes the configuration.
+touch ${ROUTER_FILE_NAME}
+mv ${ROUTER_FILE_NAME} ${ROUTER_FILE_NAME}.old
+mv ${ROUTER_FILE_NAME}.tmp ${ROUTER_FILE_NAME}
+
+# TODO Fix when broken.
