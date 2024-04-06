@@ -7,6 +7,8 @@ CONFIG_PATH=${BROKER_HOME}/etc
 EXTENSION_CONFIG_PATH=${CONFIG_PATH}/extension
 EXTENSION_CONFIG_FILE=${EXTENSION_CONFIG_PATH}/routers.xml
 DEBUG=false
+CONNECTOR_NAME=
+CONNECTOR_URL=
 
 # For each argument.
 while :; do
@@ -18,8 +20,20 @@ while :; do
             DEBUG_OPT="--debug"
             ;;
             
+        # Connector name.
+        -n|--connector-name)
+            CONNECTOR_NAME=${2}
+            shift
+            ;;
+
+        # Connector url.
+        -u|--connector-url)
+            CONNECTOR_URL=${2}
+            shift
+            ;;
+            
         # Router name.
-        -n|--router-name)
+        -r|--router-name)
             ROUTER_NAME=${2}
             shift
             ;;
@@ -43,12 +57,19 @@ set -o nounset
 # Enables interruption signal handling.
 trap - INT TERM
 
+# Adds connectors if available.
+if [ -n "${CONNECTOR_NAME}" ] && [ -n "${CONNECTOR_URL}" ]
+then
+    artemis_add_connector -n "${CONNECTOR_NAME}" -u "${CONNECTOR_URL}"
+fi
+
 # Print arguments if on debug mode.
 ${DEBUG} && echo "Running 'artemis_add_connector.sh'"
 ${DEBUG} && echo "ROUTER_NAME=${ROUTER_NAME}"
 ${DEBUG} && echo "ROUTER_URL=${ROUTER_URL}"
 
 # Makes sure file exists.
+cd ${EXTENSION_CONFIG_PATH}
 ls ${EXTENSION_CONFIG_FILE} || touch ${EXTENSION_CONFIG_FILE} 
 
 # Adds or updates the connector.
