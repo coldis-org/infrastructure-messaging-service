@@ -11,6 +11,11 @@ CONFIG_PATH=${BROKER_HOME}/etc
 EXTENSION_CONFIG_PATH=${CONFIG_PATH}/extension
 export BROKER_HOME CONFIG_PATH EXTENSION_CONFIG_PATH
 
+# Configures users, connectors and routers.
+artemis_add_user
+artemis_add_connector
+artemis_add_router
+
 # Max CPU, threads and connections.
 if [ -z "${MAX_CPU}" ]
 then
@@ -56,12 +61,6 @@ ENV_VARIABLES=$(awk 'BEGIN{for(v in ENVIRON) print "$"v}')
 envsubst "$ENV_VARIABLES" <"${CONFIG_PATH}/broker.xml" | sponge "${CONFIG_PATH}/broker.xml"
 cat "${CONFIG_PATH}/broker.xml"
 
-# Update users and roles with if username and password is passed as argument
-if [ "${ARTEMIS_USERNAME}" ] && [ "${ARTEMIS_PASSWORD}" ]; then
-	echo "${ARTEMIS_USERNAME} = ${ARTEMIS_PASSWORD}" > ${CONFIG_PATH}/artemis-users.properties
-	echo "technology-messaging-service-admin = ${ARTEMIS_USERNAME}" > ${CONFIG_PATH}/artemis-roles.properties
-	cat ${CONFIG_PATH}/artemis-users.properties
-fi
 
 # Makes sure extension files exist.
 ls ${EXTENSION_CONFIG_PATH}/connectors.xml || cp ${CONFIG_PATH}/connectors.xml ${EXTENSION_CONFIG_FILE}/connectors.xml

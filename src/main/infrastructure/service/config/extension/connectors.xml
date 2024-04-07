@@ -1,3 +1,0 @@
-<connectors xmlns="urn:activemq:core">
-<connector name="localhost">tcp://0.0.0.0:61616</connector>
-</connectors>
