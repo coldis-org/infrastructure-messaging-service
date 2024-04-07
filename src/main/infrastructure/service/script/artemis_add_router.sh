@@ -7,8 +7,11 @@ CONFIG_PATH=${BROKER_HOME}/etc
 EXTENSION_CONFIG_PATH=${CONFIG_PATH}/extension
 EXTENSION_CONFIG_FILE=${EXTENSION_CONFIG_PATH}/routers.xml
 DEBUG=false
+USER_NAME=
+USER_PASSWORD=
 CONNECTOR_NAME=
 CONNECTOR_URL=
+ROUTER_NAME=
 
 # For each argument.
 while :; do
@@ -20,14 +23,26 @@ while :; do
             DEBUG_OPT="--debug"
             ;;
             
+        # User name.
+        -u|--user-name)
+            USER_NAME=${2}
+            shift
+            ;;
+
+        # User password.
+        -p|--user-password)
+            USER_PASSWORD=${2}
+            shift
+            ;;
+            
         # Connector name.
-        -n|--connector-name)
+        -c|--connector-name)
             CONNECTOR_NAME=${2}
             shift
             ;;
 
         # Connector url.
-        -u|--connector-url)
+        -a|--connector-url)
             CONNECTOR_URL=${2}
             shift
             ;;
@@ -60,7 +75,7 @@ trap - INT TERM
 # Adds connectors if available.
 if [ -n "${CONNECTOR_NAME}" ] && [ -n "${CONNECTOR_URL}" ]
 then
-    artemis_add_connector -n "${CONNECTOR_NAME}" -u "${CONNECTOR_URL}"
+    artemis_add_connector -u "${USER_NAME}" -p "${USER_PASSWORD}" -c "${CONNECTOR_NAME}" -a "${CONNECTOR_URL}"
 fi
 
 # Print arguments if on debug mode.
@@ -70,29 +85,34 @@ ${DEBUG} && echo "ROUTER_URL=${ROUTER_URL}"
 
 # Makes sure file exists.
 cd ${EXTENSION_CONFIG_PATH}
-ls ${EXTENSION_CONFIG_FILE} || touch ${EXTENSION_CONFIG_FILE} 
+ls ${EXTENSION_CONFIG_FILE} || cp ${CONFIG_PATH}/routers.xml ${EXTENSION_CONFIG_FILE} 
 
 # Adds or updates the connector.
-ROUTER_FILE_NAME="${ROUTER_NAME}.xml"
-ROUTER_CONFIG_TAG="<xi:include href=\"${ARTEMIS_DIR}/extension/${ROUTER_FILE_NAME}\" />"
-ROUTERS_END_TAG="</connection-routers>"
-if ! (cat ${EXTENSION_CONFIG_FILE} | grep "${ROUTER_CONFIG_TAG}")
+if [ -n "${ROUTER_NAME}" ]
 then
-    sed -i "s#^${ROUTERS_END_TAG}\$#${ROUTER_CONFIG_TAG}#" ${EXTENSION_CONFIG_FILE}
-    echo "${ROUTERS_END_TAG}" >> ${EXTENSION_CONFIG_FILE}
+
+    ROUTER_FILE_NAME="${ROUTER_NAME}.xml"
+    ROUTER_CONFIG_TAG="<xi:include href=\"${ARTEMIS_DIR}/extension/${ROUTER_FILE_NAME}\" />"
+    ROUTERS_END_TAG="</connection-routers>"
+    if ! (cat ${EXTENSION_CONFIG_FILE} | grep "${ROUTER_CONFIG_TAG}")
+    then
+        sed -i "s#^${ROUTERS_END_TAG}\$#${ROUTER_CONFIG_TAG}#" ${EXTENSION_CONFIG_FILE}
+        echo "${ROUTERS_END_TAG}" >> ${EXTENSION_CONFIG_FILE}
+    fi
+    
+    # Reads the input file line by line.
+    rm -f ${ROUTER_FILE_NAME}.old ${ROUTER_FILE_NAME}.tmp
+    while read ROUTER_FILE_LINE
+    do
+    	echo "${ROUTER_FILE_LINE}" >> ${ROUTER_FILE_NAME}.tmp
+    done
+    ${DEBUG} && cat ${ROUTER_FILE_NAME}.tmp
+    
+    # Changes the configuration.
+    touch ${ROUTER_FILE_NAME}
+    mv ${ROUTER_FILE_NAME} ${ROUTER_FILE_NAME}.old
+    mv ${ROUTER_FILE_NAME}.tmp ${ROUTER_FILE_NAME}
+    
+    # TODO Fix when broken.
+
 fi
-
-# Reads the input file line by line.
-rm -f ${ROUTER_FILE_NAME}.old ${ROUTER_FILE_NAME}.tmp
-while read ROUTER_FILE_LINE
-do
-	echo "${ROUTER_FILE_LINE}" >> ${ROUTER_FILE_NAME}.tmp
-done
-${DEBUG} && cat ${ROUTER_FILE_NAME}.tmp
-
-# Changes the configuration.
-touch ${ROUTER_FILE_NAME}
-mv ${ROUTER_FILE_NAME} ${ROUTER_FILE_NAME}.old
-mv ${ROUTER_FILE_NAME}.tmp ${ROUTER_FILE_NAME}
-
-# TODO Fix when broken.
