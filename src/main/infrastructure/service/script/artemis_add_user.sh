@@ -62,7 +62,7 @@ ls ${EXTENSION_CONFIG_FILE} || touch ${EXTENSION_CONFIG_FILE}
 # Adds or updates the users.
 if [ -n "${USER_NAME}" ] && [ -n "${USER_PASSWORD}" ]
 then
-    CONFIG_START="${USER_NAME} = "
+    CONFIG_START="${USER_NAME}="
     CONFIG="${CONFIG_START} ${USER_PASSWORD}"
     if (cat ${EXTENSION_CONFIG_FILE} | grep "${CONFIG_START}")
     then
@@ -72,10 +72,13 @@ then
     fi
 fi
 
-# Reloads users.
-echo "${ARTEMIS_USERNAME:-artemis} = ${ARTEMIS_PASSWORD:-artemis}" > ${CONFIG_PATH}/artemis-users.properties
-echo "technology-messaging-service-admin = ${ARTEMIS_USERNAME:-artemis}" > ${CONFIG_PATH}/artemis-roles.properties
+# Reloads users.ECHO
+echo "${ARTEMIS_USERNAME:-artemis}=${ARTEMIS_PASSWORD:-artemis}" > ${CONFIG_PATH}/artemis-users.properties
 cat ${EXTENSION_CONFIG_FILE} >> ${CONFIG_PATH}/artemis-users.properties
+USERS=$( sed -e ':a;N;$!ba;s/\n/,/g' ${CONFIG_PATH}/artemis-users.properties | sed -e 's/\s//g' -e 's/\([^=]*\)=[^,$]*/\1/g' -e 's/,$//' )
+${DEBUG} && echo "USERS=${USERS}"
+echo "technology-messaging-service-admin=${USERS}" > ${CONFIG_PATH}/artemis-roles.properties
 
 cat ${CONFIG_PATH}/artemis-users.properties
+cat ${CONFIG_PATH}/artemis-roles.properties
 
