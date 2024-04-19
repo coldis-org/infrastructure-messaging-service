@@ -115,4 +115,7 @@ then
     
     # TODO Fix when broken.
 
+    # Restart needed to get changes
+    ${DEBUG} && echo "'Restarting...'"
+    kill 1
 fi
