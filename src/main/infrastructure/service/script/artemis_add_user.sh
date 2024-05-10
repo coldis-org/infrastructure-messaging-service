@@ -63,7 +63,7 @@ ls ${EXTENSION_CONFIG_FILE} || touch ${EXTENSION_CONFIG_FILE}
 if [ -n "${USER_NAME}" ] && [ -n "${USER_PASSWORD}" ]
 then
     CONFIG_START="${USER_NAME}="
-    CONFIG="${CONFIG_START} ${USER_PASSWORD}"
+    CONFIG="${CONFIG_START}${USER_PASSWORD}"
     if (cat ${EXTENSION_CONFIG_FILE} | grep "${CONFIG_START}")
     then
         sed -i "s#^${CONFIG_START}.*\$#${CONFIG}#" ${EXTENSION_CONFIG_FILE}
