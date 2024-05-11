@@ -36,15 +36,19 @@ export THREAD_POOL SCHEDULED_THREAD_POOL CONN_REMOTING_THREADS
 # Max memory and global size and queue size.
 if [ -z "${MAX_MEMORY}" ]
 then
-	MAX_MEMORY=$(cat "/sys/fs/cgroup/memory/memory.limit_in_bytes" || echo 0)
-	if ! [ ${MAX_MEMORY} -ne 0 ]
-	then
-		MAX_MEMORY=$((1024 * 1024 * 1024))
-	fi
+	MAX_MEMORY=$(cat "/sys/fs/cgroup/memory/memory.limit_in_bytes" || echo "error")
+fi
+if [ -z "${MAX_MEMORY}" ] || [ "${MAX_MEMORY}" = "error" ] || [ ${MAX_MEMORY} -le 0 ]
+then
+	MAX_MEMORY=$((1024 * 1024 * 1024))
 fi
 if [ -z "${CONN_CONNECTIONS_ALLOWED}" ]
 then
-	CONN_CONNECTIONS_ALLOWED=$(echo $((MAX_MEMORY * CONN_CONNECTIONS_ALLOWED_MEM_RATIO / (1024 * 1024))))
+	CONN_CONNECTIONS_ALLOWED=$(echo $((MAX_MEMORY * CONN_CONNECTIONS_ALLOWED_MEM_RATIO / 1024 / 1024)))
+fi
+if [ -z "${CONN_CONNECTIONS_ALLOWED}" ] || [ "${CONN_CONNECTIONS_ALLOWED}" = "error" ] || [ ${CONN_CONNECTIONS_ALLOWED} -le 0 ]
+then
+	CONN_CONNECTIONS_ALLOWED=8192
 fi
 QUEUE_MAX_SIZE=$(echo $((MAX_MEMORY / MAX_QUEUE_SIZE_MEM_RATIO)))
 GLOBAL_MAX_SIZE=$(echo $((MAX_MEMORY / MAX_GLOBAL_SIZE_MEM_RATIO)))

@@ -32,7 +32,7 @@ ARTEMIS_INSTANCE_ETC_URI='file:/var/lib/artemis/etc/'
 HAWTIO_ROLE='technology-messaging-service-admin'
 
 if [ -z "$JAVA_ARGS" ]; then
-    JAVA_ARGS="-XX:+PrintClassHistogram -XX:+UseStringDeduplication \
+    JAVA_ARGS=" -XX:+PrintClassHistogram -XX:+UseStringDeduplication \
     --add-opens java.base/jdk.internal.misc=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED -Dio.netty.tryReflectionSetAccessible=true \
     -Dhawtio.disableProxy=true -Dhawtio.realm=activemq -Dhawtio.offline=true  -Djolokia.policyLocation=${ARTEMIS_INSTANCE_ETC_URI}jolokia-access.xml \
     -Dhawtio.rolePrincipalClasses=org.apache.activemq.artemis.spi.core.security.jaas.RolePrincipal -Dcom.sun.management.jmxremote \
