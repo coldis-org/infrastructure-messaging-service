@@ -10,8 +10,8 @@
 		<!-- Persistence enabled. -->
 		<persistence-enabled>true</persistence-enabled>
 		<!-- Paging, bindings and large messages -->
-		<read-whole-page>true</read-whole-page>
-		<page-max-concurrent-io>8</page-max-concurrent-io>
+		<read-whole-page>${READ_WHOLE_PAGE}</read-whole-page>
+		<page-max-concurrent-io>${PAGE_MAX_IO_CONCURRENCY}</page-max-concurrent-io>
 		<page-sync-timeout>7300000</page-sync-timeout>
 		<paging-directory>data/paging</paging-directory>
 		<!-- Journal config. -->
@@ -50,8 +50,8 @@
         <xi:include href="${ARTEMIS_DIR}/extension/routers.xml"/>
 		<!-- Acceptors. -->
 		<acceptors>
-			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=${CONN_USE_EPOLL};directDeliver=${CONN_DIRECT_DELIVER};tcpNoDelay=${CONN_TCP_NO_DELAY};batchDelay=${CONN_BATCH_DELAY};handshake-timeout=${CONN_HANDSHAKE_TIMEOUT};tcpSendBufferSize=${CONN_TCP_BUFFER_SIZE};tcpReceiveBufferSize=${CONN_TCP_BUFFER_SIZE};compressLargeMessages=${CONN_LARGE_MESSAGE_COMPRESS};minLargeMessageSize=${CONN_LARGE_MESSAGE_SIZE};compressionLevel=${CONN_LARGE_MESSAGE_COMPRESSION_LEVEL};remotingThreads=${CONN_REMOTING_THREADS};connectionsAllowed=${CONN_CONNECTIONS_ALLOWED}</acceptor>
-			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=${CONN_USE_EPOLL};directDeliver=${CONN_DIRECT_DELIVER};tcpNoDelay=${CONN_TCP_NO_DELAY};batchDelay=${CONN_BATCH_DELAY};handshake-timeout=${CONN_HANDSHAKE_TIMEOUT};tcpSendBufferSize=${CONN_TCP_BUFFER_SIZE};tcpReceiveBufferSize=${CONN_TCP_BUFFER_SIZE};compressLargeMessages=${CONN_LARGE_MESSAGE_COMPRESS};minLargeMessageSize=${CONN_LARGE_MESSAGE_SIZE};compressionLevel=${CONN_LARGE_MESSAGE_COMPRESSION_LEVEL};remotingThreads=${CONN_REMOTING_THREADS};connectionsAllowed=${CONN_CONNECTIONS_ALLOWED}</acceptor>
+			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=${CONN_USE_EPOLL};directDeliver=${CONN_DIRECT_DELIVER};tcpNoDelay=${CONN_TCP_NO_DELAY};batchDelay=${CONN_BATCH_DELAY};handshake-timeout=${CONN_HANDSHAKE_TIMEOUT};tcpSendBufferSize=${CONN_TCP_BUFFER_SIZE};tcpReceiveBufferSize=${CONN_TCP_BUFFER_SIZE};remotingThreads=${CONN_REMOTING_THREADS};connectionsAllowed=${CONN_CONNECTIONS_ALLOWED}</acceptor>
+			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=${CONN_USE_EPOLL};directDeliver=${CONN_DIRECT_DELIVER};tcpNoDelay=${CONN_TCP_NO_DELAY};batchDelay=${CONN_BATCH_DELAY};handshake-timeout=${CONN_HANDSHAKE_TIMEOUT};tcpSendBufferSize=${CONN_TCP_BUFFER_SIZE};tcpReceiveBufferSize=${CONN_TCP_BUFFER_SIZE};remotingThreads=${CONN_REMOTING_THREADS};connectionsAllowed=${CONN_CONNECTIONS_ALLOWED}</acceptor>
 		</acceptors>
 		<!-- Transaction -->
 		<transaction-timeout>93000</transaction-timeout>
@@ -97,10 +97,12 @@
 				<auto-create-addresses>true</auto-create-addresses>
 				<auto-delete-addresses>false</auto-delete-addresses>
 				<page-size-bytes>${PAGE_SIZE}M</page-size-bytes>
-				<max-size-bytes>${QUEUE_MAX_SIZE}</max-size-bytes>
 				<max-size-messages>${MAX_QUEUE_SIZE_COUNT}</max-size-messages>
-				<max-read-page-messages>-1</max-read-page-messages>
-				<max-read-page-bytes>-1</max-read-page-bytes>
+				<max-size-bytes>${QUEUE_MAX_SIZE}</max-size-bytes>
+				<max-read-page-messages>${MAX_QUEUE_SIZE_COUNT}</max-read-page-messages>
+				<max-read-page-bytes>${QUEUE_MAX_SIZE}</max-read-page-bytes>
+				<prefetch-page-messages>${PREFECTH_QUEUE_SIZE_COUNT}</prefetch-page-messages>
+				<prefetch-page-bytes>${QUEUE_PRETECH_SIZE}</prefetch-page-bytes>
 				<default-consumer-window-size>${CONSUMER_WINDOW_SIZE}</default-consumer-window-size>
 				<management-browse-page-size>3000</management-browse-page-size>
 				<address-full-policy>PAGE</address-full-policy>
@@ -120,10 +122,12 @@
 				<auto-create-addresses>true</auto-create-addresses>
 				<auto-delete-addresses>false</auto-delete-addresses>
 				<page-size-bytes>${PAGE_SIZE}M</page-size-bytes>
-				<max-size-bytes>${QUEUE_MAX_SIZE}</max-size-bytes>
 				<max-size-messages>${MAX_QUEUE_SIZE_COUNT}</max-size-messages>
-				<max-read-page-messages>-1</max-read-page-messages>
-				<max-read-page-bytes>-1</max-read-page-bytes>
+				<max-size-bytes>${QUEUE_MAX_SIZE}</max-size-bytes>
+				<max-read-page-messages>${MAX_QUEUE_SIZE_COUNT}</max-read-page-messages>
+				<max-read-page-bytes>${QUEUE_MAX_SIZE}</max-read-page-bytes>
+				<prefetch-page-messages>${PREFECTH_QUEUE_SIZE_COUNT}</prefetch-page-messages>
+				<prefetch-page-bytes>${QUEUE_PRETECH_SIZE}</prefetch-page-bytes>
 				<default-consumer-window-size>${CONSUMER_WINDOW_SIZE}</default-consumer-window-size>
 				<management-browse-page-size>3000</management-browse-page-size>
 				<address-full-policy>PAGE</address-full-policy>
