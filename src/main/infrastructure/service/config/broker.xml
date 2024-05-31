@@ -128,7 +128,6 @@
 				<max-read-page-bytes>${QUEUE_MAX_SIZE}</max-read-page-bytes>
 				<prefetch-page-messages>${PREFECTH_QUEUE_SIZE_COUNT}</prefetch-page-messages>
 				<prefetch-page-bytes>${QUEUE_PRETECH_SIZE}</prefetch-page-bytes>
-				<default-consumer-window-size>${CONSUMER_WINDOW_SIZE}</default-consumer-window-size>
 				<management-browse-page-size>3000</management-browse-page-size>
 				<address-full-policy>PAGE</address-full-policy>
 				<default-last-value-queue>${LAST_VALUE_QUEUE}</default-last-value-queue>
