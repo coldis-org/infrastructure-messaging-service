@@ -23,15 +23,16 @@
 		<journal-sync-transactional>true</journal-sync-transactional>
 		<journal-sync-non-transactional>true</journal-sync-non-transactional>
 		<journal-device-block-size>4096</journal-device-block-size>
-		<journal-file-size>11M</journal-file-size>
-		<journal-min-files>123</journal-min-files>
-		<journal-pool-files>123</journal-pool-files>
-		<journal-compact-min-files>739</journal-compact-min-files>
-		<journal-compact-percentage>50</journal-compact-percentage>
+		<journal-file-size>${JOURNAL_FILE_SIZE}M</journal-file-size>
+		<journal-min-files>${JOURNAL_MIN_FILES}</journal-min-files>
+		<journal-pool-files>${JOURNAL_POOL_FILES}</journal-pool-files>
+		<journal-compact-min-files>${JOURNAL_COMPACT_MIN_FILES}</journal-compact-min-files>
+		<journal-compact-percentage>${JOURNAL_COMPACT_PERC}</journal-compact-percentage>
 		<journal-max-io>32768</journal-max-io>
-		<journal-buffer-timeout>7300000</journal-buffer-timeout>
-		<journal-buffer-size>11M</journal-buffer-size>
+		<journal-buffer-timeout>50000000</journal-buffer-timeout> <!-- 500000 -> 2000/s | 1000000000 -->
+		<journal-buffer-size>${JOURNAL_BUFFER_SIZE}M</journal-buffer-size>
 		<!-- Thread pool. -->
+		<async-connection-execution-enabled>${ASYNC_CONNECTION_EXECUTION_ENABLED}</async-connection-execution-enabled>
 		<thread-pool-max-size>${THREAD_POOL}</thread-pool-max-size>
 		<scheduled-thread-pool-max-size>${SCHEDULED_THREAD_POOL}</scheduled-thread-pool-max-size>
 		<!-- Disk usage -->
@@ -50,8 +51,8 @@
         <xi:include href="${ARTEMIS_DIR}/extension/routers.xml"/>
 		<!-- Acceptors. -->
 		<acceptors>
-			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=${CONN_USE_EPOLL};directDeliver=${CONN_DIRECT_DELIVER};tcpNoDelay=${CONN_TCP_NO_DELAY};batchDelay=${CONN_BATCH_DELAY};handshake-timeout=${CONN_HANDSHAKE_TIMEOUT};tcpSendBufferSize=${CONN_TCP_BUFFER_SIZE};tcpReceiveBufferSize=${CONN_TCP_BUFFER_SIZE};remotingThreads=${CONN_REMOTING_THREADS};connectionsAllowed=${CONN_CONNECTIONS_ALLOWED}</acceptor>
-			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=${CONN_USE_EPOLL};directDeliver=${CONN_DIRECT_DELIVER};tcpNoDelay=${CONN_TCP_NO_DELAY};batchDelay=${CONN_BATCH_DELAY};handshake-timeout=${CONN_HANDSHAKE_TIMEOUT};tcpSendBufferSize=${CONN_TCP_BUFFER_SIZE};tcpReceiveBufferSize=${CONN_TCP_BUFFER_SIZE};remotingThreads=${CONN_REMOTING_THREADS};connectionsAllowed=${CONN_CONNECTIONS_ALLOWED}</acceptor>
+			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=${CONN_USE_EPOLL};directDeliver=${CONN_DIRECT_DELIVER};tcpNoDelay=${CONN_TCP_NO_DELAY};batchDelay=${CONN_BATCH_DELAY};handshake-timeout=${CONN_HANDSHAKE_TIMEOUT};tcpSendBufferSize=${CONN_TCP_BUFFER_SIZE};tcpReceiveBufferSize=${CONN_TCP_BUFFER_SIZE};writeBufferLowWaterMark=${CONN_LOW_BUFFER_WATERMARK};writeBufferHighWaterMark=${CONN_HIGH_BUFFER_WATERMARK};remotingThreads=${CONN_REMOTING_THREADS};connectionsAllowed=${CONN_CONNECTIONS_ALLOWED}</acceptor>
+			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=${CONN_USE_EPOLL};directDeliver=${CONN_DIRECT_DELIVER};tcpNoDelay=${CONN_TCP_NO_DELAY};batchDelay=${CONN_BATCH_DELAY};handshake-timeout=${CONN_HANDSHAKE_TIMEOUT};tcpSendBufferSize=${CONN_TCP_BUFFER_SIZE};tcpReceiveBufferSize=${CONN_TCP_BUFFER_SIZE};writeBufferLowWaterMark=${CONN_LOW_BUFFER_WATERMARK};writeBufferHighWaterMark=${CONN_HIGH_BUFFER_WATERMARK};remotingThreads=${CONN_REMOTING_THREADS};connectionsAllowed=${CONN_CONNECTIONS_ALLOWED}</acceptor>
 		</acceptors>
 		<!-- Transaction -->
 		<transaction-timeout>93000</transaction-timeout>
@@ -124,8 +125,8 @@
 				<page-size-bytes>${PAGE_SIZE}M</page-size-bytes>
 				<max-size-messages>${MAX_QUEUE_SIZE_COUNT}</max-size-messages>
 				<max-size-bytes>${QUEUE_MAX_SIZE}</max-size-bytes>
-				<max-read-page-messages>${MAX_QUEUE_SIZE_COUNT}</max-read-page-messages>
-				<max-read-page-bytes>${QUEUE_MAX_SIZE}</max-read-page-bytes>
+				<max-read-page-messages>${PREFECTH_QUEUE_SIZE_COUNT}</max-read-page-messages>
+				<max-read-page-bytes>${QUEUE_PRETECH_SIZE}</max-read-page-bytes>
 				<prefetch-page-messages>${PREFECTH_QUEUE_SIZE_COUNT}</prefetch-page-messages>
 				<prefetch-page-bytes>${QUEUE_PRETECH_SIZE}</prefetch-page-bytes>
 				<management-browse-page-size>3000</management-browse-page-size>

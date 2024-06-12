@@ -18,7 +18,7 @@ RUN groupadd -r artemis \
 	&& apt-get -qq -o=Dpkg::Use-Pty=0 install -y libaio1 curl jq \
 	&& rm -rf /var/lib/apt-get/lists/*
 # Installs Artemis.
-ENV ACTIVEMQ_ARTEMIS_VERSION="2.33.0" \
+ENV ACTIVEMQ_ARTEMIS_VERSION="2.34.0" \
 	CREATE_ARGS="--http-host 0.0.0.0 --host 0.0.0.0 --relax-jolokia --require-login --verbose --no-autotune"
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends wget gnupg2 \
@@ -35,19 +35,6 @@ RUN apt-get update \
 	&& apt-get -qq -o=Dpkg::Use-Pty=0 autoremove -y \
 	&& apt-get clean -y \
 	&& rm -rf /var/lib/apt-get/lists/* 
-#RUN apt-get update \
-#	&& apt-get install -y --no-install-recommends wget gnupg2 \
-#	&& wget "https://www.apache.org/dist/activemq/activemq-artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz" \
-#	&& wget "https://www.apache.org/dist/activemq/activemq-artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc" \
-#	&& wget "https://apache.org/dist/activemq/KEYS" \
-#	&& tar xfz apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz \
-#	&& mv apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION} artemis \
-#	&& chmod 755 artemis \
-#	&& rm -f apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz KEYS apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc \
-#	&& apt-get remove -y wget gnupg2 \
-#	&& apt-get -qq -o=Dpkg::Use-Pty=0 autoremove -y \
-#	&& apt-get clean -y \
-#	&& rm -rf /var/lib/apt-get/lists/* 
 
 # Installs basic libs.
 RUN  apt-get update \
@@ -83,26 +70,37 @@ RUN chmod -R 755 /opt/artemis-script \
 	done
 
 # Variables.
-ENV MAX_GLOBAL_SIZE_MEM_RATIO=5\
-	MAX_QUEUE_SIZE_MEM_RATIO=32\
-	MAX_QUEUE_SIZE_COUNT=400000\
-	PREFECTH_QUEUE_SIZE_MEM_RATIO=128\
-	PREFECTH_QUEUE_SIZE_COUNT=100000\
-	THREAD_POOL_PROC_RATIO=128\
-	SCHEDULED_THREAD_POOL_PROC_RATIO=16\
-	PAGE_SIZE=11\
+ENV MAX_GLOBAL_SIZE_MEM_PERC=7\
+	MAX_QUEUE_SIZE_MEM_PERC=3\
+	MAX_QUEUE_SIZE_COUNT=30000\
+	PREFECTH_QUEUE_SIZE_MEM_PERC=3\
+	PREFECTH_QUEUE_SIZE_COUNT=500000\
+	ASYNC_CONNECTION_EXECUTION_ENABLED=true\
+	THREAD_POOL_PROC_PERC=1600\
+	SCHEDULED_THREAD_POOL_PROC_PERC=800\
+	PAGE_SIZE=10\
 	PAGE_MAX_IO_CONCURRENCY=8\
 	READ_WHOLE_PAGE=true\
+	JOURNAL_FILE_SIZE=10\
+	JOURNAL_MIN_FILES_PERC=10\
+	JOURNAL_MIN_FILES_CAP=200\
+	JOURNAL_POOL_FILES_PERC=10\
+	JOURNAL_COMPACT_MIN_FILES_PERC=30\
+	JOURNAL_COMPACT_MIN_FILES_CAP=500\
+	JOURNAL_COMPACT_PERC=50\
+	JOURNAL_BUFFER_SIZE_PERC=5\
 	LAST_VALUE_KEY=_AMQ_LVQ_NAME\
 	CONSUMER_WINDOW_SIZE=524288\
-	CONN_USE_EPOLL=false\
-	CONN_TCP_BUFFER_SIZE=16777216\
+	CONN_USE_EPOLL=true\
+	CONN_TCP_BUFFER_SIZE=524288\
+	CONN_LOW_BUFFER_WATERMARK_PERC=100\
+	CONN_HIGH_BUFFER_WATERMARK_PERC=150\
 	CONN_TCP_NO_DELAY=true\
-	CONN_BATCH_DELAY=20\
+	CONN_BATCH_DELAY=5\
 	CONN_DIRECT_DELIVER=false\
 	CONN_HANDSHAKE_TIMEOUT=360\
-	CONN_REMOTING_THREADS_PROC_RATIO=128\
-	CONN_CONNECTIONS_ALLOWED_MEM_RATIO=8\
+	CONN_REMOTING_THREADS_PROC_PERC=1000\
+	CONN_CONNECTIONS_ALLOWED_MEM_PERC=700\
 	ARTEMIS_DIR=/var/lib/artemis/etc
 
 
