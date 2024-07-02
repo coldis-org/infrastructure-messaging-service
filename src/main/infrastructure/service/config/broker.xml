@@ -12,14 +12,14 @@
 		<!-- Paging, bindings and large messages -->
 		<read-whole-page>${READ_WHOLE_PAGE}</read-whole-page>
 		<page-max-concurrent-io>${PAGE_MAX_IO_CONCURRENCY}</page-max-concurrent-io>
-		<page-sync-timeout>7300000</page-sync-timeout>
+		<page-sync-timeout>${PAGE_SYNC_TIMEOUT}</page-sync-timeout>
 		<paging-directory>data/paging</paging-directory>
 		<!-- Journal config. -->
 		<large-messages-directory>data/large-messages</large-messages-directory>
 		<bindings-directory>data/bindings</bindings-directory>
 		<journal-directory>data/journal</journal-directory>
-		<journal-type>ASYNCIO</journal-type>
-		<journal-datasync>true</journal-datasync>
+		<journal-type>${JOURNAL_TYPE}</journal-type>
+		<journal-datasync>${JOURNAL_DATA_SYNC}</journal-datasync>
 		<journal-sync-transactional>true</journal-sync-transactional>
 		<journal-sync-non-transactional>true</journal-sync-non-transactional>
 		<journal-device-block-size>4096</journal-device-block-size>
@@ -28,9 +28,9 @@
 		<journal-pool-files>${JOURNAL_POOL_FILES}</journal-pool-files>
 		<journal-compact-min-files>${JOURNAL_COMPACT_MIN_FILES}</journal-compact-min-files>
 		<journal-compact-percentage>${JOURNAL_COMPACT_PERC}</journal-compact-percentage>
-		<journal-max-io>32768</journal-max-io>
-		<journal-buffer-timeout>50000000</journal-buffer-timeout> <!-- 500000 -> 2000/s | 1000000000 -->
-		<journal-buffer-size>${JOURNAL_BUFFER_SIZE}M</journal-buffer-size>
+		<journal-max-io>${JOURNAL_MAX_IO}</journal-max-io>
+		<journal-buffer-timeout>${JOURNAL_BUFFER_TIMEOUT}</journal-buffer-timeout> <!-- 500000 -> 2000/s | 1000000000 -> 1/s -->
+		<journal-buffer-size>${JOURNAL_BUFFER_SIZE}b</journal-buffer-size>
 		<!-- Thread pool. -->
 		<async-connection-execution-enabled>${ASYNC_CONNECTION_EXECUTION_ENABLED}</async-connection-execution-enabled>
 		<thread-pool-max-size>${THREAD_POOL}</thread-pool-max-size>
@@ -45,7 +45,7 @@
 		<critical-analyzer-timeout>240000</critical-analyzer-timeout>
 		<critical-analyzer-policy>LOG</critical-analyzer-policy>
 		<!-- Global max size. -->
-		<global-max-size>${GLOBAL_MAX_SIZE}</global-max-size>	
+		<global-max-size>${GLOBAL_MAX_SIZE}b</global-max-size>	
 		<!-- Connectors and routers. -->
         <xi:include href="${ARTEMIS_DIR}/extension/connectors.xml"/>
         <xi:include href="${ARTEMIS_DIR}/extension/routers.xml"/>
@@ -100,8 +100,8 @@
 				<page-size-bytes>${PAGE_SIZE}M</page-size-bytes>
 				<max-size-messages>${MAX_QUEUE_SIZE_COUNT}</max-size-messages>
 				<max-size-bytes>${QUEUE_MAX_SIZE}</max-size-bytes>
-				<max-read-page-messages>${MAX_QUEUE_SIZE_COUNT}</max-read-page-messages>
-				<max-read-page-bytes>${QUEUE_MAX_SIZE}</max-read-page-bytes>
+				<max-read-page-messages>${PREFECTH_QUEUE_SIZE_COUNT}</max-read-page-messages>
+				<max-read-page-bytes>${QUEUE_PRETECH_SIZE}</max-read-page-bytes>
 				<prefetch-page-messages>${PREFECTH_QUEUE_SIZE_COUNT}</prefetch-page-messages>
 				<prefetch-page-bytes>${QUEUE_PRETECH_SIZE}</prefetch-page-bytes>
 				<default-consumer-window-size>${CONSUMER_WINDOW_SIZE}</default-consumer-window-size>
@@ -129,6 +129,7 @@
 				<max-read-page-bytes>${QUEUE_PRETECH_SIZE}</max-read-page-bytes>
 				<prefetch-page-messages>${PREFECTH_QUEUE_SIZE_COUNT}</prefetch-page-messages>
 				<prefetch-page-bytes>${QUEUE_PRETECH_SIZE}</prefetch-page-bytes>
+				<default-consumer-window-size>${CONSUMER_WINDOW_SIZE}</default-consumer-window-size>
 				<management-browse-page-size>3000</management-browse-page-size>
 				<address-full-policy>PAGE</address-full-policy>
 				<default-last-value-queue>${LAST_VALUE_QUEUE}</default-last-value-queue>
