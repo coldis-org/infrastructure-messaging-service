@@ -111,12 +111,14 @@ ls ${EXTENSION_CONFIG_PATH}/routers.xml || cp ${CONFIG_PATH}/routers.xml ${EXTEN
 
 # Size of Journal.
 JOURNAL_SIZE=$(du -sb ./data/journal | sed 's/\([^ \t]*\).*/\1/')
+LARGE_MESSAGE_SIZE=$(du -sb ./data/large-messages | sed 's/\([^ \t]*\).*/\1/')
+TOTAL_JOURNAL_SIZE=$(( JOURNAL_SIZE + LARGE_MESSAGE_SIZE ))
 JOURNAL_COMPACT_MIN_MEM=$(( JOURNAL_COMPACT_MIN_FILES * JOURNAL_FILE_SIZE * 1024 * 1024 ))
 echo "JOURNAL_SIZE=${JOURNAL_SIZE}"
 echo "JOURNAL_COMPACT_MIN_MEM=${JOURNAL_COMPACT_MIN_MEM}"
 
 # Compacts the journal.
-if ${FORCE_COMPACT} || [ "${JOURNAL_SIZE}" -gt "${JOURNAL_COMPACT_MIN_MEM}" ]
+if ${FORCE_COMPACT} || [ "${TOTAL_JOURNAL_SIZE}" -gt "${JOURNAL_COMPACT_MIN_MEM}" ]
 then
 	echo "Journal too big. Compacting files before starting."
 	./bin/artemis data compact

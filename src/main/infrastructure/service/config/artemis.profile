@@ -37,7 +37,7 @@ if [ -z "$JAVA_ARGS" ]; then
     -Dhawtio.disableProxy=true -Dhawtio.realm=activemq -Dhawtio.offline=true  -Djolokia.policyLocation=${ARTEMIS_INSTANCE_ETC_URI}jolokia-access.xml \
     -Dhawtio.rolePrincipalClasses=org.apache.activemq.artemis.spi.core.security.jaas.RolePrincipal -Dcom.sun.management.jmxremote \
     -Dcom.sun.management.jmxremote.port=1099 -Dcom.sun.management.jmxremote.rmi.port=1099 -Dcom.sun.management.jmxremote.local.only=false \
-    -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false \
+    -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -XshowSettings:vm \
     -javaagent:${ARTEMIS_ETC_DIR}/jmx_prometheus_javaagent-0.17.0.jar=1234:${ARTEMIS_ETC_DIR}/config.yml"
 fi
 
