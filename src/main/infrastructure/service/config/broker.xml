@@ -87,6 +87,7 @@
 		</security-settings>
 		<!-- Default queues. -->
 		<xi:include href="${ARTEMIS_DIR}/addresses.xml"/>
+		<xi:include href="${ARTEMIS_DIR}/queues.xml"/>
 		<!-- Address settings -->
 		<address-settings>
 			<address-setting match="activemq.management#">
