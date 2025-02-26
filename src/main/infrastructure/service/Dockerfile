@@ -1,5 +1,5 @@
 # From Java service.
-FROM coldis/infrastructure-java-service:8.0.0
+FROM coldis/infrastructure-java-service:7.0.3
 
 # Make sure pipes are considered to determine success.
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -57,7 +57,8 @@ RUN cd /var/lib \
 COPY config /var/lib/artemis/etc
 RUN mkdir -p /var/lib/artemis/lock \
 	&& mkdir -p /var/lib/artemis/data \
-	&& chown -R artemis.artemis /var/lib/artemis
+	&& chown -R artemis.artemis /var/lib/artemis \
+	&& usermod -d /var/lib/artemis artemis
 
 # Copies the scripts.
 RUN mkdir -p /opt/artemis-script
@@ -71,16 +72,16 @@ RUN chmod -R 755 /opt/artemis-script \
 
 # Variables.
 ENV MAX_GLOBAL_SIZE_MEM_PERC=37\
-	MAX_QUEUE_SIZE_MEM_PERC=1\
-	MAX_QUEUE_SIZE_COUNT=100000\
-	PREFECTH_QUEUE_SIZE_MEM_PERC=1\
-	PREFECTH_QUEUE_SIZE_COUNT=100000\
-	ASYNC_CONNECTION_EXECUTION_ENABLED=false\
-	THREAD_POOL_PROC_PERC=2000\
+	MAX_QUEUE_SIZE_MEM_PERC=2\
+	MAX_QUEUE_SIZE_COUNT=500000\
+	PREFECTH_QUEUE_SIZE_MEM_PERC=2\
+	PREFECTH_QUEUE_SIZE_COUNT=500000\
+	ASYNC_CONNECTION_EXECUTION_ENABLED=true\
+	THREAD_POOL_PROC_PERC=3000\
 	THREAD_POOL_MIN=16\
 	SCHEDULED_THREAD_POOL_PROC_PERC=300\
 	SCHEDULED_THREAD_POOL_MIN=16\
-	PAGE_SYNC_PER_SEC=100\
+	PAGE_SYNC_PER_SEC=50\
 	PAGE_SIZE_PERC=10\
 	PAGE_MAX_SIZE=50\
 	PAGE_MAX_IO_CONCURRENCY=30\
@@ -96,8 +97,8 @@ ENV MAX_GLOBAL_SIZE_MEM_PERC=37\
 	JOURNAL_COMPACT_MIN_FILES_PERC=30\
 	JOURNAL_COMPACT_MIN_FILES_DISK_CAP=5000\
 	JOURNAL_COMPACT_PERC=80\
-	JOURNAL_BUFFER_SIZE_PERC=1\
-	JOURNAL_BUFFER_PER_SEC=1000\
+	JOURNAL_BUFFER_SIZE_PERC=2\
+	JOURNAL_BUFFER_PER_SEC=500\
 	JOURNAL_DATA_SYNC=false\
 	LAST_VALUE_KEY=_AMQ_LVQ_NAME\
 	CONSUMER_WINDOW_SIZE=262144\
@@ -136,5 +137,5 @@ WORKDIR /var/lib/artemis
 
 # Command.
 ENTRYPOINT [ "artemis_init" ]
-CMD [ "./bin/artemis", "run" ]
+CMD [ "bin/artemis", "run" ]
 

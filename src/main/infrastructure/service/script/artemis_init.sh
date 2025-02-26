@@ -1,9 +1,12 @@
 #!/bin/sh
 set -e
 
+# Default execution.
+EXEC="$@"
+
 # Makes sure data is available.
-chown -R artemis.artemis /var/lib/artemis
-su - artemis
+chown -R artemis:artemis /var/lib/artemis
+#su - artemis
 
 # Variables.
 BROKER_HOME=/var/lib/artemis
@@ -12,18 +15,10 @@ EXTENSION_CONFIG_PATH=${CONFIG_PATH}/extension
 export BROKER_HOME CONFIG_PATH EXTENSION_CONFIG_PATH
 INT_MAX=2147483647
 
-# Memory limit.
-memory_limit() {
-	default_mem=$(( 1024 * 1024 * 1024 )) # 1GB
-	max_mem=9223372036854771712
-	mem=$( cat "/sys/fs/cgroup/memory/memory.limit_in_bytes" 2>/dev/null )
-	if [ -z "${mem}" ] || [ "${mem}" = "${max_mem}" ]
-	then
-		mem="${default_mem}"
-	fi
-	echo "${mem}"
-}
-echo "memory_limit=$(memory_limit)"
+# OS limits.
+. os_limits
+available_cpus
+available_memory
 
 # Configures users, connectors and routers.
 artemis_add_user
@@ -33,19 +28,15 @@ artemis_add_router
 # Threads.
 if [ -z "${MAX_CPU}" ]
 then
-	MAX_CPU=$(cat "/sys/fs/cgroup/cpu/cpu.cfs_quota_us" || echo "error")
+	MAX_CPU="${AVAILABLE_CPUS}"
 fi
-if [ -z "${MAX_CPU}" ] || [ "${MAX_CPU}" = "error" ] || [ ${MAX_CPU} -le 0 ]
-then
-	MAX_CPU=100000
-fi
-THREAD_POOL=$(( THREAD_POOL_PROC_PERC < 0 ? -1 : ( MAX_CPU * THREAD_POOL_PROC_PERC / 100 / 100000 ) ))
+THREAD_POOL=$(( THREAD_POOL_PROC_PERC < 0 ? -1 : ( MAX_CPU * THREAD_POOL_PROC_PERC / 100 ) ))
 THREAD_POOL=$(( THREAD_POOL < THREAD_POOL_MIN ? THREAD_POOL_MIN : THREAD_POOL ))
-SCHEDULED_THREAD_POOL=$(( SCHEDULED_THREAD_POOL_PROC_PERC < 0 ? -1 : ( MAX_CPU * SCHEDULED_THREAD_POOL_PROC_PERC / 100 / 100000 ) ))
+SCHEDULED_THREAD_POOL=$(( SCHEDULED_THREAD_POOL_PROC_PERC < 0 ? -1 : ( MAX_CPU * SCHEDULED_THREAD_POOL_PROC_PERC / 100 ) ))
 SCHEDULED_THREAD_POOL=$(( SCHEDULED_THREAD_POOL < SCHEDULED_THREAD_POOL_MIN ? SCHEDULED_THREAD_POOL_MIN : SCHEDULED_THREAD_POOL ))
 if [ -z "${CONN_REMOTING_THREADS}" ]
 then
-	CONN_REMOTING_THREADS=$(( MAX_CPU * CONN_REMOTING_THREADS_PROC_PERC / 100 / 100000 ))
+	CONN_REMOTING_THREADS=$(( MAX_CPU * CONN_REMOTING_THREADS_PROC_PERC / 100 ))
 	CONN_REMOTING_THREADS=$(( CONN_REMOTING_THREADS < CONN_REMOTING_THREADS_MIN ? CONN_REMOTING_THREADS_MIN : CONN_REMOTING_THREADS ))
 	
 fi
@@ -54,11 +45,7 @@ export THREAD_POOL SCHEDULED_THREAD_POOL CONN_REMOTING_THREADS
 # Queue sizes.
 if [ -z "${MAX_MEMORY}" ]
 then
-	MAX_MEMORY=$(memory_limit || echo "error")
-fi
-if [ -z "${MAX_MEMORY}" ] || [ "${MAX_MEMORY}" = "error" ] || [ ${MAX_MEMORY} -le 0 ]
-then
-	MAX_MEMORY=$((1024 * 1024 * 1024))
+	MAX_MEMORY="$(( ${AVAILABLE_MEMORY} * 1024 * 1024 ))"
 fi
 if [ -z "${CONN_CONNECTIONS_ALLOWED}" ]
 then
@@ -116,7 +103,6 @@ ENV_VARIABLES=$(awk 'BEGIN{for(v in ENVIRON) print "$"v}')
 envsubst "$ENV_VARIABLES" <"${CONFIG_PATH}/broker.xml" | sponge "${CONFIG_PATH}/broker.xml"
 cat "${CONFIG_PATH}/broker.xml"
 
-
 # Makes sure extension files exist.
 ls ${EXTENSION_CONFIG_PATH}/connectors.xml || cp ${CONFIG_PATH}/connectors.xml ${EXTENSION_CONFIG_FILE}/connectors.xml
 ls ${EXTENSION_CONFIG_PATH}/routers.xml || cp ${CONFIG_PATH}/routers.xml ${EXTENSION_CONFIG_FILE}/routers.xml
@@ -143,4 +129,10 @@ then
 	./bin/artemis data recover
 fi
 
-exec "$@"
+# Tunes Java opts.
+. java_tune_opts
+java_tune_opts
+
+# Starts the broker.
+echo "Starting broker."
+exec ${EXEC}
