@@ -1,5 +1,5 @@
 # From Java service.
-FROM coldis/infrastructure-java-service:7.0.3
+FROM coldis/infrastructure-java-service:9.0.0
 
 # Make sure pipes are considered to determine success.
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -7,7 +7,8 @@ WORKDIR /opt/
 
 # Variables.
 ENV ARTEMIS_USERNAME=artemis\
-	ARTEMIS_PASSWORD=artemis
+	ARTEMIS_PASSWORD=artemis\
+	ARTEMIS_ADMIN_ROLE=admin
 
 # Configures users and basic libs.
 RUN groupadd -r artemis \
@@ -18,8 +19,7 @@ RUN groupadd -r artemis \
 	&& apt-get -qq -o=Dpkg::Use-Pty=0 install -y libaio1 curl jq \
 	&& rm -rf /var/lib/apt-get/lists/*
 # Installs Artemis.
-ENV ACTIVEMQ_ARTEMIS_VERSION="2.39.0" \
-	CREATE_ARGS="--http-host 0.0.0.0 --host 0.0.0.0 --relax-jolokia --require-login --verbose --no-autotune"
+ENV ACTIVEMQ_ARTEMIS_VERSION="2.40.0"
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends wget gnupg2 \
 	&& wget "https://www.apache.org/dist/activemq/activemq-artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz" \
@@ -50,10 +50,7 @@ RUN cd /var/lib \
 	--home /opt/artemis \
 	--user "${ARTEMIS_USERNAME}" \
 	--password "${ARTEMIS_PASSWORD}" \
-	--role "technology-messaging-service-admin" \
-	--cluster-user "${ARTEMIS_USERNAME}-cluster" \
-	--cluster-password "${ARTEMIS_PASSWORD}" \
-	${CREATE_ARGS}
+	--http-host 0.0.0.0 --host 0.0.0.0 --relax-jolokia --require-login --verbose
 COPY config /var/lib/artemis/etc
 RUN mkdir -p /var/lib/artemis/lock \
 	&& mkdir -p /var/lib/artemis/data \
@@ -71,12 +68,13 @@ RUN chmod -R 755 /opt/artemis-script \
 	done
 
 # Variables.
-ENV MAX_GLOBAL_SIZE_MEM_PERC=30\
+ENV LOG_LEVEL=INFO\
+	MAX_GLOBAL_SIZE_MEM_PERC=30\
 	MAX_QUEUE_SIZE_MEM_PERC=5\
 	MAX_QUEUE_SIZE_COUNT=500000\
 	PREFECTH_QUEUE_SIZE_MEM_PERC=2\
 	PREFECTH_QUEUE_SIZE_COUNT=500000\
-	ASYNC_CONNECTION_EXECUTION_ENABLED=true\
+	ASYNC_CONNECTION_EXECUTION_ENABLED=false\
 	THREAD_POOL_PROC_PERC=1000\
 	THREAD_POOL_MIN=16\
 	SCHEDULED_THREAD_POOL_PROC_PERC=300\

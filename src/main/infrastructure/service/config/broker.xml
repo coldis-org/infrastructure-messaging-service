@@ -64,25 +64,25 @@
 		<security-settings>
 			<security-setting match="#">
 				<permission type="createNonDurableQueue"
-					roles="technology-messaging-service-admin" />
+					roles="admin" />
 				<permission type="deleteNonDurableQueue"
-					roles="technology-messaging-service-admin" />
+					roles="admin" />
 				<permission type="createDurableQueue"
-					roles="technology-messaging-service-admin" />
+					roles="admin" />
 				<permission type="deleteDurableQueue"
-					roles="technology-messaging-service-admin" />
+					roles="admin" />
 				<permission type="createAddress"
-					roles="technology-messaging-service-admin" />
+					roles="admin" />
 				<permission type="deleteAddress"
-					roles="technology-messaging-service-admin" />
+					roles="admin" />
 				<permission type="consume"
-					roles="technology-messaging-service-admin" />
+					roles="admin" />
 				<permission type="browse"
-					roles="technology-messaging-service-admin" />
+					roles="admin" />
 				<permission type="send"
-					roles="technology-messaging-service-admin" />
+					roles="admin" />
 				<permission type="manage"
-					roles="technology-messaging-service-admin" />
+					roles="admin" />
 			</security-setting>
 		</security-settings>
 		<!-- Default queues. -->
