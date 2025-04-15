@@ -30,7 +30,9 @@ ARTEMIS_INSTANCE_ETC_URI='file:/var/lib/artemis/etc/'
 HAWTIO_ROLES=${ARTEMIS_ADMIN_ROLE}
 
 if [ -z "$JAVA_ARGS" ]; then
-    JAVA_ARGS=" -XX:AutoBoxCacheMax=20000 \
+    JAVA_ARGS=" \
+    -XX:MaxGCPauseMillis=200 \
+    -XX:AutoBoxCacheMax=20000 \
     -XX:+PrintClassHistogram \
     -XX:+UseStringDeduplication \
     --add-opens java.base/jdk.internal.misc=ALL-UNNAMED \
@@ -49,8 +51,8 @@ if [ -z "$JAVA_ARGS" ]; then
     -Dcom.sun.management.jmxremote.local.only=false \
     -Dcom.sun.management.jmxremote.authenticate=false \
     -Dcom.sun.management.jmxremote.ssl=false \
-    -javaagent:${ARTEMIS_ETC_DIR}/jmx_prometheus_javaagent-0.17.0.jar=1234:${ARTEMIS_ETC_DIR}/config.yml"
+    -javaagent:${ARTEMIS_ETC_DIR}/jmx_prometheus_javaagent-0.20.0.jar=1234:${ARTEMIS_ETC_DIR}/config.yml"
 fi
 
-# Java Opts
+# Java Opts.S
 JAVA_ARGS="$JAVA_ARGS $JAVA_OPTS"

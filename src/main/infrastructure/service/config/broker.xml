@@ -45,14 +45,13 @@
 		<critical-analyzer-timeout>240000</critical-analyzer-timeout>
 		<critical-analyzer-policy>LOG</critical-analyzer-policy>
 		<!-- Global max size. -->
-		<global-max-size>${GLOBAL_MAX_SIZE}b</global-max-size>	
+		<global-max-size-percent-of-jvm-max-memory>${MAX_GLOBAL_SIZE_MEM_PERC}</global-max-size-percent-of-jvm-max-memory>	
 		<!-- Connectors and routers. -->
         <xi:include href="${ARTEMIS_DIR}/extension/connectors.xml"/>
         <xi:include href="${ARTEMIS_DIR}/extension/routers.xml"/>
 		<!-- Acceptors. -->
 		<acceptors>
 			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=${CONN_USE_EPOLL};directDeliver=${CONN_DIRECT_DELIVER};tcpNoDelay=${CONN_TCP_NO_DELAY};batchDelay=${CONN_BATCH_DELAY};handshake-timeout=${CONN_HANDSHAKE_TIMEOUT};tcpSendBufferSize=${CONN_TCP_BUFFER_SIZE};tcpReceiveBufferSize=${CONN_TCP_BUFFER_SIZE};writeBufferLowWaterMark=${CONN_LOW_BUFFER_WATERMARK};writeBufferHighWaterMark=${CONN_HIGH_BUFFER_WATERMARK};remotingThreads=${CONN_REMOTING_THREADS};connectionsAllowed=${CONN_CONNECTIONS_ALLOWED}</acceptor>
-			<acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;useEpoll=${CONN_USE_EPOLL};directDeliver=${CONN_DIRECT_DELIVER};tcpNoDelay=${CONN_TCP_NO_DELAY};batchDelay=${CONN_BATCH_DELAY};handshake-timeout=${CONN_HANDSHAKE_TIMEOUT};tcpSendBufferSize=${CONN_TCP_BUFFER_SIZE};tcpReceiveBufferSize=${CONN_TCP_BUFFER_SIZE};writeBufferLowWaterMark=${CONN_LOW_BUFFER_WATERMARK};writeBufferHighWaterMark=${CONN_HIGH_BUFFER_WATERMARK};remotingThreads=${CONN_REMOTING_THREADS};connectionsAllowed=${CONN_CONNECTIONS_ALLOWED}</acceptor>
 		</acceptors>
 		<!-- Transaction -->
 		<transaction-timeout>93000</transaction-timeout>
@@ -105,6 +104,9 @@
 				<max-read-page-bytes>${QUEUE_PRETECH_SIZE}</max-read-page-bytes>
 				<prefetch-page-messages>${PREFECTH_QUEUE_SIZE_COUNT}</prefetch-page-messages>
 				<prefetch-page-bytes>${QUEUE_PRETECH_SIZE}</prefetch-page-bytes>
+				<slow-consumer-threshold>${SLOW_CONSUMER_THRESHOLD}</slow-consumer-threshold>
+				<slow-consumer-policy>${SLOW_CONSUMER_POLICY}</slow-consumer-policy>
+				<slow-consumer-check-period>${SLOW_CONSUMER_CHECK_PERIOD}</slow-consumer-check-period>
 				<default-consumer-window-size>${CONSUMER_WINDOW_SIZE}</default-consumer-window-size>
 				<management-browse-page-size>3000</management-browse-page-size>
 				<address-full-policy>PAGE</address-full-policy>
@@ -130,6 +132,9 @@
 				<max-read-page-bytes>${QUEUE_PRETECH_SIZE}</max-read-page-bytes>
 				<prefetch-page-messages>${PREFECTH_QUEUE_SIZE_COUNT}</prefetch-page-messages>
 				<prefetch-page-bytes>${QUEUE_PRETECH_SIZE}</prefetch-page-bytes>
+				<slow-consumer-threshold>${SLOW_CONSUMER_THRESHOLD}</slow-consumer-threshold>
+				<slow-consumer-policy>${SLOW_CONSUMER_POLICY}</slow-consumer-policy>
+				<slow-consumer-check-period>${SLOW_CONSUMER_CHECK_PERIOD}</slow-consumer-check-period>
 				<default-consumer-window-size>${CONSUMER_WINDOW_SIZE}</default-consumer-window-size>
 				<management-browse-page-size>3000</management-browse-page-size>
 				<address-full-policy>PAGE</address-full-policy>
