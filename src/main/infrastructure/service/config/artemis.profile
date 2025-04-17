@@ -31,7 +31,6 @@ HAWTIO_ROLES=${ARTEMIS_ADMIN_ROLE}
 
 if [ -z "$JAVA_ARGS" ]; then
     JAVA_ARGS=" \
-    -XX:MaxGCPauseMillis=200 \
     -XX:AutoBoxCacheMax=20000 \
     -XX:+PrintClassHistogram \
     -XX:+UseStringDeduplication \
