@@ -11,7 +11,7 @@
 		<persistence-enabled>true</persistence-enabled>
 		<!-- Paging, bindings and large messages -->
 		<read-whole-page>${READ_WHOLE_PAGE}</read-whole-page>
-		<page-max-concurrent-io>${PAGE_MAX_IO_CONCURRENCY}</page-max-concurrent-io>
+		<page-max-concurrent-io>${IO_THREAD_POOL}</page-max-concurrent-io>
 		<page-sync-timeout>${PAGE_SYNC_TIMEOUT}</page-sync-timeout>
 		<paging-directory>data/paging</paging-directory>
 		<!-- Journal config. -->
@@ -21,7 +21,7 @@
 		<journal-type>${JOURNAL_TYPE}</journal-type>
 		<journal-datasync>${JOURNAL_DATA_SYNC}</journal-datasync>
 		<journal-sync-transactional>true</journal-sync-transactional>
-		<journal-sync-non-transactional>true</journal-sync-non-transactional>
+		<journal-sync-non-transactional>false</journal-sync-non-transactional>
 		<journal-device-block-size>4096</journal-device-block-size>
 		<journal-file-size>${JOURNAL_FILE_SIZE}M</journal-file-size>
 		<journal-min-files>${JOURNAL_MIN_FILES}</journal-min-files>
@@ -39,7 +39,7 @@
 		<max-disk-usage>95</max-disk-usage>
 		<!-- Shutdown -->
 		<graceful-shutdown-enabled>true</graceful-shutdown-enabled>
-		<graceful-shutdown-timeout>37000</graceful-shutdown-timeout>
+		<graceful-shutdown-timeout>30000</graceful-shutdown-timeout>
 		<!-- Disable critical analyzer. -->
 		<critical-analyzer>true</critical-analyzer>
 		<critical-analyzer-timeout>240000</critical-analyzer-timeout>
@@ -53,12 +53,13 @@
 		<acceptors>
 			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=${CONN_USE_EPOLL};directDeliver=${CONN_DIRECT_DELIVER};tcpNoDelay=${CONN_TCP_NO_DELAY};batchDelay=${CONN_BATCH_DELAY};handshake-timeout=${CONN_HANDSHAKE_TIMEOUT};tcpSendBufferSize=${CONN_TCP_BUFFER_SIZE};tcpReceiveBufferSize=${CONN_TCP_BUFFER_SIZE};writeBufferLowWaterMark=${CONN_LOW_BUFFER_WATERMARK};writeBufferHighWaterMark=${CONN_HIGH_BUFFER_WATERMARK};remotingThreads=${CONN_REMOTING_THREADS};connectionsAllowed=${CONN_CONNECTIONS_ALLOWED}</acceptor>
 		</acceptors>
+		<connection-ttl-check-interval>120000</connection-ttl-check-interval>
 		<!-- Transaction -->
-		<transaction-timeout>93000</transaction-timeout>
+		<transaction-timeout>60000</transaction-timeout>
 		<!-- Scans. -->
-		<disk-scan-period>11000</disk-scan-period>
+		<disk-scan-period>10000</disk-scan-period>
 		<message-expiry-scan-period>-1</message-expiry-scan-period>
-		<address-queue-scan-period>1300000</address-queue-scan-period>
+		<address-queue-scan-period>60000</address-queue-scan-period>
 		<!-- Security. -->
 		<security-settings>
 			<security-setting match="#">
