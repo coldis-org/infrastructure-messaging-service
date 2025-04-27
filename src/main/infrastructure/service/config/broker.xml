@@ -117,6 +117,7 @@
 				<redelivery-delay-multiplier>5.0</redelivery-delay-multiplier>
 				<max-redelivery-delay>1800000</max-redelivery-delay>
 				<max-delivery-attempts>13</max-delivery-attempts>
+  				<max-expiry-delay>${MAX_EXPIRY_DELAY}</max-expiry-delay>
 			</address-setting>
 			<address-setting match="#">
 				<dead-letter-address>DLQ</dead-letter-address>
@@ -145,6 +146,7 @@
 				<redelivery-delay-multiplier>5.0</redelivery-delay-multiplier>
 				<max-redelivery-delay>1800000</max-redelivery-delay>
 				<max-delivery-attempts>13</max-delivery-attempts>
+  				<max-expiry-delay>${MAX_EXPIRY_DELAY}</max-expiry-delay>
 			</address-setting>
 		</address-settings>
 		<!-- Diverts. -->
