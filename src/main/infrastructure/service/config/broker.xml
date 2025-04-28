@@ -20,8 +20,8 @@
 		<journal-directory>data/journal</journal-directory>
 		<journal-type>${JOURNAL_TYPE}</journal-type>
 		<journal-datasync>${JOURNAL_DATA_SYNC}</journal-datasync>
-		<journal-sync-transactional>true</journal-sync-transactional>
-		<journal-sync-non-transactional>false</journal-sync-non-transactional>
+		<journal-sync-transactional>${JOURNAL_SYNC_TRANSACTIONAL}</journal-sync-transactional>
+		<journal-sync-non-transactional>${JOURNAL_SYNC_NON_TRANSACTIONAL}</journal-sync-non-transactional>
 		<journal-device-block-size>4096</journal-device-block-size>
 		<journal-file-size>${JOURNAL_FILE_SIZE}M</journal-file-size>
 		<journal-min-files>${JOURNAL_MIN_FILES}</journal-min-files>
