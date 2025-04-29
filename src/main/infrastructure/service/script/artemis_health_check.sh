@@ -1,5 +1,38 @@
 #!/bin/sh
 
+# Retry count.
+retry_count=${retry_count:=5}
+
+# For each argument.
+while :; do
+	case ${1} in
+		
+		# Debug argument.
+		--debug)
+			DEBUG=true
+			DEBUG_OPT="--debug"
+			;;
+			
+		# Retry count.
+		-r|--retry-count)
+            retry_count=${2}
+            shift
+            ;;
+            
+		# Other option.
+		?*)
+			printf 'WARN: Unknown option (ignored): %s\n' "$1" >&2
+			;;
+
+		# No more options.
+		*)
+			break
+
+	esac 
+	shift
+done
+
+
 # Adds a message to the expiry queue.
 health_check_success=false
 if bin/artemis producer \
@@ -24,7 +57,7 @@ then
 else
     echo "Failed to add/receive message to the health check queue."
 fi
-	
+
 # Ignores health check if the producers are blocked.
 if [ "${health_check_success}" != "true" ]
 then
@@ -32,7 +65,16 @@ then
 	then 
    	 	echo "Ignoring health check because the producers are blocked."
 	else 
-		exit "Health check failed."
+	    if [ "${retry_count}" -gt 0 ]
+        then
+            echo "Retrying health check in 5 seconds..."
+            sleep 3
+            retry_count=$((retry_count - 1))
+            exec "$0" "$@" --retry-count ${retry_count}
+        else
+            echo "Health check failed after multiple attempts."
+            exit 1
+        fi
 	fi
 fi
 
