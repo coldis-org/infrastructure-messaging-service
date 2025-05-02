@@ -1,7 +1,8 @@
 #!/bin/sh
 
 # Retry count.
-retry_count=${retry_count:=5}
+retry_count=${retry_count:=6}
+receive_timeout=${receive_timeout:=5000}
 
 # For each argument.
 while :; do
@@ -48,8 +49,8 @@ if bin/artemis producer \
   --user "${ARTEMIS_USERNAME}" \
   --password "${ARTEMIS_PASSWORD}" \
   --destination "health-check" \
-  --message-count 100 \
-  --receive-timeout 1000 \
+  --message-count 5 \
+  --receive-timeout ${receive_timeout} \
   --break-on-null
 then 
     health_check_success=true
