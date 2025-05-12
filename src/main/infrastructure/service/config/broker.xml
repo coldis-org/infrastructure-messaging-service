@@ -99,13 +99,14 @@
 				<auto-create-addresses>true</auto-create-addresses>
 				<auto-delete-addresses>false</auto-delete-addresses>
 				<page-size-bytes>${PAGE_SIZE}M</page-size-bytes>
-				<max-size-messages>${MAX_QUEUE_SIZE_COUNT}</max-size-messages>
-				<max-size-bytes>${QUEUE_MAX_SIZE}</max-size-bytes>
-				<max-read-page-messages>${PREFECTH_QUEUE_SIZE_COUNT}</max-read-page-messages>
-				<max-read-page-bytes>${QUEUE_PRETECH_SIZE}</max-read-page-bytes>
-				<prefetch-page-messages>${PREFECTH_QUEUE_SIZE_COUNT}</prefetch-page-messages>
-				<prefetch-page-bytes>${QUEUE_PRETECH_SIZE}</prefetch-page-bytes>
+				<max-size-messages>${QUEUE_MAX_SIZE_FULL_COUNT}</max-size-messages>
+				<max-size-bytes>${QUEUE_MAX_SIZE_FULL}</max-size-bytes>
+				<prefetch-page-messages>${QUEUE_MAX_PREFECTH_SIZE_COUNT}</prefetch-page-messages>
+				<prefetch-page-bytes>${QUEUE_MAX_PREFECTH_SIZE}</prefetch-page-bytes>
+				<max-read-page-messages>${QUEUE_MAX_TOTAL_READ_SIZE_COUNT}</max-read-page-messages>
+				<max-read-page-bytes>${QUEUE_MAX_TOTAL_READ_SIZE}</max-read-page-bytes>
 				<slow-consumer-threshold>${SLOW_CONSUMER_THRESHOLD}</slow-consumer-threshold>
+				<slow-consumer-threshold-measurement-unit>${SLOW_CONSUMER_THRESHOLD_MEASUREMENT_UNIT}</slow-consumer-threshold-measurement-unit>
 				<slow-consumer-policy>${SLOW_CONSUMER_POLICY}</slow-consumer-policy>
 				<slow-consumer-check-period>${SLOW_CONSUMER_CHECK_PERIOD}</slow-consumer-check-period>
 				<default-consumer-window-size>${CONSUMER_WINDOW_SIZE}</default-consumer-window-size>
@@ -128,13 +129,14 @@
 				<auto-create-addresses>true</auto-create-addresses>
 				<auto-delete-addresses>false</auto-delete-addresses>
 				<page-size-bytes>${PAGE_SIZE}M</page-size-bytes>
-				<max-size-messages>${MAX_QUEUE_SIZE_COUNT}</max-size-messages>
-				<max-size-bytes>${QUEUE_MAX_SIZE}</max-size-bytes>
-				<max-read-page-messages>${PREFECTH_QUEUE_SIZE_COUNT}</max-read-page-messages>
-				<max-read-page-bytes>${QUEUE_PRETECH_SIZE}</max-read-page-bytes>
-				<prefetch-page-messages>${PREFECTH_QUEUE_SIZE_COUNT}</prefetch-page-messages>
-				<prefetch-page-bytes>${QUEUE_PRETECH_SIZE}</prefetch-page-bytes>
+				<max-size-messages>${QUEUE_MAX_SIZE_FULL_COUNT}</max-size-messages>
+				<max-size-bytes>${QUEUE_MAX_SIZE_FULL}</max-size-bytes>
+				<prefetch-page-messages>${QUEUE_MAX_PREFECTH_SIZE_COUNT}</prefetch-page-messages>
+				<prefetch-page-bytes>${QUEUE_MAX_PREFECTH_SIZE}</prefetch-page-bytes>
+				<max-read-page-messages>${QUEUE_MAX_TOTAL_READ_SIZE_COUNT}</max-read-page-messages>
+				<max-read-page-bytes>${QUEUE_MAX_TOTAL_READ_SIZE}</max-read-page-bytes>
 				<slow-consumer-threshold>${SLOW_CONSUMER_THRESHOLD}</slow-consumer-threshold>
+				<slow-consumer-threshold-measurement-unit>${SLOW_CONSUMER_THRESHOLD_MEASUREMENT_UNIT}</slow-consumer-threshold-measurement-unit>
 				<slow-consumer-policy>${SLOW_CONSUMER_POLICY}</slow-consumer-policy>
 				<slow-consumer-check-period>${SLOW_CONSUMER_CHECK_PERIOD}</slow-consumer-check-period>
 				<default-consumer-window-size>${CONSUMER_WINDOW_SIZE}</default-consumer-window-size>
