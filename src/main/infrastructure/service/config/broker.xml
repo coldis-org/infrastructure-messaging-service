@@ -55,7 +55,7 @@
 		</acceptors>
 		<connection-ttl-check-interval>120000</connection-ttl-check-interval>
 		<!-- Transaction -->
-		<transaction-timeout>60000</transaction-timeout>
+		<transaction-timeout>${TRANSACTION_TIMEOUT}</transaction-timeout>
 		<!-- Scans. -->
 		<disk-scan-period>10000</disk-scan-period>
 		<message-expiry-scan-period>-1</message-expiry-scan-period>
