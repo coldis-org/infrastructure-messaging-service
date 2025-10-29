@@ -4,8 +4,8 @@ DEBUG=true
 INPUT_FILE="/local/messaging-services"
 
 if [ ! -f "$INPUT_FILE" ]; then
-    echo "Missing file"
-    exit 1
+    echo "Skipping 'artemis_router_parser' - Missing file"
+    exit 0
 fi
 
 while IFS= read -r LINE || [ -n "$LINE" ]; do
