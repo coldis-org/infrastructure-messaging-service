@@ -84,7 +84,7 @@ if [ -n "${CONNECTOR_NAME}" ] && [ -n "${CONNECTOR_URL}" ]
 then
     
     CONNECTOR_CONFIG_TAG_START="<connector name=\"${CONNECTOR_NAME}\">"
-    CONNECTOR_CONFIG_TAG="${CONNECTOR_CONFIG_TAG_START}${CONNECTOR_URL}</connector>"
+    CONNECTOR_CONFIG_TAG="${CONNECTOR_CONFIG_TAG_START}tcp://${CONNECTOR_URL}</connector>"
     CONNECTORS_END_TAG="</connectors>"
     if (cat ${EXTENSION_CONFIG_FILE} | grep "${CONNECTOR_CONFIG_TAG_START}")
     then

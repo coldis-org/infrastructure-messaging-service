@@ -79,9 +79,8 @@ then
 fi
 
 # Print arguments if on debug mode.
-${DEBUG} && echo "Running 'artemis_add_connector.sh'"
+${DEBUG} && echo "Running 'artemis_add_router.sh'"
 ${DEBUG} && echo "ROUTER_NAME=${ROUTER_NAME}"
-${DEBUG} && echo "ROUTER_URL=${ROUTER_URL}"
 
 # Makes sure file exists.
 cd ${EXTENSION_CONFIG_PATH}
@@ -90,32 +89,30 @@ ls ${EXTENSION_CONFIG_FILE} || cp ${CONFIG_PATH}/routers.xml ${EXTENSION_CONFIG_
 # Adds or updates the connector.
 if [ -n "${ROUTER_NAME}" ]
 then
-
     ROUTER_FILE_NAME="${ROUTER_NAME}.xml"
     ROUTER_CONFIG_TAG="<xi:include href=\"${ARTEMIS_DIR}/extension/${ROUTER_FILE_NAME}\" />"
     ROUTERS_END_TAG="</connection-routers>"
+
+    cat > "$ROUTER_FILE_NAME" <<EOF
+<connection-router xmlns="urn:activemq:core" name="${ROUTER_NAME}-router">
+    <key-type>USER_NAME</key-type>
+    <key-filter>${ROUTER_NAME}</key-filter>
+    <pool>
+        <username>${USER_NAME}</username>
+        <password>${USER_PASSWORD}</password>
+        <local-target-enabled>false</local-target-enabled>
+        <static-connectors>
+            <connector-ref>${ROUTER_NAME}</connector-ref>
+        </static-connectors>
+    </pool>
+</connection-router>
+EOF
+
+
     if ! (cat ${EXTENSION_CONFIG_FILE} | grep "${ROUTER_CONFIG_TAG}")
     then
         sed -i "s#^${ROUTERS_END_TAG}\$#${ROUTER_CONFIG_TAG}#" ${EXTENSION_CONFIG_FILE}
         echo "${ROUTERS_END_TAG}" >> ${EXTENSION_CONFIG_FILE}
     fi
     
-    # Reads the input file line by line.
-    rm -f ${ROUTER_FILE_NAME}.old ${ROUTER_FILE_NAME}.tmp
-    while read ROUTER_FILE_LINE
-    do
-    	echo "${ROUTER_FILE_LINE}" >> ${ROUTER_FILE_NAME}.tmp
-    done
-    ${DEBUG} && cat ${ROUTER_FILE_NAME}.tmp
-    
-    # Changes the configuration.
-    touch ${ROUTER_FILE_NAME}
-    mv ${ROUTER_FILE_NAME} ${ROUTER_FILE_NAME}.old
-    mv ${ROUTER_FILE_NAME}.tmp ${ROUTER_FILE_NAME}
-    
-    # TODO Fix when broken.
-
-    # Restart needed to get changes
-    ${DEBUG} && echo "'Restarting...'"
-    kill 1
 fi

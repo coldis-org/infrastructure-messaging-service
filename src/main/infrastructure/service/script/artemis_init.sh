@@ -24,6 +24,7 @@ EXPORT=true
 artemis_add_user
 artemis_add_connector
 artemis_add_router
+artemis_router_parser
 
 # Threads.
 if [ -z "${MAX_CPU}" ]
