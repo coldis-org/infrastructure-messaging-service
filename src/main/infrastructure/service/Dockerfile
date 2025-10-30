@@ -1,5 +1,5 @@
 # From Java service.
-FROM coldis/infrastructure-java-service:9.0.0
+FROM coldis/infrastructure-java-service:10.0.0
 
 # Make sure pipes are considered to determine success.
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -19,7 +19,7 @@ RUN groupadd -r artemis \
 	&& apt-get -qq -o=Dpkg::Use-Pty=0 install -y libaio1 curl jq \
 	&& rm -rf /var/lib/apt-get/lists/*
 # Installs Artemis.
-ENV ACTIVEMQ_ARTEMIS_VERSION="2.42.0"
+ENV ACTIVEMQ_ARTEMIS_VERSION="2.43.0"
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends wget gnupg2 \
 	&& wget "https://www.apache.org/dist/activemq/activemq-artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz" \
@@ -111,10 +111,10 @@ ENV LOG_LEVEL=INFO\
 	LAST_VALUE_KEY=_AMQ_LVQ_NAME\
 	TRANSACTION_TIMEOUT=20000\
 	CONSUMER_WINDOW_SIZE=131072\
-	SLOW_CONSUMER_THRESHOLD=10\
+	SLOW_CONSUMER_THRESHOLD=1\
 	SLOW_CONSUMER_THRESHOLD_MEASUREMENT_UNIT=MESSAGES_PER_HOUR\
 	SLOW_CONSUMER_POLICY=KILL\
-	SLOW_CONSUMER_CHECK_PERIOD=60\
+	SLOW_CONSUMER_CHECK_PERIOD=3600\
 	MAX_EXPIRY_DELAY=345600000\
 	CONN_USE_EPOLL=false\
 	CONN_TCP_BUFFER_SIZE=-1\
