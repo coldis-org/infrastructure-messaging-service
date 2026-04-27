@@ -1,5 +1,5 @@
 # From Java service.
-FROM coldis/infrastructure-java-service:10.0.0
+FROM coldis/infrastructure-java-service:11.0.0
 
 # Make sure pipes are considered to determine success.
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -19,12 +19,12 @@ RUN groupadd -r artemis \
 	&& apt-get -qq -o=Dpkg::Use-Pty=0 install -y libaio1 curl jq \
 	&& rm -rf /var/lib/apt-get/lists/*
 # Installs Artemis.
-ENV ACTIVEMQ_ARTEMIS_VERSION="2.43.0"
+ENV ACTIVEMQ_ARTEMIS_VERSION="2.53.0"
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends wget gnupg2 \
-	&& wget "https://www.apache.org/dist/activemq/activemq-artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz" \
-	&& wget "https://www.apache.org/dist/activemq/activemq-artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc" \
-	&& wget "https://apache.org/dist/activemq/KEYS" \
+	&& wget "https://downloads.apache.org/artemis/artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz" \
+	&& wget "https://downloads.apache.org/artemis/artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc" \
+	&& wget "https://downloads.apache.org/artemis/KEYS" \
 	&& gpg --no-tty --import "KEYS" \
 	&& gpg --no-tty "apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc" \
 	&& tar xfz apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz \
@@ -110,7 +110,7 @@ ENV LOG_LEVEL=INFO\
 	JOURNAL_DATA_SYNC=false\
 	LAST_VALUE_KEY=_AMQ_LVQ_NAME\
 	TRANSACTION_TIMEOUT=20000\
-	CONSUMER_WINDOW_SIZE=131072\
+	CONSUMER_WINDOW_SIZE=65536\
 	SLOW_CONSUMER_THRESHOLD=1\
 	SLOW_CONSUMER_THRESHOLD_MEASUREMENT_UNIT=MESSAGES_PER_HOUR\
 	SLOW_CONSUMER_POLICY=KILL\
