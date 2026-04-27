@@ -16,7 +16,7 @@ RUN groupadd -r artemis \
 	&& apt-get -qq -o=Dpkg::Use-Pty=0 update -y \
 	&& apt-get -qq -o=Dpkg::Use-Pty=0 full-upgrade -y \
 	&& apt-get -qq -o=Dpkg::Use-Pty=0 autoremove -y \
-	&& apt-get -qq -o=Dpkg::Use-Pty=0 install -y libaio1 curl jq \
+	&& apt-get -qq -o=Dpkg::Use-Pty=0 install -y libaio1t64 curl jq \
 	&& rm -rf /var/lib/apt-get/lists/*
 # Installs Artemis.
 ENV ACTIVEMQ_ARTEMIS_VERSION="2.53.0"
