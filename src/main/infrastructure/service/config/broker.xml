@@ -58,7 +58,7 @@
 		<transaction-timeout>${TRANSACTION_TIMEOUT}</transaction-timeout>
 		<!-- Scans. -->
 		<disk-scan-period>10000</disk-scan-period>
-		<message-expiry-scan-period>-1</message-expiry-scan-period>
+		<message-expiry-scan-period>{MESSAGE_EXPIRY_SCAN_PERIOD}</message-expiry-scan-period>
 		<address-queue-scan-period>60000</address-queue-scan-period>
 		<!-- Security. -->
 		<security-settings>
