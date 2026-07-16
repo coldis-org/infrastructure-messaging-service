@@ -134,7 +134,11 @@ fi
 # Direct (off-heap) memory limit: defaults to Xmx when unset, which lets heap + direct
 # overcommit the container; bound it to a fraction of available memory instead.
 MAX_DIRECT_MEMORY=$(( MAX_MEMORY * MAX_DIRECT_MEM_PERC / 100 / 1024 / 1024 ))
-export JOURNAL_MIN_FILES JOURNAL_POOL_FILES JOURNAL_COMPACT_MIN_FILES JOURNAL_BUFFER_SIZE JOURNAL_BUFFER_TIMEOUT PAGE_SYNC_TIMEOUT JOURNAL_MAX_IO MAX_DIRECT_MEMORY
+# Global max size computed explicitly (MAX_GLOBAL_SIZE_MEM_PERC of the heap): the
+# global-max-size-percent-of-jvm-max-memory element was not honored (broker logged the
+# "adjusted to 1/2 of the JVM max size" default), so derive the byte value here instead.
+GLOBAL_MAX_SIZE=$(( MAX_MEMORY * MAX_RAM_PERC / 100 * MAX_GLOBAL_SIZE_MEM_PERC / 100 ))
+export JOURNAL_MIN_FILES JOURNAL_POOL_FILES JOURNAL_COMPACT_MIN_FILES JOURNAL_BUFFER_SIZE JOURNAL_BUFFER_TIMEOUT PAGE_SYNC_TIMEOUT JOURNAL_MAX_IO MAX_DIRECT_MEMORY GLOBAL_MAX_SIZE
 
 # Last value.
 LAST_VALUE_QUEUE=false
