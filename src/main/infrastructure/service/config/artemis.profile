@@ -50,6 +50,7 @@ if [ -z "$JAVA_ARGS" ]; then
     -Dcom.sun.management.jmxremote.local.only=false \
     -Dcom.sun.management.jmxremote.authenticate=false \
     -Dcom.sun.management.jmxremote.ssl=false \
+    -XX:MaxDirectMemorySize=${MAX_DIRECT_MEMORY}m \
     -javaagent:${ARTEMIS_ETC_DIR}/jmx_prometheus_javaagent-0.20.0.jar=1234:${ARTEMIS_ETC_DIR}/config.yml"
 fi
 

@@ -111,10 +111,30 @@ fi
 JOURNAL_COMPACT_MIN_FILES_CAP=$(( JOURNAL_COMPACT_MIN_FILES_DISK_CAP / JOURNAL_FILE_SIZE ))
 JOURNAL_COMPACT_MIN_FILES=$(( JOURNAL_COMPACT_MIN_FILES > JOURNAL_COMPACT_MIN_FILES_CAP ? JOURNAL_COMPACT_MIN_FILES_CAP : JOURNAL_COMPACT_MIN_FILES ))
 JOURNAL_BUFFER_SIZE=$(( MAX_MEMORY * JOURNAL_BUFFER_SIZE_PERC / 100 ))
+# The timed buffer is sized by the flush window (buffer-timeout x device throughput), not by
+# memory: cap it absolutely so large-memory brokers do not allocate huge buffers (native ones
+# under ASYNCIO).
+JOURNAL_BUFFER_SIZE=$(( JOURNAL_BUFFER_SIZE > (JOURNAL_BUFFER_MAX_SIZE * 1024 * 1024) ? (JOURNAL_BUFFER_MAX_SIZE * 1024 * 1024) : JOURNAL_BUFFER_SIZE ))
 JOURNAL_BUFFER_SIZE=$(( JOURNAL_BUFFER_SIZE > INT_MAX ? INT_MAX : JOURNAL_BUFFER_SIZE ))
 JOURNAL_BUFFER_TIMEOUT=$(( 1000000000 / JOURNAL_BUFFER_PER_SEC ))
 PAGE_SYNC_TIMEOUT=$(( 1000000000 / PAGE_SYNC_PER_SEC ))
-export JOURNAL_MIN_FILES JOURNAL_POOL_FILES JOURNAL_COMPACT_MIN_FILES JOURNAL_BUFFER_SIZE JOURNAL_BUFFER_TIMEOUT PAGE_SYNC_TIMEOUT
+# Journal max IO: NIO only supports a single outstanding write. For ASYNCIO, unless set
+# explicitly, derive the kernel AIO queue depth from available memory so the worst-case
+# in-flight native buffers (max-io x journal-buffer-size) stay at JOURNAL_AIO_MEM_PERC of
+# memory on any broker size.
+if [ "${JOURNAL_TYPE}" = "NIO" ]
+then
+	JOURNAL_MAX_IO=1
+elif [ -z "${JOURNAL_MAX_IO}" ]
+then
+	JOURNAL_MAX_IO=$(( MAX_MEMORY * JOURNAL_AIO_MEM_PERC / 100 / JOURNAL_BUFFER_SIZE ))
+	JOURNAL_MAX_IO=$(( JOURNAL_MAX_IO < 4 ? 4 : JOURNAL_MAX_IO ))
+	JOURNAL_MAX_IO=$(( JOURNAL_MAX_IO > 4096 ? 4096 : JOURNAL_MAX_IO ))
+fi
+# Direct (off-heap) memory limit: defaults to Xmx when unset, which lets heap + direct
+# overcommit the container; bound it to a fraction of available memory instead.
+MAX_DIRECT_MEMORY=$(( MAX_MEMORY * MAX_DIRECT_MEM_PERC / 100 / 1024 / 1024 ))
+export JOURNAL_MIN_FILES JOURNAL_POOL_FILES JOURNAL_COMPACT_MIN_FILES JOURNAL_BUFFER_SIZE JOURNAL_BUFFER_TIMEOUT PAGE_SYNC_TIMEOUT JOURNAL_MAX_IO MAX_DIRECT_MEMORY
 
 # Last value.
 LAST_VALUE_QUEUE=false

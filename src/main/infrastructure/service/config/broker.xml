@@ -40,10 +40,12 @@
 		<!-- Shutdown -->
 		<graceful-shutdown-enabled>true</graceful-shutdown-enabled>
 		<graceful-shutdown-timeout>30000</graceful-shutdown-timeout>
-		<!-- Disable critical analyzer. -->
+		<!-- Critical analyzer: LOG dumps threads when a critical component stalls past the
+			timeout, without halting the broker. Keep the timeout low enough to catch real
+			freezes (env-tunable). -->
 		<critical-analyzer>true</critical-analyzer>
-		<critical-analyzer-timeout>240000</critical-analyzer-timeout>
-		<critical-analyzer-policy>LOG</critical-analyzer-policy>
+		<critical-analyzer-timeout>${CRITICAL_ANALYZER_TIMEOUT}</critical-analyzer-timeout>
+		<critical-analyzer-policy>${CRITICAL_ANALYZER_POLICY}</critical-analyzer-policy>
 		<!-- Global max size. -->
 		<global-max-size-percent-of-jvm-max-memory>${MAX_GLOBAL_SIZE_MEM_PERC}</global-max-size-percent-of-jvm-max-memory>	
 		<!-- Connectors and routers. -->
