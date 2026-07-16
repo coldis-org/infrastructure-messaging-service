@@ -17,6 +17,9 @@ RUN groupadd -r artemis \
 	&& apt-get -qq -o=Dpkg::Use-Pty=0 full-upgrade -y \
 	&& apt-get -qq -o=Dpkg::Use-Pty=0 autoremove -y \
 	&& apt-get -qq -o=Dpkg::Use-Pty=0 install -y libaio1t64 curl jq \
+	# libaio1t64 only ships libaio.so.1t64, but the Artemis native bridge dlopens libaio.so.1
+	# (same ABI on 64-bit); without this symlink ASYNCIO silently falls back to NIO.
+	&& ln -s libaio.so.1t64 /usr/lib/x86_64-linux-gnu/libaio.so.1 \
 	&& rm -rf /var/lib/apt-get/lists/*
 # Installs Artemis.
 ENV ACTIVEMQ_ARTEMIS_VERSION="2.55.0"
