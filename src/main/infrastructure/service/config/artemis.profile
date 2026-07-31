@@ -59,7 +59,7 @@ if [ -z "$JAVA_ARGS" ]; then
     -XshowSettings:vm \
     -Dcom.sun.management.jmxremote \
     -XX:MaxDirectMemorySize=${MAX_DIRECT_MEMORY}m \
-    -javaagent:${ARTEMIS_ETC_DIR}/jmx_prometheus_javaagent-0.20.0.jar=1234:${ARTEMIS_ETC_DIR}/config.yml"
+    -javaagent:${ARTEMIS_ETC_DIR}/jmx_prometheus_javaagent-1.6.0.jar=1234:${ARTEMIS_ETC_DIR}/config.yml"
 fi
 
 # Java Opts.S
