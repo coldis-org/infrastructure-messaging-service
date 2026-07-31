@@ -71,25 +71,25 @@
 		<security-settings>
 			<security-setting match="#">
 				<permission type="send"
-					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_SERVICE_ROLE}" />
+					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_BREAKGLASS_ROLE},${ARTEMIS_SERVICE_ROLE}" />
 				<permission type="consume"
-					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_SERVICE_ROLE}" />
+					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_BREAKGLASS_ROLE},${ARTEMIS_SERVICE_ROLE}" />
 				<permission type="browse"
-					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_SERVICE_ROLE}" />
+					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_BREAKGLASS_ROLE},${ARTEMIS_SERVICE_ROLE}" />
 				<permission type="createAddress"
-					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_SERVICE_ROLE}" />
+					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_BREAKGLASS_ROLE},${ARTEMIS_SERVICE_ROLE}" />
 				<permission type="createDurableQueue"
-					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_SERVICE_ROLE}" />
+					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_BREAKGLASS_ROLE},${ARTEMIS_SERVICE_ROLE}" />
 				<permission type="createNonDurableQueue"
-					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_SERVICE_ROLE}" />
+					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_BREAKGLASS_ROLE},${ARTEMIS_SERVICE_ROLE}" />
 				<permission type="deleteNonDurableQueue"
-					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_SERVICE_ROLE}" />
+					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_BREAKGLASS_ROLE},${ARTEMIS_SERVICE_ROLE}" />
 				<permission type="deleteAddress"
-					roles="${ARTEMIS_ADMIN_ROLE}" />
+					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_BREAKGLASS_ROLE}" />
 				<permission type="deleteDurableQueue"
-					roles="${ARTEMIS_ADMIN_ROLE}" />
+					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_BREAKGLASS_ROLE}" />
 				<permission type="manage"
-					roles="${ARTEMIS_ADMIN_ROLE}" />
+					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_BREAKGLASS_ROLE}" />
 			</security-setting>
 		</security-settings>
 		<!-- Default queues. -->

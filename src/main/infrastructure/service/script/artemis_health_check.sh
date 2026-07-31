@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# Absolute, because this runs as an orchestrator health check and cannot assume a working directory:
+# the CLI calls below used to be relative, which passed under 'docker exec' (it inherits the image's
+# WORKDIR) and failed with "bin/artemis: not found" wherever the check was invoked from elsewhere.
+BROKER_HOME=${BROKER_HOME:=/var/lib/artemis}
+
 # Retry count.
 retry_count=${retry_count:=6}
 retry_wait=${retry_wait:=5}
@@ -56,7 +61,7 @@ health_check_success=false
 if [ "${check_type}" = "shell" ]
 then
 
-	if bin/artemis check queue \
+	if ${BROKER_HOME}/bin/artemis check queue \
 	  --url tcp://localhost:61616 \
 	  --user "${ARTEMIS_USERNAME}" \
 	  --password "${ARTEMIS_PASSWORD}" \
@@ -84,7 +89,7 @@ else
 	if [ "${send_response_status}" = "404" ]
 	then
         echo "Queue not found. Creating queue..."
-	    bin/artemis queue create \
+	    ${BROKER_HOME}/bin/artemis queue create \
 	        --url tcp://localhost:61616 \
 	        --user "${ARTEMIS_USERNAME}" \
 	        --password "${ARTEMIS_PASSWORD}" \

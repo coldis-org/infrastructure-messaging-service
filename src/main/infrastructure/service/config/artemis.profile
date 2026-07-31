@@ -31,7 +31,7 @@ ARTEMIS_INSTANCE_ETC_URI='file:/var/lib/artemis/etc/'
 # Comma-separated list; '*' or empty disables the check, so never leave it blank. Defaults to
 # ARTEMIS_ADMIN_ROLE. This is the ONLY effective role check on the console today, so treat every
 # role listed here as a full administrator - see the note on management.xml below.
-HAWTIO_ROLES=${ARTEMIS_CONSOLE_ROLES:-${ARTEMIS_ADMIN_ROLE}}
+HAWTIO_ROLES=${ARTEMIS_CONSOLE_ROLES:-${ARTEMIS_ADMIN_ROLE}},${ARTEMIS_BREAKGLASS_ROLE}
 
 # On '-Dcom.sun.management.jmxremote' below: it is load bearing for metrics, despite the name. It
 # makes the JVM create the Platform MBeanServer during startup, before the broker can install the
@@ -59,7 +59,8 @@ if [ -z "$JAVA_ARGS" ]; then
     -XshowSettings:vm \
     -Dcom.sun.management.jmxremote \
     -XX:MaxDirectMemorySize=${MAX_DIRECT_MEMORY}m \
-    -javaagent:${ARTEMIS_ETC_DIR}/jmx_prometheus_javaagent-1.6.0.jar=1234:${ARTEMIS_ETC_DIR}/config.yml"
+    -javaagent:${ARTEMIS_ETC_DIR}/jmx_prometheus_javaagent-1.6.0.jar=1234:${ARTEMIS_ETC_DIR}/config.yml \
+    -javaagent:${ARTEMIS_ETC_DIR}/jaas-refresh-agent.jar=${ARTEMIS_ETC_DIR}/login.config"
 fi
 
 # Java Opts.S

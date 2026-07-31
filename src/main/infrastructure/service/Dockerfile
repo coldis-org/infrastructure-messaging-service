@@ -1,3 +1,12 @@
+# Builds the agent that makes etc/login.config reloadable at runtime. Compiled here because the
+# runtime image ships a JRE: it has no javac and no jar.
+FROM eclipse-temurin:26-jdk AS jaas-refresh-agent
+COPY agent /agent
+WORKDIR /agent
+RUN javac JaasRefreshAgent.java \
+	&& printf 'Premain-Class: JaasRefreshAgent\n' > manifest.mf \
+	&& jar cfm jaas-refresh-agent.jar manifest.mf JaasRefreshAgent.class
+
 # From Java service.
 FROM coldis/infrastructure-java-service:11.0.1
 
@@ -8,15 +17,26 @@ WORKDIR /opt/
 # Variables.
 # ARTEMIS_ADMIN_ROLE is the console/management role, held by LDAP-backed humans only.
 # ARTEMIS_SERVICE_ROLE is given to the accounts artemis_add_user creates: produce/consume only.
+#
+# The break glass account ships with working defaults so that an emergency needs no preparation: with
+# the directory unreachable it is the only way left to manage the broker, and enabling one at that
+# point would require access nobody is meant to have. Understand what that means before deploying as
+# is - it authenticates on the CORE acceptor (61616), not just from inside the container, so anyone
+# who reaches that port with these credentials can invoke management, drop addresses and durable
+# queues, and read every message in every queue. Override both values per environment.
 ENV ARTEMIS_USERNAME=artemis\
 	ARTEMIS_PASSWORD=artemis\
 	ARTEMIS_ADMIN_ROLE=jms-administrators\
 	ARTEMIS_SERVICE_ROLE=service\
+	ARTEMIS_BREAKGLASS_ROLE=breakglass\
+	ARTEMIS_BREAKGLASS_USERNAME=breakglass\
+	ARTEMIS_BREAKGLASS_PASSWORD=breakglass\
 	ARTEMIS_CONSOLE_ROLES=
 
 # LDAP backs the console realm (see config/login.config). Empty on purpose: with no LDAP
 # configured the console has no valid users at all, instead of falling back to system accounts.
 ENV LDAP_HOST=\
+	LDAP_URI=\
 	LDAP_PORT=389\
 	LDAP_USER=\
 	LDAP_PASSWORD=\
@@ -71,6 +91,7 @@ RUN cd /var/lib \
 	--password "${ARTEMIS_PASSWORD}" \
 	--http-host 0.0.0.0 --host 0.0.0.0 --relax-jolokia --require-login --verbose
 COPY config /var/lib/artemis/etc
+COPY --from=jaas-refresh-agent /agent/jaas-refresh-agent.jar /var/lib/artemis/etc/
 RUN mkdir -p /var/lib/artemis/lock \
 	&& mkdir -p /var/lib/artemis/data \
 	&& chown -R artemis.artemis /var/lib/artemis \
