@@ -151,6 +151,10 @@ export LAST_VALUE_QUEUE
 ENV_VARIABLES=$(awk 'BEGIN{for(v in ENVIRON) print "$"v}')
 envsubst "$ENV_VARIABLES" <"${CONFIG_PATH}/broker.xml" | sponge "${CONFIG_PATH}/broker.xml"
 cat "${CONFIG_PATH}/broker.xml"
+# JAAS and the management context need the same treatment: JAAS only expands system properties,
+# never environment variables, so the LDAP settings have to be substituted here.
+envsubst "$ENV_VARIABLES" <"${CONFIG_PATH}/management.xml" | sponge "${CONFIG_PATH}/management.xml"
+envsubst "$ENV_VARIABLES" <"${CONFIG_PATH}/login.config" | sponge "${CONFIG_PATH}/login.config"
 
 # Makes sure extension files exist.
 ls ${EXTENSION_CONFIG_PATH}/connectors.xml || cp ${CONFIG_PATH}/connectors.xml ${EXTENSION_CONFIG_FILE}/connectors.xml

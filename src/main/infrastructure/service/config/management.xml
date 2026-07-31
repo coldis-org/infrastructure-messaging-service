@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+	Versioned copy of the file 'artemis create' generates, so the JMX/Jolokia roles stay in sync
+	with ARTEMIS_ADMIN_ROLE. The generated one is stamped with the role passed to 'artemis create',
+	defaulting to 'amq' - a role no user here ever gets.
+
+	WARNING: everything below is INERT, and that is a decision, not an oversight. This authorisation
+	guards the Platform MBeanServer, and it is only installed while the JVM's own
+	'-Dcom.sun.management.jmxremote' agent is NOT set: that agent creates the MBeanServer during
+	startup, before the broker can install the interceptor. artemis.profile sets the flag on purpose,
+	because the Prometheus javaagent needs the unguarded MBeanServer to scrape Artemis beans at all.
+	Measured: with this file granting a role nobody holds, a console user still read attributes AND
+	created an address, both HTTP 200.
+
+	The trade was made knowingly. Read only access to broker state is served by Grafana, off those
+	metrics, so the console does not need tiers: it is an administrative tool, and whoever passes the
+	HAWTIO_ROLES gate (ARTEMIS_CONSOLE_ROLES, see artemis.profile) is a full administrator. Limiting
+	WHICH LDAP groups get in happens there, and that part is enforced. There is deliberately no
+	viewer role here, because a role that looks read only but is not enforced is worse than none.
+
+	If a tiered console is ever genuinely needed, the order is: move metrics off the JMX exporter
+	onto Artemis' native Prometheus plugin, drop the flag, and only then split these entries by role.
+	Dropping the flag on its own silently reduces the Prometheus scrape to zero Artemis series.
+
+	No <connector> element on purpose: remote JMX is not used, so port 1099 stays closed.
+-->
+<management-context xmlns="http://activemq.apache.org/schema">
+	<authorisation>
+		<allowlist>
+			<entry domain="hawtio"/>
+		</allowlist>
+		<default-access>
+			<access method="list*" roles="${ARTEMIS_ADMIN_ROLE}"/>
+			<access method="get*" roles="${ARTEMIS_ADMIN_ROLE}"/>
+			<access method="is*" roles="${ARTEMIS_ADMIN_ROLE}"/>
+		</default-access>
+		<role-access>
+			<match domain="org.apache.activemq.artemis">
+				<access method="list*" roles="${ARTEMIS_ADMIN_ROLE}"/>
+				<access method="get*" roles="${ARTEMIS_ADMIN_ROLE}"/>
+				<access method="is*" roles="${ARTEMIS_ADMIN_ROLE}"/>
+				<access method="set*" roles="${ARTEMIS_ADMIN_ROLE}"/>
+				<!-- count and browse are needed by the browse tab in the console. -->
+				<access method="browse*" roles="${ARTEMIS_ADMIN_ROLE}"/>
+				<access method="count*" roles="${ARTEMIS_ADMIN_ROLE}"/>
+				<access method="*" roles="${ARTEMIS_ADMIN_ROLE}"/>
+			</match>
+		</role-access>
+	</authorisation>
+</management-context>

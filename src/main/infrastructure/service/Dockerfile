@@ -6,9 +6,25 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 WORKDIR /opt/
 
 # Variables.
+# ARTEMIS_ADMIN_ROLE is the console/management role, held by LDAP-backed humans only.
+# ARTEMIS_SERVICE_ROLE is given to the accounts artemis_add_user creates: produce/consume only.
 ENV ARTEMIS_USERNAME=artemis\
 	ARTEMIS_PASSWORD=artemis\
-	ARTEMIS_ADMIN_ROLE=admin
+	ARTEMIS_ADMIN_ROLE=jms-administrators\
+	ARTEMIS_SERVICE_ROLE=service\
+	ARTEMIS_CONSOLE_ROLES=
+
+# LDAP backs the console realm (see config/login.config). Empty on purpose: with no LDAP
+# configured the console has no valid users at all, instead of falling back to system accounts.
+ENV LDAP_HOST=\
+	LDAP_PORT=389\
+	LDAP_USER=\
+	LDAP_PASSWORD=\
+	LDAP_USERS=\
+	LDAP_GROUPS=\
+	LDAP_DEBUG=false\
+	LDAP_CONNECTION_TIMEOUT=5000\
+	LDAP_READ_TIMEOUT=5000
 
 # Configures users and basic libs.
 RUN groupadd -r artemis \

@@ -3,7 +3,11 @@
 # Retry count.
 retry_count=${retry_count:=6}
 retry_wait=${retry_wait:=5}
-check_type="curl"
+receive_timeout=${receive_timeout:=10000}
+# Checks over the messaging protocol, not over the console: the console and its Jolokia endpoint
+# authenticate in the 'console' realm (LDAP only), so ARTEMIS_USERNAME cannot reach them. The
+# 'curl' type below is kept for brokers whose console realm still accepts system accounts.
+check_type="shell"
 
 # For each argument.
 while :; do

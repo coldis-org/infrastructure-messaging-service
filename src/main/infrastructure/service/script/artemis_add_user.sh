@@ -77,7 +77,10 @@ echo "${ARTEMIS_USERNAME:-artemis}=${ARTEMIS_PASSWORD:-artemis}" > ${CONFIG_PATH
 cat ${EXTENSION_CONFIG_FILE} >> ${CONFIG_PATH}/artemis-users.properties
 USERS=$( sed -e ':a;N;$!ba;s/\n/,/g' ${CONFIG_PATH}/artemis-users.properties | sed -e 's/\s//g' -e 's/\([^=]*\)=[^,$]*/\1/g' -e 's/,$//' )
 ${DEBUG} && echo "USERS=${USERS}"
-echo "admin=${USERS}" > ${CONFIG_PATH}/artemis-roles.properties
+# System accounts get the service role, not the admin one: they are meant to produce/consume,
+# while managing the broker and the console belong to ARTEMIS_ADMIN_ROLE (LDAP-backed).
+echo "${ARTEMIS_SERVICE_ROLE:-service}=${USERS}" > ${CONFIG_PATH}/artemis-roles.properties
+
 
 cat ${CONFIG_PATH}/artemis-users.properties
 cat ${CONFIG_PATH}/artemis-roles.properties
