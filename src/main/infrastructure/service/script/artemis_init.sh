@@ -20,6 +20,25 @@ DEBUG=true
 EXPORT=true
 . os_limits
 
+# LDAP endpoint, composed the way the other services do it: the orchestrator template renders
+# LDAP_URI and LDAP_PORT, and LDAP_HOST is "host:port". It has to be read here rather than only
+# inside artemis_update_conn, because that runs as a child process while login.config is stamped
+# further down by envsubst out of THIS environment.
+if [ -f /local/application.env ]
+then
+	. /local/application.env
+fi
+if [ -z "${LDAP_HOST}" ] && [ -n "${LDAP_URI}" ]
+then
+	LDAP_HOST="${LDAP_URI}:${LDAP_PORT}"
+fi
+export LDAP_HOST
+
+# No artemis_update_conn call here on purpose: unlike the databases' pg_hba.conf, which is persistent
+# state in PGDATA, login.config is regenerated from the environment by the envsubst further down, so
+# it already carries the current endpoint at boot. That script exists for the running broker, driven
+# by the orchestrator template when the endpoint changes.
+
 # Configures users, connectors and routers.
 artemis_add_user
 artemis_add_connector
@@ -148,9 +167,28 @@ then
 fi
 export LAST_VALUE_QUEUE
 
+# These land inside quoted JAAS options, where a single stray double quote makes the WHOLE file
+# unparseable - and that takes the 'activemq' realm down with the 'console' one, so a bad directory
+# password stops messaging and the health check, not just the UI. Measured: a password arriving as
+# '"secret"' produced connectionPassword=""secret"", a Configuration Error, and a failing health
+# check. Vault's 'toJSON' wraps values in quotes, hence stripping one layer before escaping the rest.
+JAAS_VALUE () {
+	printf '%s' "${1}" | sed -e 's/^"\(.*\)"$/\1/' -e 's/\\/\\\\/g' -e 's/"/\\"/g'
+}
+LDAP_HOST=$( JAAS_VALUE "${LDAP_HOST}" )
+LDAP_USER=$( JAAS_VALUE "${LDAP_USER}" )
+LDAP_PASSWORD=$( JAAS_VALUE "${LDAP_PASSWORD}" )
+LDAP_USERS=$( JAAS_VALUE "${LDAP_USERS}" )
+LDAP_GROUPS=$( JAAS_VALUE "${LDAP_GROUPS}" )
+export LDAP_HOST LDAP_USER LDAP_PASSWORD LDAP_USERS LDAP_GROUPS
+
 ENV_VARIABLES=$(awk 'BEGIN{for(v in ENVIRON) print "$"v}')
 envsubst "$ENV_VARIABLES" <"${CONFIG_PATH}/broker.xml" | sponge "${CONFIG_PATH}/broker.xml"
 cat "${CONFIG_PATH}/broker.xml"
+# JAAS and the management context need the same treatment: JAAS only expands system properties,
+# never environment variables, so the LDAP settings have to be substituted here.
+envsubst "$ENV_VARIABLES" <"${CONFIG_PATH}/management.xml" | sponge "${CONFIG_PATH}/management.xml"
+envsubst "$ENV_VARIABLES" <"${CONFIG_PATH}/login.config" | sponge "${CONFIG_PATH}/login.config"
 
 # Makes sure extension files exist.
 ls ${EXTENSION_CONFIG_PATH}/connectors.xml || cp ${CONFIG_PATH}/connectors.xml ${EXTENSION_CONFIG_FILE}/connectors.xml

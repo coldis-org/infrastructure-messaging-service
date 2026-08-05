@@ -77,7 +77,27 @@ echo "${ARTEMIS_USERNAME:-artemis}=${ARTEMIS_PASSWORD:-artemis}" > ${CONFIG_PATH
 cat ${EXTENSION_CONFIG_FILE} >> ${CONFIG_PATH}/artemis-users.properties
 USERS=$( sed -e ':a;N;$!ba;s/\n/,/g' ${CONFIG_PATH}/artemis-users.properties | sed -e 's/\s//g' -e 's/\([^=]*\)=[^,$]*/\1/g' -e 's/,$//' )
 ${DEBUG} && echo "USERS=${USERS}"
-echo "admin=${USERS}" > ${CONFIG_PATH}/artemis-roles.properties
+# System accounts get the service role, not the admin one: they are meant to produce/consume,
+# while managing the broker and the console belong to ARTEMIS_ADMIN_ROLE (LDAP-backed).
+echo "${ARTEMIS_SERVICE_ROLE:-service}=${USERS}" > ${CONFIG_PATH}/artemis-roles.properties
+
+# Break glass account. Lives in the 'activemq' realm, so it keeps working while the directory is
+# unreachable - which is when it is needed. It holds ARTEMIS_BREAKGLASS_ROLE, the only properties
+# backed role with 'manage', so management over CORE stays possible during an LDAP outage. It cannot
+# reach the console from here: that realm authenticates against the files created below, which are
+# empty until artemis_breakglass enables them. No credentials configured, no account.
+if [ -n "${ARTEMIS_BREAKGLASS_USERNAME}" ] && [ -n "${ARTEMIS_BREAKGLASS_PASSWORD}" ]
+then
+	echo "${ARTEMIS_BREAKGLASS_USERNAME}=${ARTEMIS_BREAKGLASS_PASSWORD}" >> ${CONFIG_PATH}/artemis-users.properties
+	echo "${ARTEMIS_BREAKGLASS_ROLE:-breakglass}=${ARTEMIS_BREAKGLASS_USERNAME}" >> ${CONFIG_PATH}/artemis-roles.properties
+	${DEBUG} && echo "BREAKGLASS_USER=${ARTEMIS_BREAKGLASS_USERNAME}"
+fi
+
+# Console side of the break glass, kept empty on purpose: the console realm reads these, so an empty
+# pair means no properties backed user can log into the UI and the directory decides on its own.
+# artemis_breakglass fills them in when someone deliberately opens that door. Always created, because
+# a missing file would fail the login module rather than simply matching nobody.
+touch ${CONFIG_PATH}/breakglass-users.properties ${CONFIG_PATH}/breakglass-roles.properties
 
 cat ${CONFIG_PATH}/artemis-users.properties
 cat ${CONFIG_PATH}/artemis-roles.properties

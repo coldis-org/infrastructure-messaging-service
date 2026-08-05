@@ -1,21 +1,37 @@
 ---
+# GAUGE, not COUNTER: these attributes are point-in-time values (message counts, sizes, limits) and
+# several are legitimately negative - '-1' meaning unlimited/disabled. jmx_exporter 1.x validates
+# counters and rejects negative values, failing the WHOLE scrape with HTTP 500 rather than dropping
+# the offending series. Declaring them COUNTER would also make 1.x append a '_total' suffix to every
+# name. Do not change these back.
+#
+# To require credentials on the /metrics endpoint, add the block below and configure the same
+# credentials on the Prometheus scrape job - the endpoint is otherwise open to anyone who can reach
+# the port. Prefer a hash over a plaintext password: add 'algorithm: SHA-256', 'salt' and
+# 'passwordHash' instead of 'password'.
+#
+# httpServer:
+#   authentication:
+#     basic:
+#       username: prometheus
+#       password: <secret>
 lowercaseOutputName: true
 lowercaseOutputLabelNames: true
 rules:
   - pattern: "^org.apache.activemq.artemis<broker=\"([^\"]*)\"><>([^:]*):\\s(.*)"
     attrNameSnakeCase: true
     name: artemis_$2
-    type: COUNTER
+    type: GAUGE
   - pattern: "^org.apache.activemq.artemis<broker=\"([^\"]*)\",\\s*component=addresses,\\s*address=\"([^\"]*)\"><>([^:]*):\\s(.*)"
     attrNameSnakeCase: true
     name: artemis_$3
-    type: COUNTER
+    type: GAUGE
     labels:
         address: $2
   - pattern: "^org.apache.activemq.artemis<broker=\"([^\"]*)\",\\s*component=addresses,\\s*address=\"([^\"]*)\",\\s*subcomponent=(queue|topic)s,\\s*routing-type=\"([^\"]*)\",\\s*(queue|topic)=\"([^\"]*)\"><>([^: ]*):\\s(.*)"
     attrNameSnakeCase: true
     name: artemis_$7
-    type: COUNTER
+    type: GAUGE
     labels:
         address: $2
         "$5": $6

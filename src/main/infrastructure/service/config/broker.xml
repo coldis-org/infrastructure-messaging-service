@@ -63,29 +63,33 @@
 		<disk-scan-period>10000</disk-scan-period>
 		<message-expiry-scan-period>${MESSAGE_EXPIRY_SCAN_PERIOD}</message-expiry-scan-period>
 		<address-queue-scan-period>60000</address-queue-scan-period>
-		<!-- Security. -->
+		<!-- Security: system accounts (ARTEMIS_SERVICE_ROLE, properties-backed) move messages and
+			let the broker auto-create the addresses/queues they use - auto-create is on in the
+			address-settings below, so withholding the create permissions would break producers.
+			Managing the broker and dropping durable resources stay with ARTEMIS_ADMIN_ROLE, which
+			only LDAP-backed humans hold. -->
 		<security-settings>
 			<security-setting match="#">
-				<permission type="createNonDurableQueue"
-					roles="admin" />
-				<permission type="deleteNonDurableQueue"
-					roles="admin" />
-				<permission type="createDurableQueue"
-					roles="admin" />
-				<permission type="deleteDurableQueue"
-					roles="admin" />
-				<permission type="createAddress"
-					roles="admin" />
-				<permission type="deleteAddress"
-					roles="admin" />
-				<permission type="consume"
-					roles="admin" />
-				<permission type="browse"
-					roles="admin" />
 				<permission type="send"
-					roles="admin" />
+					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_BREAKGLASS_ROLE},${ARTEMIS_SERVICE_ROLE}" />
+				<permission type="consume"
+					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_BREAKGLASS_ROLE},${ARTEMIS_SERVICE_ROLE}" />
+				<permission type="browse"
+					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_BREAKGLASS_ROLE},${ARTEMIS_SERVICE_ROLE}" />
+				<permission type="createAddress"
+					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_BREAKGLASS_ROLE},${ARTEMIS_SERVICE_ROLE}" />
+				<permission type="createDurableQueue"
+					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_BREAKGLASS_ROLE},${ARTEMIS_SERVICE_ROLE}" />
+				<permission type="createNonDurableQueue"
+					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_BREAKGLASS_ROLE},${ARTEMIS_SERVICE_ROLE}" />
+				<permission type="deleteNonDurableQueue"
+					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_BREAKGLASS_ROLE},${ARTEMIS_SERVICE_ROLE}" />
+				<permission type="deleteAddress"
+					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_BREAKGLASS_ROLE}" />
+				<permission type="deleteDurableQueue"
+					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_BREAKGLASS_ROLE}" />
 				<permission type="manage"
-					roles="admin" />
+					roles="${ARTEMIS_ADMIN_ROLE},${ARTEMIS_BREAKGLASS_ROLE}" />
 			</security-setting>
 		</security-settings>
 		<!-- Default queues. -->
