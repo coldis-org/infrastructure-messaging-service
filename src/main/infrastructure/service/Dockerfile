@@ -8,7 +8,7 @@ RUN javac JaasRefreshAgent.java \
 	&& jar cfm jaas-refresh-agent.jar manifest.mf JaasRefreshAgent.class
 
 # From Java service.
-FROM coldis/infrastructure-java-service:11.0.1
+FROM coldis/infrastructure-java-service:11.2.0
 
 # Make sure pipes are considered to determine success.
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -47,41 +47,33 @@ ENV LDAP_HOST=\
 	LDAP_READ_TIMEOUT=5000
 
 # Configures users and basic libs.
-RUN groupadd -r artemis \
-	&& useradd -r -g artemis artemis \
-	&& apt-get -qq -o=Dpkg::Use-Pty=0 update -y \
-	&& apt-get -qq -o=Dpkg::Use-Pty=0 full-upgrade -y \
-	&& apt-get -qq -o=Dpkg::Use-Pty=0 autoremove -y \
-	&& apt-get -qq -o=Dpkg::Use-Pty=0 install -y libaio1t64 curl jq \
-	# libaio1t64 only ships libaio.so.1t64, but the Artemis native bridge dlopens libaio.so.1
-	# (same ABI on 64-bit); without this symlink ASYNCIO silently falls back to NIO.
-	&& ln -s libaio.so.1t64 /usr/lib/x86_64-linux-gnu/libaio.so.1 \
-	&& rm -rf /var/lib/apt-get/lists/*
+# uid/gid 999 is what the Ubuntu image used: keeping it means existing volumes need no re-chown and
+# anything else mounting them sees the same owner. Alpine ships gid 999 as 'ping', which is unused here.
+RUN delgroup ping \
+	&& addgroup -S -g 999 artemis \
+	&& adduser -S -D -H -u 999 -G artemis -h /var/lib/artemis -s /sbin/nologin artemis \
+	&& apk upgrade --no-cache \
+	&& apk add --no-cache libaio curl jq gettext-envsubst moreutils
 # Installs Artemis.
-ENV ACTIVEMQ_ARTEMIS_VERSION="2.55.0"
-RUN apt-get update \
-	&& apt-get install -y --no-install-recommends wget gnupg2 \
-	&& wget "https://downloads.apache.org/artemis/artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz" \
-	&& wget "https://downloads.apache.org/artemis/artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc" \
-	&& wget "https://downloads.apache.org/artemis/KEYS" \
+# downloads.apache.org only keeps the latest release, so a pinned version stops building there as soon
+# as the next one comes out; archive.apache.org keeps every release but is throttled (~100KB/s, over
+# 10 minutes for the tarball). Hence the fast one first and the archive as fallback.
+ENV ACTIVEMQ_ARTEMIS_VERSION="2.57.0"
+RUN apk add --no-cache --virtual .artemis-build gnupg \
+	&& ARTEMIS_FILE="artemis/artemis/${ACTIVEMQ_ARTEMIS_VERSION}/apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz" \
+	&& for MIRROR in https://downloads.apache.org https://archive.apache.org/dist; \
+	do \
+		wget -q "${MIRROR}/${ARTEMIS_FILE}" && wget -q "${MIRROR}/${ARTEMIS_FILE}.asc" && break; \
+		rm -f apache-artemis-*; \
+	done \
+	&& wget -q "https://downloads.apache.org/artemis/KEYS" \
 	&& gpg --no-tty --import "KEYS" \
-	&& gpg --no-tty "apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc" \
+	&& gpg --no-tty --verify "apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc" \
 	&& tar xfz apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz \
 	&& mv apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION} artemis \
 	&& chmod 755 artemis \
-	&& rm -f apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz KEYS apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc \
-	&& apt-get remove -y wget gnupg2 \
-	&& apt-get -qq -o=Dpkg::Use-Pty=0 autoremove -y \
-	&& apt-get clean -y \
-	&& rm -rf /var/lib/apt-get/lists/* 
-
-# Installs basic libs.
-RUN  apt-get update \
-	&& apt-get install -y --no-install-recommends gettext-base moreutils \
-	&& apt-get remove -y wget gnupg2 \
-	&& apt-get -qq -o=Dpkg::Use-Pty=0 autoremove -y \
-	&& apt-get clean -y \
-	&& rm -rf /var/lib/apt-get/lists/* 
+	&& rm -rf apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz KEYS apache-artemis-${ACTIVEMQ_ARTEMIS_VERSION}-bin.tar.gz.asc ~/.gnupg \
+	&& apk del .artemis-build
 
 # Creates broker instance.
 RUN cd /var/lib \
@@ -94,8 +86,7 @@ COPY config /var/lib/artemis/etc
 COPY --from=jaas-refresh-agent /agent/jaas-refresh-agent.jar /var/lib/artemis/etc/
 RUN mkdir -p /var/lib/artemis/lock \
 	&& mkdir -p /var/lib/artemis/data \
-	&& chown -R artemis.artemis /var/lib/artemis \
-	&& usermod -d /var/lib/artemis artemis
+	&& chown -R artemis:artemis /var/lib/artemis
 
 # Copies the scripts.
 RUN mkdir -p /opt/artemis-script
@@ -184,8 +175,8 @@ ENV LOG_LEVEL=INFO\
 
 # Web Server
 EXPOSE 8161 \
-	# JMX Exporter
-	9404 \
+	# JMX Exporter (port set on the javaagent in config/artemis.profile)
+	1234 \
 	# Port for CORE,MQTT,AMQP,HORNETQ,STOMP,OPENWIRE
 	61616 \
 	# Port for HORNETQ,STOMP
