@@ -26,11 +26,19 @@ All under `src/main/infrastructure/service/`.
 
 ## Commands
 
-No build script or CI. The image builds from its folder:
+No build script or CI. The image builds from its folder, and the broker test runs against a
+built image (host-side, with docker; about 1.5 minutes, pulls published images as old clients and
+upgrade sources):
 
 ```bash
 docker build -t coldis/infrastructure-messaging-service:<tag> src/main/infrastructure/service
+bash src/test/infrastructure/service/broker_test.sh coldis/infrastructure-messaging-service:<tag>
 ```
+
+It checks the AIO journal, authentication, 2.43/2.53 clients and the upgrade from published
+images' volumes (`CLIENT_IMAGES`, `UPGRADE_IMAGES` override them; empty skips). Run it on any change
+to the Dockerfile, `config/` or `script/`, and record the result in the local check
+(`tests=<passed>/<run>`).
 
 ## Gotchas
 
