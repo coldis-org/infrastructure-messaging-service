@@ -11,27 +11,45 @@ retry_wait=${retry_wait:=5}
 receive_timeout=${receive_timeout:=10000}
 # Checks over the messaging protocol, not over the console: the console and its Jolokia endpoint
 # authenticate in the 'console' realm (LDAP only), so ARTEMIS_USERNAME cannot reach them.
-# 'stomp' does what 'shell' does - produce one message and consume it back, in the 'activemq' realm -
-# but from bash, over the loopback-only STOMP acceptor in broker.xml. 'shell' starts a whole JVM for
-# the CLI on every run: measured ~2.5 CPU seconds per check against ~0.1 for 'stomp', and at the
-# orchestrator's check rate that alone pinned small brokers at their CPU quota. 'shell' stays as a
-# fallback, and 'curl' for brokers whose console realm still accepts system accounts.
+# 'stomp' produces one message and consumes it back, in the 'activemq' realm, like 'shell' - but from
+# bash, over the loopback-only STOMP acceptor in broker.xml. 'shell' starts a whole JVM for the CLI
+# on every run: measured ~2.5 CPU seconds per check against ~0.1 for 'stomp', and at the
+# orchestrator's check rate that alone pinned small brokers at their CPU quota. What 'stomp' does not
+# exercise is the client acceptor (61616) itself - its connection limit and threads - which the
+# 'curl' check used up to 2.55.2 did not either. A raw TCP probe of 61616 cannot stand in for it:
+# measured, a connection that never handshakes is not counted against the limit nor refused by it.
+# 'shell' stays as a fallback, and 'curl' for brokers whose console realm still accepts system
+# accounts.
 check_type="stomp"
-stomp_port=${stomp_port:=61613}
+# Fixed, like the acceptor it talks to in broker.xml.
+stomp_port=61613
 health_check_queue="health-check"
+health_check_lock="${BROKER_HOME}/lock/health-check.lock"
 
 # Produces one persistent message to the health check queue and waits to consume that same message
 # back. Sending first, and only subscribing once the broker has receipted the send, is deliberate:
 # the send auto-creates the anycast queue on a fresh broker, and a subscription opened before the
 # queue existed was measured never receiving the message. Anything else found in the queue, left by
-# an earlier run that timed out, is consumed along the way.
+# an earlier run that was killed or timed out, is consumed along the way.
 stomp_check() {
 	local message_id
 	local deadline
-	message_id="health-check-$$-$(date +%s%N)"
-	deadline=$(( $(date +%s) + receive_timeout / 1000 ))
 	local frame=
 	local success=false
+	message_id="health-check-$$-$(date +%s%N)"
+	deadline=$(( $(date +%s) + receive_timeout / 1000 ))
+
+	# One run at a time, waiting for the lock within the same timeout. Runs share the queue and each
+	# consumes whatever it finds there, so concurrent runs took each other's messages: measured, six
+	# at once failed 17 times out of 18, and a run that lost its message stayed subscribed for its
+	# whole timeout, taking the messages of whatever ran next. Overlap is ordinary - retries chain
+	# for over a minute, and a check the orchestrator gave up on keeps running in the container.
+	exec 4>"${health_check_lock}"
+	if ! flock -w "$(( deadline - $(date +%s) ))" 4
+	then
+		echo "Another health check held the lock for the whole timeout."
+		return 1
+	fi
 
 	# A broker that drops the connection (bad credentials, shutting down) must fail the check and go
 	# through the retries below, not kill the script with SIGPIPE on the next write.
@@ -233,7 +251,9 @@ then
             echo "Retrying health check in 5 seconds..."
             sleep 3
             retry_count=$((retry_count - 1))
-            exec "$0" "$@" --retry-count ${retry_count}
+            # The option loop above consumed the arguments, so the check type is passed on
+            # explicitly: otherwise a '-t shell' run would retry with the default.
+            exec "$0" --check-type "${check_type}" --retry-count "${retry_count}"
         else
             echo "Health check failed after multiple attempts."
             exit 1

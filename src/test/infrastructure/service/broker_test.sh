@@ -71,7 +71,16 @@ check "the journal is AIO (native libaio loads)" 'docker logs "$B" 2>&1 | grep -
 # queue does not exist yet - the case where a subscription opened too early never gets the message.
 check "the health check passes on a fresh broker" 'docker exec "$B" artemis_health_check >/dev/null 2>&1'
 check "the health check fails on a wrong password" '! docker exec -e ARTEMIS_PASSWORD=wrong -e retry_count=0 "$B" artemis_health_check >/dev/null 2>&1'
-check "the health check STOMP acceptor is loopback only" 'docker exec "$B" bash -c "exec 3<>/dev/tcp/127.0.0.1/61613 && ! exec 4<>/dev/tcp/\$(hostname -i)/61613" 2>/dev/null'
+check "the health check STOMP acceptor is loopback only" 'docker exec "$B" bash -c "exec 3<>/dev/tcp/127.0.0.1/61613 && exec 5<>/dev/tcp/\$(hostname -i)/61616 && ! exec 4<>/dev/tcp/\$(hostname -i)/61613" 2>/dev/null'
+# Runs overlap in production (retries, checks the orchestrator gave up on): they must not take each
+# other's messages.
+concurrent_health_checks() {
+	local i failed=0
+	for i in 1 2 3 4 5 6; do docker exec -e retry_count=0 "$B" artemis_health_check >/dev/null 2>&1 & done
+	for i in 1 2 3 4 5 6; do wait -n || failed=1; done
+	[ "$failed" -eq 0 ]
+}
+check "six health checks at once all pass" 'concurrent_health_checks'
 check "no credentials are rejected" '[[ "$(cli "$B" 127.0.0.1 producer "" "--message-count 1")" == AMQ229031* ]]'
 check "a wrong password is rejected" '[[ "$(cli "$B" 127.0.0.1 producer "--user \"\$ARTEMIS_USERNAME\" --password wrong" "--message-count 1")" == AMQ229031* ]]'
 check "the service user produces" '[ "$(cli "$B" 127.0.0.1 producer "$SERVICE_USER" "--message-count 3")" = "Produced: 3 messages" ]'
