@@ -11,8 +11,10 @@ retry_wait=${retry_wait:=5}
 receive_timeout=${receive_timeout:=10000}
 # Digits only: under bash, a value used in $(( )) is itself evaluated, array subscripts and command
 # substitutions included, so an environment value like 'a[$(command)]' would run the command.
+# Base 10 forced, or a leading zero would make it octal ('010000' is 4096; '08000' is an error).
 case ${receive_timeout} in
 	''|*[!0-9]*) receive_timeout=10000 ;;
+	*) receive_timeout=$(( 10#${receive_timeout} )) ;;
 esac
 # Checks over the messaging protocol, not over the console: the console and its Jolokia endpoint
 # authenticate in the 'console' realm (LDAP only), so ARTEMIS_USERNAME cannot reach them.
