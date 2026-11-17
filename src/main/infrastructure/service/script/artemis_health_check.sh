@@ -9,6 +9,11 @@ BROKER_HOME=${BROKER_HOME:=/var/lib/artemis}
 retry_count=${retry_count:=6}
 retry_wait=${retry_wait:=5}
 receive_timeout=${receive_timeout:=10000}
+# Digits only: under bash, a value used in $(( )) is itself evaluated, array subscripts and command
+# substitutions included, so an environment value like 'a[$(command)]' would run the command.
+case ${receive_timeout} in
+	''|*[!0-9]*) receive_timeout=10000 ;;
+esac
 # Checks over the messaging protocol, not over the console: the console and its Jolokia endpoint
 # authenticate in the 'console' realm (LDAP only), so ARTEMIS_USERNAME cannot reach them.
 # 'stomp' produces one message and consumes it back, in the 'activemq' realm, like 'shell' - but from
@@ -37,7 +42,9 @@ stomp_check() {
 	local frame=
 	local success=false
 	message_id="health-check-$$-$(date +%s%N)"
-	deadline=$(( $(date +%s) + receive_timeout / 1000 ))
+	# Whole seconds, rounded up, plus the one already under way: at least receive_timeout, never
+	# zero. (Fractions would need EPOCHREALTIME, whose decimal mark follows the pt_BR locale.)
+	deadline=$(( $(date +%s) + (receive_timeout + 999) / 1000 + 1 ))
 
 	# One run at a time, waiting for the lock within the same timeout. Runs share the queue and each
 	# consumes whatever it finds there, so concurrent runs took each other's messages: measured, six
@@ -158,6 +165,8 @@ then
 	then
 		health_check_success=true
 	fi
+	# Releases the lock now, on every outcome, rather than holding it through the retry pause.
+	exec 4>&-
 
 # Artemis CLI.
 elif [ "${check_type}" = "shell" ]
