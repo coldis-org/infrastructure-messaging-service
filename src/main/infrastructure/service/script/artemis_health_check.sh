@@ -112,7 +112,21 @@ ack:auto"
 		esac
 	done
 
-	send_frame "DISCONNECT"
+	# Closes gracefully: asks for a receipt and reads up to it, so the socket is closed with nothing
+	# left unread. Closing right after a bare DISCONNECT made the kernel send a reset, and the broker
+	# logged four warnings per check (AMQ332069, AMQ222067, AMQ222061, AMQ222107) - measured, at the
+	# orchestrator's rate, one burst every few seconds. Whatever else arrives on the way (another
+	# stale message) is read and dropped.
+	send_frame "DISCONNECT
+receipt:disconnected"
+	while read_frame
+	do
+		case "${frame}" in
+			RECEIPT*disconnected*)
+				break
+				;;
+		esac
+	done
 	exec 3>&-
 	${success}
 }
