@@ -25,7 +25,7 @@ import javax.security.auth.login.Configuration;
  * here authenticates, so there is no such circularity.
  *
  * Restarting the web server drops in-flight console sessions and Jolokia requests for a moment. The
- * messaging protocols, the health check (which runs over CORE) and the Prometheus javaagent (its own
+ * messaging protocols, the health check (which runs over STOMP) and the Prometheus javaagent (its own
  * HTTP server) are all untouched.
  *
  * Deliberately outside the authentication path: it only drops a cache and restarts a listener, and

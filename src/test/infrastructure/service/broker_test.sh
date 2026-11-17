@@ -67,6 +67,11 @@ B=$PREFIX-broker
 start "$B" "$IMAGE"; R=$?
 check "the broker starts" '[ $R -eq 0 ]'
 check "the journal is AIO (native libaio loads)" 'docker logs "$B" 2>&1 | grep -q "AMQ221012: Using AIO Journal"'
+# Health check: STOMP from bash on the loopback acceptor. First on purpose, while the health-check
+# queue does not exist yet - the case where a subscription opened too early never gets the message.
+check "the health check passes on a fresh broker" 'docker exec "$B" artemis_health_check >/dev/null 2>&1'
+check "the health check fails on a wrong password" '! docker exec -e ARTEMIS_PASSWORD=wrong -e retry_count=0 "$B" artemis_health_check >/dev/null 2>&1'
+check "the health check STOMP acceptor is loopback only" 'docker exec "$B" bash -c "exec 3<>/dev/tcp/127.0.0.1/61613 && ! exec 4<>/dev/tcp/\$(hostname -i)/61613" 2>/dev/null'
 check "no credentials are rejected" '[[ "$(cli "$B" 127.0.0.1 producer "" "--message-count 1")" == AMQ229031* ]]'
 check "a wrong password is rejected" '[[ "$(cli "$B" 127.0.0.1 producer "--user \"\$ARTEMIS_USERNAME\" --password wrong" "--message-count 1")" == AMQ229031* ]]'
 check "the service user produces" '[ "$(cli "$B" 127.0.0.1 producer "$SERVICE_USER" "--message-count 3")" = "Produced: 3 messages" ]'

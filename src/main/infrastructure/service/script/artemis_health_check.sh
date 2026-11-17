@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Absolute, because this runs as an orchestrator health check and cannot assume a working directory:
 # the CLI calls below used to be relative, which passed under 'docker exec' (it inherits the image's
@@ -10,18 +10,93 @@ retry_count=${retry_count:=6}
 retry_wait=${retry_wait:=5}
 receive_timeout=${receive_timeout:=10000}
 # Checks over the messaging protocol, not over the console: the console and its Jolokia endpoint
-# authenticate in the 'console' realm (LDAP only), so ARTEMIS_USERNAME cannot reach them. The
-# 'curl' type below is kept for brokers whose console realm still accepts system accounts.
-check_type="shell"
+# authenticate in the 'console' realm (LDAP only), so ARTEMIS_USERNAME cannot reach them.
+# 'stomp' does what 'shell' does - produce one message and consume it back, in the 'activemq' realm -
+# but from bash, over the loopback-only STOMP acceptor in broker.xml. 'shell' starts a whole JVM for
+# the CLI on every run: measured ~2.5 CPU seconds per check against ~0.1 for 'stomp', and at the
+# orchestrator's check rate that alone pinned small brokers at their CPU quota. 'shell' stays as a
+# fallback, and 'curl' for brokers whose console realm still accepts system accounts.
+check_type="stomp"
+stomp_port=${stomp_port:=61613}
+health_check_queue="health-check"
+
+# Produces one persistent message to the health check queue and waits to consume that same message
+# back. Sending first, and only subscribing once the broker has receipted the send, is deliberate:
+# the send auto-creates the anycast queue on a fresh broker, and a subscription opened before the
+# queue existed was measured never receiving the message. Anything else found in the queue, left by
+# an earlier run that timed out, is consumed along the way.
+stomp_check() {
+	local message_id
+	local deadline
+	message_id="health-check-$$-$(date +%s%N)"
+	deadline=$(( $(date +%s) + receive_timeout / 1000 ))
+	local frame=
+	local success=false
+
+	# A broker that drops the connection (bad credentials, shutting down) must fail the check and go
+	# through the retries below, not kill the script with SIGPIPE on the next write.
+	trap '' PIPE
+	if ! exec 3<>"/dev/tcp/127.0.0.1/${stomp_port}"
+	then
+		echo "Could not connect to the STOMP acceptor on port ${stomp_port}."
+		return 1
+	fi
+
+	# Frames are NUL terminated; between them the broker may send bare EOLs, stripped on read.
+	send_frame() { printf '%s\n\n%s\0' "${1}" "${2:-}" >&3 2>/dev/null; }
+	read_frame() {
+		local wait=$(( deadline - $(date +%s) ))
+		[ "${wait}" -gt 0 ] && IFS= read -r -d '' -t "${wait}" -u 3 frame && frame="${frame#"${frame%%[!$'\n']*}"}"
+	}
+
+	send_frame "CONNECT
+accept-version:1.2
+host:localhost
+heart-beat:0,0
+login:${ARTEMIS_USERNAME}
+passcode:${ARTEMIS_PASSWORD}"
+
+	while read_frame
+	do
+		case "${frame}" in
+			ERROR*)
+				echo "${frame}" | grep '^message:'
+				break
+				;;
+			CONNECTED*)
+				send_frame "SEND
+destination:${health_check_queue}
+destination-type:ANYCAST
+persistent:true
+content-type:text/plain
+receipt:sent" "${message_id}"
+				;;
+			RECEIPT*)
+				send_frame "SUBSCRIBE
+id:0
+destination:${health_check_queue}
+destination-type:ANYCAST
+ack:auto"
+				;;
+			MESSAGE*"${message_id}")
+				success=true
+				break
+				;;
+		esac
+	done
+
+	send_frame "DISCONNECT"
+	exec 3>&-
+	${success}
+}
 
 # For each argument.
 while :; do
 	case ${1} in
 		
-		# Debug argument.
+		# Debug argument: still accepted so callers passing it keep working, but this script has no
+		# debug output - tracing it would print the credentials in the CONNECT frame.
 		--debug)
-			DEBUG=true
-			DEBUG_OPT="--debug"
 			;;
 			
 		# Retry count.
@@ -57,8 +132,17 @@ done
 
 health_check_success=false
 
-# Shell scripts.
-if [ "${check_type}" = "shell" ]
+# STOMP, from bash.
+if [ "${check_type}" = "stomp" ]
+then
+
+	if stomp_check
+	then
+		health_check_success=true
+	fi
+
+# Artemis CLI.
+elif [ "${check_type}" = "shell" ]
 then
 
 	if ${BROKER_HOME}/bin/artemis check queue \

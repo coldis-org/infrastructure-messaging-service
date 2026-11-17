@@ -71,6 +71,9 @@ to the Dockerfile, `config/` or `script/`, and record the result in the local ch
 
 - Scripts live in `script/` as `artemis_*.sh`, `#!/bin/sh`, are copied to `/opt/artemis-script` and
   linked into `/usr/bin` without the `.sh` suffix (`artemis_init.sh` -> `/usr/bin/artemis_init`).
+  The exception is `artemis_health_check.sh`, which is `#!/bin/bash`: its default check speaks STOMP
+  through `/dev/tcp` to the loopback acceptor (127.0.0.1:61613), because the CLI alternative starts
+  a JVM per run (~2.5 CPU seconds) and the orchestrator runs it every few seconds.
 - Tunables are environment variables with a default in the Dockerfile `ENV` block, consumed by
   `artemis_init` and substituted into the XML config with `envsubst`.
 - Runtime changes (LDAP endpoint, users) go through scripts driven by the orchestrator template and
