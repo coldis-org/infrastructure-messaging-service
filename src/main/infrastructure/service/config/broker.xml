@@ -55,6 +55,11 @@
 		<!-- Acceptors. -->
 		<acceptors>
 			<acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE;useEpoll=${CONN_USE_EPOLL};directDeliver=${CONN_DIRECT_DELIVER};tcpNoDelay=${CONN_TCP_NO_DELAY};batchDelay=${CONN_BATCH_DELAY};handshake-timeout=${CONN_HANDSHAKE_TIMEOUT};tcpSendBufferSize=${CONN_TCP_BUFFER_SIZE};tcpReceiveBufferSize=${CONN_TCP_BUFFER_SIZE};writeBufferLowWaterMark=${CONN_LOW_BUFFER_WATERMARK};writeBufferHighWaterMark=${CONN_HIGH_BUFFER_WATERMARK};remotingThreads=${CONN_REMOTING_THREADS};connectionsAllowed=${CONN_CONNECTIONS_ALLOWED}</acceptor>
+			<!-- Health check only (artemis_health_check): STOMP lets it produce and consume from bash
+				instead of starting a JVM for the CLI on every run. Bound to loopback, so it is not
+				reachable from outside the container's network namespace; it authenticates in the same
+				'activemq' realm as 61616. -->
+			<acceptor name="health-check">tcp://127.0.0.1:61613?protocols=STOMP;useEpoll=${CONN_USE_EPOLL};connectionsAllowed=8</acceptor>
 		</acceptors>
 		<connection-ttl-check-interval>120000</connection-ttl-check-interval>
 		<!-- Transaction -->
