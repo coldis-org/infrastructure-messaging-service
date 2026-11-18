@@ -66,6 +66,24 @@ to the Dockerfile, `config/` or `script/`, and record the result in the local ch
 - **Debian userland assumed.** The Dockerfile uses `apt-get` and
   `/usr/lib/x86_64-linux-gnu`; the current `java-service` Dockerfile is Alpine, so raising the
   `FROM` tag to an Alpine release needs this Dockerfile reworked.
+- **A running broker's files are edited from outside, by the volume-swap drain.** After a volume
+  swap, `messaging/drain_messaging_service` in `infrastructure-automation-platform` has the broker on
+  the new volume pull the old volume's queues (a `rec-` copy of the broker) through AMQP federation.
+  It does so by editing both brokers' `etc/broker.xml` through `nomad alloc exec`, applied by
+  Artemis's configuration reload, without a restart. It relies on:
+  - the `<acceptor name="artemis">` line declaring `protocols=CORE;`, which it turns into
+    `protocols=CORE,AMQP;`;
+  - an `<acceptors>` line, which it puts a `broker-connections` block before;
+  - `etc/broker.xml` ending in `</configuration>`: a read that does not is taken as cut short;
+  - the broker's own account, `ARTEMIS_USERNAME` (from the task or `/local/application.env`), as
+    a `user=password` line of `etc/artemis-users.properties`;
+  - a break-glass account in `etc/artemis-roles.properties`, for `artemis queue stat`;
+  - `artemis-server-<version>.jar` under `/opt/artemis/lib`;
+  - `log/artemis.log`, where it waits for `AMQ221087`, `61616 for protocols [CORE,AMQP]` and
+    `Connected on Server AMQP Connection drain-federation on`.
+
+  Changing any of these breaks the drain in the incident it exists for. The runtime drain section
+  of `broker_test.sh` covers the reload, the acceptor and the federation.
 
 ## Conventions
 

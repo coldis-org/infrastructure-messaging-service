@@ -2,8 +2,10 @@
 
 # Broker tests for the messaging image. They run on the host and drive
 # containers: the broker boots with the AIO journal, authentication holds,
-# older Artemis clients still connect, and a volume written by a published
-# image is picked up by the image under test with its messages intact.
+# older Artemis clients still connect, a volume written by a published
+# image is picked up by the image under test with its messages intact, and
+# the runtime edits the volume-swap drain makes to two running brokers
+# (AMQP on the acceptor, a federation block) reload without a restart.
 #
 #   docker build -t messaging-test src/main/infrastructure/service
 #   bash src/test/infrastructure/service/broker_test.sh messaging-test
@@ -124,6 +126,78 @@ do
 	check "upgrade from $old_image: the 5 messages are delivered" '[ "$(cli "$N" 127.0.0.1 consumer "$SERVICE_USER" "--message-count 5 --receive-timeout 20000")" = "Consumed: 5 messages" ]'
 	docker rm -f "$N" >/dev/null
 done
+
+# Runtime drain: what messaging/drain_messaging_service (infrastructure-automation-platform) does to
+# two running brokers after a volume swap. AMQP is added to the old broker's CORE acceptor and a
+# federation block to the new broker, each by editing broker.xml and letting the configuration
+# reload apply it, then the block is removed again. The playbook waits for the log lines checked
+# here. Data on tmpfs: nothing here has to persist, and a full journal preallocated on disk only
+# slows it down.
+DRAIN_OPTIONS=(--tmpfs "$DATA:rw,size=600m" -e JOURNAL_TYPE=NIO -e JOURNAL_MIN_FILES_DISK_CAP=100
+	-e JOURNAL_POOL_FILES_DISK_CAP=100 -e JOURNAL_COMPACT_MIN_FILES_DISK_CAP=100)
+ETC=/var/lib/artemis/etc/broker.xml
+logged_count() { docker logs "$1" 2>&1 | grep -cF -- "$2"; }
+# Waits until the log of container $1 holds more than $3 lines with fixed string $2 (30s at most).
+logged() {
+	for _ in $(seq 30); do
+		[ "$(logged_count "$1" "$2")" -gt "$3" ] && return 0
+		sleep 1
+	done
+	return 1
+}
+OLD=$PREFIX-old; NEW=$PREFIX-new
+start "$OLD" "$IMAGE" "${DRAIN_OPTIONS[@]}" && start "$NEW" "$IMAGE" "${DRAIN_OPTIONS[@]}"; R=$?
+check "drain: both brokers start" '[ $R -eq 0 ]'
+check "drain: 5 messages wait on the old broker" '[ "$(cli "$OLD" 127.0.0.1 producer "$SERVICE_USER" "--message-count 5")" = "Produced: 5 messages" ]'
+# The playbook reads these counts by column position, logged in with the break-glass account.
+QUEUE_STAT=$(docker exec "$OLD" sh -c 'cd /var/lib/artemis && bin/artemis queue stat --user "$ARTEMIS_BREAKGLASS_USERNAME" --password "$ARTEMIS_BREAKGLASS_PASSWORD" --url tcp://localhost:61616 --maxRows 100000 --maxColumnSize -1 2>/dev/null')
+check "drain: queue stat keeps the layout the playbook reads" '[ "$(awk -F"|" "{ for (i = 2; i <= 5; i++) gsub(/ /, \"\", \$i) } \$2 == \"NAME\" { print \$2, \$3, \$4, \$5; exit }" <<< "$QUEUE_STAT")" = "NAME ADDRESS CONSUMER MESSAGE" ]'
+check "drain: queue stat counts the 5 messages in its fourth column" '[ "$(awk -F"|" "{ gsub(/ /, \"\", \$2); gsub(/ /, \"\", \$5) } \$2 == \"broker-test\" { print \$5 }" <<< "$QUEUE_STAT")" = 5 ]'
+
+reloads=$(logged_count "$OLD" AMQ221087)
+docker exec "$OLD" sed -i '/<acceptor name="artemis">/s/protocols=CORE;/protocols=CORE,AMQP;/' "$ETC"
+check "drain: the old broker reloads its configuration" 'logged "$OLD" AMQ221087 "$reloads"'
+check "drain: its CORE acceptor restarts accepting AMQP" 'logged "$OLD" "61616 for protocols [CORE,AMQP]" 0'
+
+reloads=$(logged_count "$NEW" AMQ221087)
+docker exec -i "$NEW" sh -c 'cat > /tmp/drain.xml' <<EOF
+		<!-- drain-federation:begin -->
+		<broker-connections>
+			<amqp-connection uri="tcp://$OLD:61616" name="drain-federation" user="artemis" password="artemis" retry-interval="5000" reconnect-attempts="360">
+				<federation>
+					<local-queue-policy name="drain-federation-queues">
+						<include address-match="#" queue-match="#"/>
+						<exclude address-match="activemq.#" queue-match="#"/>
+						<exclude address-match="health-check" queue-match="#"/>
+					</local-queue-policy>
+					<property key="amqpCredits" value="10"/>
+					<property key="amqpLowCredits" value="3"/>
+				</federation>
+			</amqp-connection>
+		</broker-connections>
+		<!-- drain-federation:end -->
+EOF
+docker exec "$NEW" sh -c "awk '/<acceptors>/ { while ((getline line < \"/tmp/drain.xml\") > 0) print line } { print }' $ETC > /tmp/broker.xml && cat /tmp/broker.xml > $ETC"
+check "drain: the new broker reloads its configuration" 'logged "$NEW" AMQ221087 "$reloads"'
+check "drain: the federation connects to the old broker" 'logged "$NEW" "Connected on Server AMQP Connection drain-federation on" 0'
+check "drain: the new broker delivers the old broker's 5 messages" '[ "$(cli "$NEW" 127.0.0.1 consumer "$SERVICE_USER" "--message-count 5 --receive-timeout 30000")" = "Consumed: 5 messages" ]'
+
+reloads=$(logged_count "$NEW" AMQ221087)
+docker exec "$NEW" sh -c "awk '/drain-federation:begin/ { skip = 1 } !skip { print } /drain-federation:end/ { skip = 0 }' $ETC > /tmp/broker.xml && cat /tmp/broker.xml > $ETC"
+check "drain: removing the block reloads the new broker" 'logged "$NEW" AMQ221087 "$reloads"'
+cli "$OLD" 127.0.0.1 producer "$SERVICE_USER" "--message-count 2" >/dev/null
+check "drain: once removed, the new broker pulls nothing" '[ "$(cli "$NEW" 127.0.0.1 consumer "$SERVICE_USER" "--message-count 2 --receive-timeout 10000")" != "Consumed: 2 messages" ]'
+
+# What `adjust` does: the block, removed above, added again with another window, reconnects.
+reloads=$(logged_count "$NEW" AMQ221087)
+connections=$(logged_count "$NEW" "Connected on Server AMQP Connection drain-federation on")
+docker exec "$NEW" sed -i -e 's/key="amqpCredits" value="10"/key="amqpCredits" value="1000"/' -e 's/key="amqpLowCredits" value="3"/key="amqpLowCredits" value="300"/' /tmp/drain.xml
+docker exec "$NEW" sh -c "awk '/<acceptors>/ { while ((getline line < \"/tmp/drain.xml\") > 0) print line } { print }' $ETC > /tmp/broker.xml && cat /tmp/broker.xml > $ETC"
+check "drain: adding it again reloads the new broker" 'logged "$NEW" AMQ221087 "$reloads"'
+check "drain: the federation added again connects again" 'logged "$NEW" "Connected on Server AMQP Connection drain-federation on" "$connections"'
+check "drain: and pulls the 2 left on the old broker" '[ "$(cli "$NEW" 127.0.0.1 consumer "$SERVICE_USER" "--message-count 2 --receive-timeout 30000")" = "Consumed: 2 messages" ]'
+check "drain: neither broker restarted" '[ "$(logged_count "$OLD" AMQ221007)$(logged_count "$NEW" AMQ221007)" = 11 ]'
+docker rm -f "$OLD" "$NEW" >/dev/null
 
 echo "$pass passed, $fail failed"
 [ "$fail" -eq 0 ]
