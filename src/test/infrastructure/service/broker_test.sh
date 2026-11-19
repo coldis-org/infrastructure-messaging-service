@@ -135,8 +135,23 @@ done
 # slows it down.
 DRAIN_OPTIONS=(--tmpfs "$DATA:rw,size=600m" -e JOURNAL_TYPE=NIO -e JOURNAL_MIN_FILES_DISK_CAP=100
 	-e JOURNAL_POOL_FILES_DISK_CAP=100 -e JOURNAL_COMPACT_MIN_FILES_DISK_CAP=100)
+# Account names other than the image's defaults and other than the role's, so that the lookups by
+# ARTEMIS_USERNAME and by role are what finds them. Both brokers share them: the federation logs in to
+# the old broker with the new broker's account. Passwords made per run, hex only, since the template
+# below does not escape them for XML as the playbook does.
+DRAIN_SERVICE_PASSWORD=$(head -c 12 /dev/urandom | od -An -tx1 | tr -d ' \n')
+DRAIN_OPERATOR_PASSWORD=$(head -c 12 /dev/urandom | od -An -tx1 | tr -d ' \n')
+DRAIN_OPTIONS+=(-e ARTEMIS_USERNAME=drain-service -e "ARTEMIS_PASSWORD=$DRAIN_SERVICE_PASSWORD"
+	-e ARTEMIS_BREAKGLASS_USERNAME=drain-operator -e "ARTEMIS_BREAKGLASS_PASSWORD=$DRAIN_OPERATOR_PASSWORD")
 ETC=/var/lib/artemis/etc/broker.xml
-logged_count() { docker logs "$1" 2>&1 | grep -cF -- "$2"; }
+# The file the playbook waits on, not the console: a logging change that drops it must fail here.
+logged_count() { docker exec "$1" cat /var/lib/artemis/log/artemis.log 2>/dev/null | grep -cF -- "$2"; }
+# The accounts as the playbook finds them: the broker's own by ARTEMIS_USERNAME (or the file the boot
+# sources), the break-glass one by its role. Each sets $user in the container's shell, and
+# PASSWORD_OF_USER then sets $password from the users file, for the command that follows.
+ACCOUNT='etc=/var/lib/artemis/etc; [ -f /local/application.env ] && . /local/application.env; user=${ARTEMIS_USERNAME:-artemis}'
+BREAKGLASS='etc=/var/lib/artemis/etc; user=$(sed -n "s/^${ARTEMIS_BREAKGLASS_ROLE:-breakglass}=//p" "$etc/artemis-roles.properties" | head -n 1 | cut -d, -f1)'
+PASSWORD_OF_USER='password=$(grep "^${user}=" "$etc/artemis-users.properties" | head -n 1 | cut -d= -f2-)'
 # Waits until the log of container $1 holds more than $3 lines with fixed string $2 (30s at most).
 logged() {
 	for _ in $(seq 30); do
@@ -148,11 +163,20 @@ logged() {
 OLD=$PREFIX-old; NEW=$PREFIX-new
 start "$OLD" "$IMAGE" "${DRAIN_OPTIONS[@]}" && start "$NEW" "$IMAGE" "${DRAIN_OPTIONS[@]}"; R=$?
 check "drain: both brokers start" '[ $R -eq 0 ]'
+found_user() { docker exec "$1" sh -c "$2; "'echo "$user"'; }
+check "drain: the playbook's lookups find the broker's account and the break-glass one" '[ "$(found_user "$OLD" "$ACCOUNT")" = drain-service ] && [ "$(found_user "$OLD" "$BREAKGLASS")" = drain-operator ]'
+# A read that does not end like this is taken as cut short; the version comes from the jar's name.
+last_line() { docker exec "$1" sh -c "grep -v '^[[:space:]]*\$' $ETC | tail -n 1"; }
+check "drain: broker.xml ends in </configuration>" '[ "$(last_line "$NEW")" = "</configuration>" ]'
+check "drain: the Artemis version can be read from artemis-server-<version>.jar" 'docker exec "$NEW" ls /opt/artemis/lib | grep -qE "^artemis-server-[0-9]+\.[0-9]+\.[0-9]+\.jar$"'
 check "drain: 5 messages wait on the old broker" '[ "$(cli "$OLD" 127.0.0.1 producer "$SERVICE_USER" "--message-count 5")" = "Produced: 5 messages" ]'
-# The playbook reads these counts by column position, logged in with the break-glass account.
-QUEUE_STAT=$(docker exec "$OLD" sh -c 'cd /var/lib/artemis && bin/artemis queue stat --user "$ARTEMIS_BREAKGLASS_USERNAME" --password "$ARTEMIS_BREAKGLASS_PASSWORD" --url tcp://localhost:61616 --maxRows 100000 --maxColumnSize -1 2>/dev/null')
-check "drain: queue stat keeps the layout the playbook reads" '[ "$(awk -F"|" "{ for (i = 2; i <= 5; i++) gsub(/ /, \"\", \$i) } \$2 == \"NAME\" { print \$2, \$3, \$4, \$5; exit }" <<< "$QUEUE_STAT")" = "NAME ADDRESS CONSUMER MESSAGE" ]'
-check "drain: queue stat counts the 5 messages in its fourth column" '[ "$(awk -F"|" "{ gsub(/ /, \"\", \$2); gsub(/ /, \"\", \$5) } \$2 == \"broker-test\" { print \$5 }" <<< "$QUEUE_STAT")" = 5 ]'
+# The playbook reads these counts by column position, up to INTERNAL, logged in with the break-glass
+# account it finds by role.
+queue_stat() { docker exec "$1" sh -c "$BREAKGLASS; $PASSWORD_OF_USER; "'cd /var/lib/artemis && bin/artemis queue stat --user "$user" --password "$password" --url tcp://localhost:61616 --maxRows 100000 --maxColumnSize -1 2>/dev/null'; }
+waiting_on() { queue_stat "$1" | awk -F"|" '{ gsub(/ /, "", $2); gsub(/ /, "", $5) } $2 == "broker-test" { print $5 }'; }
+QUEUE_STAT=$(queue_stat "$OLD")
+check "drain: queue stat keeps the layout the playbook reads" '[ "$(awk -F"|" "{ for (i = 2; i <= 11; i++) gsub(/ /, \"\", \$i) } \$2 == \"NAME\" { print \$2, \$3, \$4, \$5, \$6, \$7, \$8, \$9, \$10, \$11; exit }" <<< "$QUEUE_STAT")" = "NAME ADDRESS CONSUMER MESSAGE MESSAGES DELIVERING MESSAGES SCHEDULED ROUTING INTERNAL" ]'
+check "drain: queue stat counts the 5 messages in its fourth column" '[ "$(waiting_on "$OLD")" = 5 ]'
 
 reloads=$(logged_count "$OLD" AMQ221087)
 docker exec "$OLD" sed -i '/<acceptor name="artemis">/s/protocols=CORE;/protocols=CORE,AMQP;/' "$ETC"
@@ -160,10 +184,11 @@ check "drain: the old broker reloads its configuration" 'logged "$OLD" AMQ221087
 check "drain: its CORE acceptor restarts accepting AMQP" 'logged "$OLD" "61616 for protocols [CORE,AMQP]" 0'
 
 reloads=$(logged_count "$NEW" AMQ221087)
-docker exec -i "$NEW" sh -c 'cat > /tmp/drain.xml' <<EOF
+# A template: $OLD and the account are filled in inside the container, by envsubst.
+docker exec -i "$NEW" sh -c 'cat > /tmp/drain.template' <<'EOF'
 		<!-- drain-federation:begin -->
 		<broker-connections>
-			<amqp-connection uri="tcp://$OLD:61616" name="drain-federation" user="artemis" password="artemis" retry-interval="5000" reconnect-attempts="360">
+			<amqp-connection uri="tcp://$OLD:61616" name="drain-federation" user="$DRAIN_USER" password="$DRAIN_PASSWORD" retry-interval="5000" reconnect-attempts="360">
 				<federation>
 					<local-queue-policy name="drain-federation-queues">
 						<include address-match="#" queue-match="#"/>
@@ -177,6 +202,8 @@ docker exec -i "$NEW" sh -c 'cat > /tmp/drain.xml' <<EOF
 		</broker-connections>
 		<!-- drain-federation:end -->
 EOF
+# The broker's own account, filled in inside the container as the playbook takes it: never typed here.
+docker exec -e OLD="$OLD" "$NEW" sh -c "$ACCOUNT; $PASSWORD_OF_USER; "'DRAIN_USER=$user DRAIN_PASSWORD=$password envsubst "\$OLD \$DRAIN_USER \$DRAIN_PASSWORD" < /tmp/drain.template > /tmp/drain.xml'
 docker exec "$NEW" sh -c "awk '/<acceptors>/ { while ((getline line < \"/tmp/drain.xml\") > 0) print line } { print }' $ETC > /tmp/broker.xml && cat /tmp/broker.xml > $ETC"
 check "drain: the new broker reloads its configuration" 'logged "$NEW" AMQ221087 "$reloads"'
 check "drain: the federation connects to the old broker" 'logged "$NEW" "Connected on Server AMQP Connection drain-federation on" 0'
@@ -186,7 +213,12 @@ reloads=$(logged_count "$NEW" AMQ221087)
 docker exec "$NEW" sh -c "awk '/drain-federation:begin/ { skip = 1 } !skip { print } /drain-federation:end/ { skip = 0 }' $ETC > /tmp/broker.xml && cat /tmp/broker.xml > $ETC"
 check "drain: removing the block reloads the new broker" 'logged "$NEW" AMQ221087 "$reloads"'
 cli "$OLD" 127.0.0.1 producer "$SERVICE_USER" "--message-count 2" >/dev/null
-check "drain: once removed, the new broker pulls nothing" '[ "$(cli "$NEW" 127.0.0.1 consumer "$SERVICE_USER" "--message-count 2 --receive-timeout 10000")" != "Consumed: 2 messages" ]'
+# A consumer on the new broker is the demand the federation pulls for. It subscribes and, with the
+# block gone, gets nothing for 15s (the CLI waits for its count, so `timeout` ends it), while the
+# old broker keeps both messages.
+PULLED=$(docker exec "$NEW" sh -c "cd /var/lib/artemis && timeout 15 /opt/artemis/bin/artemis consumer --url tcp://127.0.0.1:61616 $SERVICE_USER --destination queue://broker-test --message-count 2 --receive-timeout 10000" 2>&1)
+check "drain: once removed, a consumer on the new broker subscribes and gets nothing" '[[ "$PULLED" == *"Consumer ActiveMQQueue[broker-test]"* && "$PULLED" != *"Consumed:"* && "$PULLED" != *eceived* ]]'
+check "drain: and the old broker still holds both messages" '[ "$(waiting_on "$OLD")" = 2 ]'
 
 # What `adjust` does: the block, removed above, added again with another window, reconnects.
 reloads=$(logged_count "$NEW" AMQ221087)
